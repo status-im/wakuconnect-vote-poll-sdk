@@ -1,0 +1,25 @@
+{
+    "compilerOptions": {
+        "outDir": "dist",
+        "jsx":"react",
+        "esModuleInterop": true,
+        "moduleResolution": "node",
+        "resolveJsonModule": true,
+        "skipLibCheck": true,
+        "downlevelIteration": true,
+        "strict": true,
+        "composite": true,
+        "declaration": true,
+        "sourceMap": true,
+        "declarationMap": true,
+        "module": "commonjs",
+        "forceConsistentCasingInFileNames": true,
+        "target": "es6",
+        "typeRoots": [ "./types", "./node_modules/@types", "../../node_modules/@types"]
+    },
+    "include": [
+        "src",
+        "src/**/*.json",
+        "test"
+      ]
+}

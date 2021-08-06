@@ -1,0 +1,24 @@
+{
+  "name": "status-waku-voting",
+  "private": true,
+  "license": "MIT",
+  "engines": {
+    "node": ">=14"
+  },
+  "workspaces": {
+    "packages": [
+      "packages/*"
+    ]
+  },
+  "scripts": {
+    "start": "yarn --cwd ./packages/example start",
+    "lint": "wsrun -c -s lint",
+    "lint:fix": "wsrun -c -s lint:fix",
+    "build": "wsrun -e -c -s build",
+    "test": "wsrun -e -c -s --exclude-missing test"
+  },
+  "dependencies": {
+    "prettier": "^2.3.1",
+    "wsrun": "^5.2.4"
+  }
+}
