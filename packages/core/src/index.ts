@@ -3,6 +3,7 @@ import { Waku, getStatusFleetNodes } from 'js-waku'
 class WakuVoting {
   private appName: string
   private waku: Waku | undefined
+  public tokenAddress: string
 
   private async createWaku() {
     this.waku = await Waku.create()
@@ -16,8 +17,9 @@ class WakuVoting {
     )
   }
 
-  constructor(appName: string, waku?: Waku) {
+  constructor(appName: string, tokenAddress: string, waku?: Waku) {
     this.appName = appName
+    this.tokenAddress = tokenAddress
     if (waku) {
       this.waku = waku
     } else {

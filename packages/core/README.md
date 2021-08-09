@@ -1,17 +1,17 @@
-#Gassless voting over waku
+# Gassless voting over waku
 
-##Waku Voting
+## Waku Voting
 
 Objects of type of WakuVoting, hold their own Waku objects and also store list of polls and votes for later use.
 
 Creating instance of WakuVoting: 
 
-WakuVoting constructor expects name of DApp and also as optional parameter can take custom Waku object.
+WakuVoting constructor expects name of DApp and address of a token, also as optional parameter can take custom Waku object.
 
 ```ts
     import WakuVoting from 'core'
 
-    const wakuVoting = new WakuVoting('myDapp')
+    const wakuVoting = new WakuVoting('myDapp', '0x00000000000')
 ```
 
 objects of type WakuVoting expose functions:
@@ -21,9 +21,9 @@ getTimedPolls()
 sendTimedPollVote(signer: JsonRpcSigner, pollHash: string, selectedAnswer:number, sntAmount?: number)
 
 
-##Polls
+## Polls
 
-###Creating time-limited poll
+### Creating time-limited poll
 
 To create a poll user has to send a message over waku network on specific topic 
 
@@ -36,7 +36,7 @@ message PollInit {
     bytes owner = 1; // Address of a poll owner/initializer
     int64 timestamp = 2; // Timestamp of a waku message
     string question = 3;// Question of a poll
-    repeated answers = 4; // Possible answers to poll
+    repeated string answers = 4; // Possible answers to poll
     enum PollType {
         WEIGHTED = 0;
         NON_WEIGHTED = 1;
