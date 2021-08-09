@@ -1,7 +1,8 @@
 import { expect } from 'chai'
-import { PollInitMsg, PollType } from '../../../src/types/PollInit'
+import { PollType } from '../../../src/types/PollType'
 import PollInit from '../../../src/utils/proto/PollInit'
 import { BigNumber } from 'ethers'
+import { PollInitMsg } from '../../../src/models/PollInitMsg'
 
 describe('PollInit', () => {
   it('success', async () => {

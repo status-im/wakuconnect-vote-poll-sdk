@@ -1,6 +1,7 @@
 import protons, { PollInit } from 'protons'
-import { PollInitMsg, PollType } from '../../types/PollInit'
+import { PollType } from '../../types/PollType'
 import { utils, BigNumber } from 'ethers'
+import { PollInitMsg } from '../../models/PollInitMsg'
 
 const proto = protons(`
 message PollInit {
