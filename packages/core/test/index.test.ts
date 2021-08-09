@@ -1,11 +1,11 @@
 import { expect } from 'chai'
-import { foo } from '../src'
+import { Waku } from 'js-waku'
+import WakuVoting from '../src'
 
-describe('test', () => {
-  it('foo', async () => {
-    expect(foo()).to.eq('Hello world')
-  })
-  it('not foo', async () => {
-    expect(foo()).to.not.eq('asdas')
+describe('WakuVoting', () => {
+  it('success', async () => {
+    const wakuVoting = new WakuVoting('test', {} as unknown as Waku)
+
+    expect(wakuVoting).to.not.be.undefined
   })
 })
