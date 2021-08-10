@@ -3,29 +3,24 @@ import { PollType } from '../../../src/types/PollType'
 import PollInit from '../../../src/utils/proto/PollInit'
 import { BigNumber } from 'ethers'
 import { PollInitMsg } from '../../../src/models/PollInitMsg'
+import { MockProvider } from 'ethereum-waffle'
 
 describe('PollInit', () => {
+  const provider = new MockProvider()
+  const [alice] = provider.getWallets()
   it('success', async () => {
-    const data: PollInitMsg = {
-      owner: '0x02',
-      answers: ['ab', 'cd', 'ef'],
-      endTime: 10,
-      pollType: PollType.WEIGHTED,
-      question: 'whats up',
-      signature: '0x11',
-      timestamp: 10,
-    }
+    const data = await PollInitMsg.create(alice, 'whats up', ['ab', 'cd', 'ef'], PollType.WEIGHTED)
 
     const payload = PollInit.encode(data)
 
     expect(payload).to.not.be.undefined
     if (payload) {
-      expect(PollInit.decode(payload)).to.deep.eq(data)
+      expect(PollInit.decode(payload, new Date(data.timestamp))).to.deep.eq(data)
     }
   })
 
   it('random decode', async () => {
-    expect(PollInit.decode(new Uint8Array([12, 12, 3, 32, 31, 212, 31, 32, 23]))).to.be.undefined
+    expect(PollInit.decode(new Uint8Array([12, 12, 3, 32, 31, 212, 31, 32, 23]), new Date(10))).to.be.undefined
   })
 
   it('random data', async () => {
@@ -33,36 +28,29 @@ describe('PollInit', () => {
   })
 
   it('NON_WEIGHTED init', async () => {
-    const data: PollInitMsg = {
-      owner: '0x02',
-      answers: ['ab', 'cd', 'ef'],
-      endTime: 10,
-      pollType: PollType.NON_WEIGHTED,
-      minToken: BigNumber.from(10),
-      question: 'whats up',
-      signature: '0x11',
-      timestamp: 10,
-    }
+    const data = await PollInitMsg.create(
+      alice,
+      'whats up',
+      ['ab', 'cd', 'ef'],
+      PollType.NON_WEIGHTED,
+      BigNumber.from(10)
+    )
+
     const payload = PollInit.encode(data)
     expect(payload).to.not.be.undefined
     if (payload) {
-      expect(PollInit.decode(payload)).to.deep.eq(data)
+      expect(PollInit.decode(payload, new Date(data.timestamp))).to.deep.eq(data)
     }
   })
 
   it('NON_WEIGHTED no min token', async () => {
-    const data: PollInitMsg = {
-      owner: '0x02',
-      answers: ['ab', 'cd', 'ef'],
-      endTime: 10,
-      pollType: PollType.NON_WEIGHTED,
-      question: 'whats up',
-      signature: '0x11',
-      timestamp: 10,
-    }
+    const data = await PollInitMsg.create(alice, 'whats up', ['ab', 'cd', 'ef'], PollType.NON_WEIGHTED)
 
     const payload = PollInit.encode(data)
 
-    expect(payload).to.be.undefined
+    expect(payload).to.not.be.undefined
+    if (payload) {
+      expect(PollInit.decode(payload, new Date(data.timestamp))).to.deep.eq({ ...data, minToken: BigNumber.from(1) })
+    }
   })
 })

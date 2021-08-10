@@ -2,7 +2,6 @@ import { expect } from 'chai'
 import { PollInitMsg } from '../../src/models/PollInitMsg'
 import { MockProvider } from 'ethereum-waffle'
 import { PollType } from '../../src/types/PollType'
-import { JsonRpcSigner } from '@ethersproject/providers'
 import { BigNumber, utils } from 'ethers'
 
 describe('PollInitMsg', () => {
@@ -10,12 +9,7 @@ describe('PollInitMsg', () => {
   const [alice] = provider.getWallets()
 
   it('success', async () => {
-    const poll = await PollInitMsg.create(
-      alice as unknown as JsonRpcSigner,
-      'test',
-      ['one', 'two', 'three'],
-      PollType.WEIGHTED
-    )
+    const poll = await PollInitMsg.create(alice, 'test', ['one', 'two', 'three'], PollType.WEIGHTED)
 
     expect(poll).to.not.be.undefined
     expect(poll.owner).to.eq(alice.address)
@@ -35,7 +29,7 @@ describe('PollInitMsg', () => {
 
   it('success NON_WEIGHTED', async () => {
     const poll = await PollInitMsg.create(
-      alice as unknown as JsonRpcSigner,
+      alice,
       'test',
       ['one', 'two', 'three'],
       PollType.NON_WEIGHTED,
@@ -61,12 +55,7 @@ describe('PollInitMsg', () => {
   })
 
   it('NON_WEIGHTED no minToken', async () => {
-    const poll = await PollInitMsg.create(
-      alice as unknown as JsonRpcSigner,
-      'test',
-      ['one', 'two', 'three'],
-      PollType.NON_WEIGHTED
-    )
+    const poll = await PollInitMsg.create(alice, 'test', ['one', 'two', 'three'], PollType.NON_WEIGHTED)
 
     expect(poll?.minToken?.toNumber()).to.eq(1)
 
@@ -87,14 +76,7 @@ describe('PollInitMsg', () => {
   })
 
   it('specific end time', async () => {
-    const poll = await PollInitMsg.create(
-      alice as unknown as JsonRpcSigner,
-      'test',
-      ['one', 'two', 'three'],
-      PollType.NON_WEIGHTED,
-      undefined,
-      100
-    )
+    const poll = await PollInitMsg.create(alice, 'test', ['one', 'two', 'three'], PollType.NON_WEIGHTED, undefined, 100)
 
     expect(poll?.endTime).to.eq(100)
   })

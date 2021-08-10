@@ -1,6 +1,6 @@
 import protons, { PollInit } from 'protons'
 import { PollType } from '../../types/PollType'
-import { utils, BigNumber } from 'ethers'
+import { utils } from 'ethers'
 import { PollInitMsg } from '../../models/PollInitMsg'
 
 const proto = protons(`
@@ -46,9 +46,12 @@ export function encode(pollInit: PollInitMsg) {
   }
 }
 
-export function decode(payload: Uint8Array) {
+export function decode(payload: Uint8Array, timestamp: Date | undefined) {
   try {
     const msg = proto.PollInit.decode(payload)
+    if (!timestamp || timestamp.getTime() != msg.timestamp) {
+      return undefined
+    }
     if (
       msg.owner &&
       msg.timestamp &&
@@ -58,24 +61,7 @@ export function decode(payload: Uint8Array) {
       msg.endTime &&
       msg.signature
     ) {
-      const pollInit: PollInitMsg = {
-        owner: utils.hexlify(msg.owner),
-        timestamp: msg.timestamp,
-        question: msg.question,
-        answers: msg.answers,
-        pollType: msg.pollType,
-        endTime: msg.endTime,
-        signature: utils.hexlify(msg.signature),
-      }
-
-      if (msg.pollType === PollType.NON_WEIGHTED) {
-        if (msg.minToken) {
-          pollInit.minToken = BigNumber.from(msg.minToken)
-          return pollInit
-        }
-      } else {
-        return pollInit
-      }
+      return PollInitMsg.fromProto(msg)
     }
   } catch {
     return undefined
