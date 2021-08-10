@@ -12,8 +12,10 @@ export class PollInitMsg {
   public minToken?: BigNumber
   public endTime: number
   public signature: string
+  public id: string
 
   private constructor(
+    id: string,
     owner: string,
     signature: string,
     timestamp: number,
@@ -23,6 +25,7 @@ export class PollInitMsg {
     endTime: number,
     minToken?: BigNumber
   ) {
+    this.id = id
     this.owner = owner
     this.timestamp = timestamp
     this.question = question
@@ -70,8 +73,8 @@ export class PollInitMsg {
 
     const packedData = utils.arrayify(utils.solidityPack(types, msg))
     const signature = await signer.signMessage(packedData)
-
-    return new PollInitMsg(owner, signature, timestamp, question, answers, pollType, newEndTime, minToken)
+    const id = utils.solidityKeccak256(['address', 'uint256'], [owner, timestamp])
+    return new PollInitMsg(id, owner, signature, timestamp, question, answers, pollType, newEndTime, minToken)
   }
 
   static fromProto(payload: PollInit) {
@@ -108,7 +111,7 @@ export class PollInitMsg {
     if (verifiedAddress != owner) {
       return undefined
     }
-
-    return new PollInitMsg(owner, signature, timestamp, question, answers, pollType, endTime, minToken)
+    const id = utils.solidityKeccak256(['address', 'uint256'], [owner, timestamp])
+    return new PollInitMsg(id, owner, signature, timestamp, question, answers, pollType, endTime, minToken)
   }
 }

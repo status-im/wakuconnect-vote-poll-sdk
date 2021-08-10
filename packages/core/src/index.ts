@@ -62,6 +62,7 @@ class WakuVoting {
     return messages
       ?.filter((e): e is WakuMessage & { payload: Uint8Array } => !!e?.payload)
       .map((msg) => PollInit.decode(msg.payload, msg.timestamp))
+      .filter((poll): poll is PollInitMsg => !!poll)
   }
 }
 
