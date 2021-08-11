@@ -5,7 +5,7 @@ const webpack = require('webpack')
 
 module.exports = (env) => {
     let environment = 'development'
-    if(env.ENV){
+    if (env.ENV) {
         environment = env.ENV
     }
 
@@ -19,7 +19,7 @@ module.exports = (env) => {
         devtool: 'source-map',
         resolve: {
             extensions: ['.ts', '.tsx', '.js', '.json'],
-            fallback: { 
+            fallback: {
                 "buffer": require.resolve("buffer/"),
                 "crypto": require.resolve("crypto-browserify"),
                 "stream": require.resolve("stream-browserify")
@@ -28,25 +28,9 @@ module.exports = (env) => {
         module: {
             rules: [
                 {
-                    test: /\.[jt]sx?$/,
-                    use: {
-                        loader: 'babel-loader',
-                        options: {
-                            cacheDirectory: true,
-                            babelrc: false,
-                            presets: [
-                                '@babel/preset-typescript',
-                                [
-                                    '@babel/preset-env',
-                                    { targets: { browsers: '> 0.25%, not dead' } },
-                                ],
-                                '@babel/preset-react',
-                            ],
-                            plugins: [
-                                'babel-plugin-styled-components',
-                            ],
-                        },
-                    },
+                    test: /\.tsx?$/,
+                    use: 'ts-loader',
+                    exclude: /node_modules/,
                 },
                 {
                     enforce: 'pre',
@@ -71,7 +55,7 @@ module.exports = (env) => {
             new webpack.ProvidePlugin({
                 process: 'process/browser.js',
                 Buffer: ['buffer', 'Buffer'],
-              }),
+            }),
         ],
         devServer: {
             historyApiFallback: true,

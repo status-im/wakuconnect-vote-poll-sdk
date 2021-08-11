@@ -7,6 +7,7 @@ import PollInit from './utils/proto/PollInit'
 import { WakuMessage } from 'js-waku'
 import { TimedPollVoteMsg } from './models/TimedPollVoteMsg'
 import TimedPollVote from './utils/proto/TimedPollVote'
+import { DetailedTimedPoll } from './models/DetailedTimedPoll'
 
 class WakuVoting {
   private appName: string
@@ -60,12 +61,14 @@ class WakuVoting {
     }
   }
 
-  public async getTimedPolls() {
+  private async getTimedPolls() {
     const messages = await this.waku?.store.queryHistory({ contentTopics: [this.pollInitTopic] })
-    return messages
-      ?.filter((e): e is WakuMessage & { payload: Uint8Array } => !!e?.payload)
-      .map((msg) => PollInit.decode(msg.payload, msg.timestamp))
-      .filter((poll): poll is PollInitMsg => !!poll)
+    return (
+      messages
+        ?.filter((e): e is WakuMessage & { payload: Uint8Array } => !!e?.payload)
+        .map((msg) => PollInit.decode(msg.payload, msg.timestamp))
+        .filter((poll): poll is PollInitMsg => !!poll) ?? []
+    )
   }
 
   public async sendTimedPollVote(
@@ -84,12 +87,26 @@ class WakuVoting {
     }
   }
 
-  public async getTimedPollVotes(id: string) {
+  private async getTimedPollsVotes() {
     const messages = await this.waku?.store.queryHistory({ contentTopics: [this.timedPollVoteTopic] })
-    return messages
-      ?.filter((e): e is WakuMessage & { payload: Uint8Array } => !!e?.payload)
-      .map((msg) => TimedPollVote.decode(msg.payload, msg.timestamp))
-      .filter((poll): poll is TimedPollVoteMsg => !!poll && poll.id === id)
+    return (
+      messages
+        ?.filter((e): e is WakuMessage & { payload: Uint8Array } => !!e?.payload)
+        .map((msg) => TimedPollVote.decode(msg.payload, msg.timestamp))
+        .filter((poll): poll is TimedPollVoteMsg => !!poll) ?? []
+    )
+  }
+
+  public async getDetailedTimedPolls() {
+    const polls = await this.getTimedPolls()
+    const votes = await this.getTimedPollsVotes()
+    return polls.map(
+      (poll) =>
+        new DetailedTimedPoll(
+          poll,
+          votes.filter((vote) => vote.id === poll.id)
+        )
+    )
   }
 }
 

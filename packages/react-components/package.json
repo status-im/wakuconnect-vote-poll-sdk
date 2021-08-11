@@ -17,6 +17,7 @@
   },
   "dependencies": {
     "@status-waku-voting/core": "link:../core",
+    "ethers": "^5.4.4",
     "react": "^17.0.2",
     "react-components": "^0.5.1"
   },
