@@ -4,6 +4,7 @@ import { Wallet } from 'ethers'
 import React, { useEffect, useState } from 'react'
 import { Poll } from './Poll'
 import { JsonRpcSigner } from '@ethersproject/providers'
+import styled from 'styled-components'
 
 type PollListProps = {
   wakuVoting: WakuVoting | undefined
@@ -23,14 +24,14 @@ export function PollList({ wakuVoting, signer }: PollListProps) {
   }, [wakuVoting])
 
   return (
-    <ul>
+    <PollListWrapper>
       {polls.map((poll) => {
-        return (
-          <li key={poll.poll.id}>
-            <Poll poll={poll} wakuVoting={wakuVoting} signer={signer} />
-          </li>
-        )
+        return <Poll key={poll.poll.id} poll={poll} wakuVoting={wakuVoting} signer={signer} />
       })}
-    </ul>
+    </PollListWrapper>
   )
 }
+const PollListWrapper = styled.div`
+  display: flex;
+  flex-direction: column;
+`

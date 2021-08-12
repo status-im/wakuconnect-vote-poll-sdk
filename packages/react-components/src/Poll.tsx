@@ -20,36 +20,49 @@ export function Poll({ poll, wakuVoting, signer }: PollProps) {
     signer.getAddress().then((e) => setAddress(e))
   }, [signer])
   return (
-    <div>
-      {poll.poll.question}
-      <ul>
+    <PollWrapper>
+      <PollTitle>
+        <PollQuestion>{poll.poll.question}</PollQuestion>
+        <PollTypeWrapper>{poll.poll.pollType === PollType.WEIGHTED ? 'WEIGHTED' : 'NON WEIGHTED'}</PollTypeWrapper>
+      </PollTitle>
+      <PollAnswersWrapper>
         {!poll.votesMessages.find((vote) => vote.voter === address) && (
-          <div onChange={(e) => setSelectedAnswer(Number.parseInt((e.target as any).value ?? 0))}>
-            {poll.poll.answers.map((answer, idx) => {
+          <div>
+            <div onChange={(e) => setSelectedAnswer(Number.parseInt((e.target as any).value ?? 0))}>
+              {poll.poll.answers.map((answer, idx) => {
+                return (
+                  <PollAnswer key={idx}>
+                    <input type="radio" value={idx} name={poll.poll.id} /> {answer}
+                  </PollAnswer>
+                )
+              })}
+            </div>
+            {poll.poll.pollType === PollType.WEIGHTED && (
+              <div>
+                Token amount
+                <input
+                  onChange={(e) => setTokenAmount(Number.parseInt(e.target.value))}
+                  value={tokenAmount}
+                  type="number"
+                />
+              </div>
+            )}
+          </div>
+        )}
+        {poll.votesMessages.find((vote) => vote.voter === address) && (
+          <div>
+            Results
+            {poll.answers.map((answer, idx) => {
               return (
-                <div key={idx}>
-                  <input type="radio" value={idx} name={poll.poll.id} /> {answer}
-                </div>
+                <PollAnswer key={idx}>
+                  <PollAnswerText>{answer.text}</PollAnswerText>
+                  <VoteCount>Votes : {answer.votes.toString()}</VoteCount>
+                </PollAnswer>
               )
             })}
           </div>
         )}
-        {poll.votesMessages.find((vote) => vote.voter === address) &&
-          poll.answers.map((answer, idx) => {
-            return (
-              <div key={idx}>
-                {answer.text}
-                <VoteCount>Votes : {answer.votes.toString()}</VoteCount>
-              </div>
-            )
-          })}
-      </ul>
-      {poll.poll.pollType === PollType.WEIGHTED && (
-        <div>
-          Token amount
-          <input onChange={(e) => setTokenAmount(Number.parseInt(e.target.value))} value={tokenAmount} type="number" />
-        </div>
-      )}
+      </PollAnswersWrapper>
       <button
         onClick={() => {
           if (wakuVoting) {
@@ -65,10 +78,64 @@ export function Poll({ poll, wakuVoting, signer }: PollProps) {
         {' '}
         Vote
       </button>
-    </div>
+    </PollWrapper>
   )
 }
 
 const VoteCount = styled.div`
-  margin-left: 20px;
+  margin-left: auto;
+  margin-right: 5px;
+`
+
+const PollWrapper = styled.div`
+  display: flex;
+  flex-direction: column;
+  box-shadow: 10px 10px 31px -2px #a3a1a1;
+  border-radius: 5px;
+  background-color: lightgray;
+  margin: 10px;
+  padding: 10px;
+`
+
+const PollTitle = styled.div`
+  display: flex;
+  padding: 10px;
+  height: 20px;
+  border: 1px solid black;
+  border-radius: 5px;
+`
+
+const PollQuestion = styled.div`
+  display: block;
+  width: 200px;
+  margin-left: 10px;
+  margin-top: auto;
+  overflow: hidden;
+`
+
+const PollTypeWrapper = styled.div`
+  width: 150px;
+  margin-right: 10px;
+  margin-left: auto;
+  margin-top: auto;
+  color: green;
+  font-weight: bold;
+`
+
+const PollAnswersWrapper = styled.div`
+  display: flex;
+  flex-direction: column;
+  margin: 10px;
+`
+
+const PollAnswer = styled.div`
+  display: flex;
+  margin: 20px;
+  width: 300px;
+  border-bottom: 1px solid black;
+  border-radius: 10px;
+`
+
+const PollAnswerText = styled.div`
+  width: 200px;
 `

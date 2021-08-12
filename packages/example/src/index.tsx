@@ -4,7 +4,7 @@ import { Example } from '@status-waku-voting/react-components'
 
 ReactDOM.render(
   <div>
-    <Example appName={'testApp'} />
+    <Example appName={'testApp_'} />
   </div>,
   document.getElementById('root')
 )
