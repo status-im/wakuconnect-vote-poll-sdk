@@ -5,9 +5,7 @@ import { PollList } from './PollList'
 import styled from 'styled-components'
 import { PollType } from '@status-waku-voting/core/dist/esm/src/types/PollType'
 
-const ethereum = (window as any).ethereum
-
-const provider = new providers.Web3Provider(ethereum)
+const provider = new providers.Web3Provider((window as any).ethereum)
 
 type ExampleProps = {
   appName: string
@@ -24,14 +22,13 @@ function Example({ appName }: ExampleProps) {
   const [selectedType, setSelectedType] = useState(PollType.WEIGHTED)
 
   useEffect(() => {
-    ethereum.ethereum.on('accountsChanged', async () => {
+    provider.on('accountsChanged', async () => {
       provider.send('eth_requestAccounts', [])
       setSigner(provider.getSigner())
     })
     WakuVoting.create(appName, '0x01').then((e) => setWakuVoting(e))
     provider.send('eth_requestAccounts', [])
   }, [])
-
   return (
     <Wrapper>
       {showNewPollBox && (

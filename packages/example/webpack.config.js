@@ -22,7 +22,8 @@ module.exports = (env) => {
             fallback: {
                 "buffer": require.resolve("buffer/"),
                 "crypto": require.resolve("crypto-browserify"),
-                "stream": require.resolve("stream-browserify")
+                "stream": require.resolve("stream-browserify"),
+                "assert": require.resolve("assert")
             }
         },
         module: {

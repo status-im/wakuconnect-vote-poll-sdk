@@ -52,12 +52,14 @@ class WakuVoting {
     endTime?: number
   ) {
     const pollInit = await PollInitMsg.create(signer, question, answers, pollType, minToken, endTime)
-    const payload = PollInit.encode(pollInit)
-    if (payload && pollInit) {
-      const wakuMessage = await WakuMessage.fromBytes(payload, this.pollInitTopic, {
-        timestamp: new Date(pollInit.timestamp),
-      })
-      await this.waku?.relay.send(wakuMessage)
+    if (pollInit) {
+      const payload = PollInit.encode(pollInit)
+      if (payload) {
+        const wakuMessage = await WakuMessage.fromBytes(payload, this.pollInitTopic, {
+          timestamp: new Date(pollInit.timestamp),
+        })
+        await this.waku?.relay.send(wakuMessage)
+      }
     }
   }
 

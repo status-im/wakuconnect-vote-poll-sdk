@@ -9,13 +9,20 @@ describe('PollInit', () => {
   const provider = new MockProvider()
   const [alice] = provider.getWallets()
   it('success', async () => {
-    const data = await PollInitMsg.create(alice, 'whats up', ['ab', 'cd', 'ef'], PollType.WEIGHTED)
-
-    const payload = PollInit.encode(data)
-
-    expect(payload).to.not.be.undefined
-    if (payload) {
-      expect(PollInit.decode(payload, new Date(data.timestamp))).to.deep.eq(data)
+    const data = await PollInitMsg._createWithSignFunction(
+      async () => '0x01',
+      alice,
+      'whats up',
+      ['ab', 'cd', 'ef'],
+      PollType.WEIGHTED
+    )
+    expect(data).to.not.be.undefined
+    if (data) {
+      const payload = PollInit.encode(data)
+      expect(payload).to.not.be.undefined
+      if (payload) {
+        expect(PollInit.decode(payload, new Date(data.timestamp), () => data.owner)).to.deep.eq(data)
+      }
     }
   })
 
@@ -28,29 +35,43 @@ describe('PollInit', () => {
   })
 
   it('NON_WEIGHTED init', async () => {
-    const data = await PollInitMsg.create(
+    const data = await PollInitMsg._createWithSignFunction(
+      async () => '0x01',
       alice,
       'whats up',
       ['ab', 'cd', 'ef'],
       PollType.NON_WEIGHTED,
       BigNumber.from(10)
     )
-
-    const payload = PollInit.encode(data)
-    expect(payload).to.not.be.undefined
-    if (payload) {
-      expect(PollInit.decode(payload, new Date(data.timestamp))).to.deep.eq(data)
+    expect(data).to.not.be.undefined
+    if (data) {
+      const payload = PollInit.encode(data)
+      expect(payload).to.not.be.undefined
+      if (payload) {
+        expect(PollInit.decode(payload, new Date(data.timestamp), () => data.owner)).to.deep.eq(data)
+      }
     }
   })
 
   it('NON_WEIGHTED no min token', async () => {
-    const data = await PollInitMsg.create(alice, 'whats up', ['ab', 'cd', 'ef'], PollType.NON_WEIGHTED)
+    const data = await PollInitMsg._createWithSignFunction(
+      async () => '0x01',
+      alice,
+      'whats up',
+      ['ab', 'cd', 'ef'],
+      PollType.NON_WEIGHTED
+    )
+    expect(data).to.not.be.undefined
+    if (data) {
+      const payload = PollInit.encode(data)
 
-    const payload = PollInit.encode(data)
-
-    expect(payload).to.not.be.undefined
-    if (payload) {
-      expect(PollInit.decode(payload, new Date(data.timestamp))).to.deep.eq({ ...data, minToken: BigNumber.from(1) })
+      expect(payload).to.not.be.undefined
+      if (payload) {
+        expect(PollInit.decode(payload, new Date(data.timestamp), () => data.owner)).to.deep.eq({
+          ...data,
+          minToken: BigNumber.from(1),
+        })
+      }
     }
   })
 })

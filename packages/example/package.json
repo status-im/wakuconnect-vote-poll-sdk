@@ -14,6 +14,7 @@
   },
   "dependencies": {
     "@status-waku-voting/react-components": "link:../react-components",
+    "assert": "^2.0.0",
     "buffer": "^6.0.3",
     "crypto-browserify": "^3.12.0",
     "prettier": "^2.3.2",

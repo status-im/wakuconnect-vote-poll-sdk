@@ -2,6 +2,7 @@ import protons, { PollInit } from 'protons'
 import { PollType } from '../../types/PollType'
 import { utils } from 'ethers'
 import { PollInitMsg } from '../../models/PollInitMsg'
+import { recoverTypedSignature_v4 } from 'eth-sig-util'
 
 const proto = protons(`
 message PollInit {
@@ -46,7 +47,11 @@ export function encode(pollInit: PollInitMsg) {
   }
 }
 
-export function decode(payload: Uint8Array, timestamp: Date | undefined) {
+export function decode(
+  payload: Uint8Array,
+  timestamp: Date | undefined,
+  recoverFunction?: ({ data, sig }: { data: any; sig: string }) => string
+) {
   try {
     const msg = proto.PollInit.decode(payload)
     if (!timestamp || timestamp.getTime() != msg.timestamp) {
@@ -61,7 +66,10 @@ export function decode(payload: Uint8Array, timestamp: Date | undefined) {
       msg.endTime &&
       msg.signature
     ) {
-      return PollInitMsg.fromProto(msg)
+      if (recoverFunction) {
+        return PollInitMsg.fromProto(msg, recoverFunction)
+      }
+      return PollInitMsg.fromProto(msg, (e) => utils.getAddress(recoverTypedSignature_v4(e)))
     }
   } catch {
     return undefined
