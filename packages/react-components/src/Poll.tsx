@@ -16,9 +16,11 @@ export function Poll({ poll, wakuVoting, signer }: PollProps) {
   const [selectedAnswer, setSelectedAnswer] = useState(0)
   const [tokenAmount, setTokenAmount] = useState(0)
   const [address, setAddress] = useState('')
+
   useEffect(() => {
     signer.getAddress().then((e) => setAddress(e))
   }, [signer])
+
   return (
     <PollWrapper>
       <PollTitle>

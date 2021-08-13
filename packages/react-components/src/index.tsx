@@ -22,7 +22,7 @@ function Example({ appName }: ExampleProps) {
   const [selectedType, setSelectedType] = useState(PollType.WEIGHTED)
 
   useEffect(() => {
-    provider.on('accountsChanged', async () => {
+    ;(window as any).ethereum.on('accountsChanged', async () => {
       provider.send('eth_requestAccounts', [])
       setSigner(provider.getSigner())
     })

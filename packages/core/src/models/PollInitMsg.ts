@@ -3,6 +3,16 @@ import { BigNumber, utils, Wallet } from 'ethers'
 import { JsonRpcSigner } from '@ethersproject/providers'
 import { PollInit } from 'protons'
 
+function signFunction(signer: JsonRpcSigner | Wallet) {
+  return async (params: string[]) => {
+    if ('send' in signer.provider) {
+      return signer.provider.send('eth_signTypedData_v4', params)
+    } else {
+      throw `No send function in provider`
+    }
+  }
+}
+
 type Message = {
   owner: string
   timestamp: number
@@ -10,7 +20,7 @@ type Message = {
   answers: string[]
   pollType: PollType
   endTime: number
-  minToken: BigNumber | undefined
+  minToken?: BigNumber
 }
 
 export function createSignMsgParams(message: Message) {
@@ -20,10 +30,8 @@ export function createSignMsgParams(message: Message) {
       version: '1',
     },
     message: {
-      owner: message.owner,
+      ...message,
       timestamp: new Date(message.timestamp).toLocaleDateString(),
-      question: message.question,
-      answers: message.answers,
       pollType: message.pollType === PollType.WEIGHTED ? 'Weighted' : 'Non weighted',
       endTime: new Date(message.endTime).toLocaleDateString(),
     },
@@ -44,11 +52,9 @@ export function createSignMsgParams(message: Message) {
     },
   }
 
-  if (message.pollType === PollType.NON_WEIGHTED) {
-    if (message.minToken) {
-      msgParams.message = { ...msgParams.message, minToken: message.minToken.toString() }
-      msgParams.types.Mail.push({ name: 'minToken', type: 'uint256' })
-    }
+  if (message.pollType === PollType.NON_WEIGHTED && message.minToken) {
+    msgParams.message = { ...msgParams.message, minToken: message.minToken.toString() }
+    msgParams.types.Mail.push({ name: 'minToken', type: 'uint256' })
   }
   return msgParams
 }
@@ -64,27 +70,16 @@ export class PollInitMsg {
   public signature: string
   public id: string
 
-  private constructor(
-    id: string,
-    owner: string,
-    signature: string,
-    timestamp: number,
-    question: string,
-    answers: string[],
-    pollType: PollType,
-    endTime: number,
-    minToken?: BigNumber
-  ) {
-    this.id = id
-    this.owner = owner
-    this.timestamp = timestamp
-    this.question = question
-    this.answers = answers
-    this.pollType = pollType
-    this.minToken = minToken
-    this.endTime = endTime
-
+  private constructor(signature: string, msg: Message) {
+    this.id = utils.id([msg.owner, msg.timestamp, signature].join())
     this.signature = signature
+    this.owner = msg.owner
+    this.timestamp = msg.timestamp
+    this.question = msg.question
+    this.answers = msg.answers
+    this.pollType = msg.pollType
+    this.minToken = msg.minToken
+    this.endTime = msg.endTime
   }
 
   static async _createWithSignFunction(
@@ -96,34 +91,31 @@ export class PollInitMsg {
     minToken?: BigNumber,
     endTime?: number
   ): Promise<PollInitMsg | undefined> {
-    const owner = await signer.getAddress()
     const timestamp = Date.now()
-    let newEndTime = timestamp + 10000000
-    if (endTime) {
-      newEndTime = endTime
-    }
-
     if (pollType === PollType.NON_WEIGHTED && !minToken) {
       minToken = BigNumber.from(1)
     }
-
-    const params = createSignMsgParams({
-      owner,
+    const msg = {
+      owner: await signer.getAddress(),
       timestamp,
       question,
       answers,
       pollType,
-      endTime: newEndTime,
+      endTime: endTime ? endTime : timestamp + 100000000,
       minToken,
-    })
-
-    const signature = await signFunction([owner, JSON.stringify(params)])
-    if (!signature) {
-      return undefined
     }
 
-    const id = utils.solidityKeccak256(['address', 'uint256'], [owner, timestamp])
-    return new PollInitMsg(id, owner, signature, timestamp, question, answers, pollType, newEndTime, minToken)
+    const params = createSignMsgParams(msg)
+
+    try {
+      const signature = await signFunction([msg.owner, JSON.stringify(params)])
+      if (!signature) {
+        return undefined
+      }
+      return new PollInitMsg(signature, msg)
+    } catch {
+      return undefined
+    }
   }
 
   static async create(
@@ -134,43 +126,27 @@ export class PollInitMsg {
     minToken?: BigNumber,
     endTime?: number
   ): Promise<PollInitMsg | undefined> {
-    const signFunction = async (params: string[]) => {
-      if ('send' in signer.provider) {
-        return signer.provider.send('eth_signTypedData_v4', params)
-      } else {
-        return undefined
-      }
-    }
-    return this._createWithSignFunction(signFunction, signer, question, answers, pollType, minToken, endTime)
+    return this._createWithSignFunction(signFunction(signer), signer, question, answers, pollType, minToken, endTime)
   }
 
   static fromProto(payload: PollInit, recoverFunction: ({ data, sig }: { data: any; sig: string }) => string) {
-    const owner = utils.getAddress(utils.hexlify(payload.owner))
-    const timestamp = payload.timestamp
-    const question = payload.question
-    const answers = payload.answers
-    const pollType = payload.pollType
-    const endTime = payload.endTime
     const signature = utils.hexlify(payload.signature)
-    const minToken = payload.minToken ? BigNumber.from(payload.minToken) : undefined
 
-    const params = createSignMsgParams({
-      owner,
-      timestamp,
-      question,
-      answers,
-      endTime,
-      minToken,
-      pollType,
-    })
+    const msg = {
+      ...payload,
+      owner: utils.getAddress(utils.hexlify(payload.owner)),
+      minToken: payload.minToken ? BigNumber.from(payload.minToken) : undefined,
+    }
+
+    const params = createSignMsgParams(msg)
     const verifiedAddress = recoverFunction({
       data: params,
       sig: signature,
     })
-    if (verifiedAddress != owner) {
+    if (verifiedAddress != msg.owner) {
       return undefined
     }
-    const id = utils.solidityKeccak256(['address', 'uint256'], [owner, timestamp])
-    return new PollInitMsg(id, owner, signature, timestamp, question, answers, pollType, endTime, minToken)
+
+    return new PollInitMsg(signature, msg)
   }
 }

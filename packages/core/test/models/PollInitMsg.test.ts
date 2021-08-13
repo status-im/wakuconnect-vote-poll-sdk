@@ -20,7 +20,7 @@ describe('PollInitMsg', () => {
     expect(poll).to.not.be.undefined
     if (poll) {
       expect(poll.owner).to.eq(alice.address)
-      expect(poll.endTime).to.eq(poll.timestamp + 10000000)
+      expect(poll.endTime).to.eq(poll.timestamp + 100000000)
       expect(poll.answers).to.deep.eq(['one', 'two', 'three'])
       expect(poll.minToken).to.be.undefined
       expect(poll.pollType).to.eq(PollType.WEIGHTED)
@@ -32,12 +32,12 @@ describe('PollInitMsg', () => {
           JSON.stringify(
             createSignMsgParams({
               owner: poll.owner,
-              answers: poll.answers,
-              endTime: poll.endTime,
-              pollType: poll.pollType,
-              minToken: poll.minToken,
-              question: poll.question,
               timestamp: poll.timestamp,
+              question: poll.question,
+              answers: poll.answers,
+              pollType: poll.pollType,
+              endTime: poll.endTime,
+              minToken: poll.minToken,
             })
           ),
         ].join()
@@ -63,12 +63,12 @@ describe('PollInitMsg', () => {
           JSON.stringify(
             createSignMsgParams({
               owner: poll.owner,
-              answers: poll.answers,
-              endTime: poll.endTime,
-              pollType: poll.pollType,
-              minToken: poll.minToken,
-              question: poll.question,
               timestamp: poll.timestamp,
+              question: poll.question,
+              answers: poll.answers,
+              pollType: poll.pollType,
+              endTime: poll.endTime,
+              minToken: poll.minToken,
             })
           ),
         ].join()
@@ -90,12 +90,12 @@ describe('PollInitMsg', () => {
     if (poll) {
       const msg = createSignMsgParams({
         owner: poll.owner,
-        answers: poll.answers,
-        endTime: poll.endTime,
-        pollType: poll.pollType,
-        minToken: poll.minToken,
-        question: poll.question,
         timestamp: poll.timestamp,
+        question: poll.question,
+        answers: poll.answers,
+        pollType: poll.pollType,
+        endTime: poll.endTime,
+        minToken: poll.minToken,
       })
 
       expect(poll.signature).to.eq([poll.owner, JSON.stringify(msg)].join())
