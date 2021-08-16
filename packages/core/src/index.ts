@@ -8,16 +8,13 @@ import { WakuMessage } from 'js-waku'
 import { TimedPollVoteMsg } from './models/TimedPollVoteMsg'
 import TimedPollVote from './utils/proto/TimedPollVote'
 import { DetailedTimedPoll } from './models/DetailedTimedPoll'
+import { isTruthy } from './utils'
 
 function decodeWakuMessages<T>(
   messages: WakuMessage[] | null | undefined,
-  decoder: { decode: (payload: Uint8Array | undefined, timestamp: Date | undefined) => T | undefined }
+  decode: (payload: Uint8Array | undefined, timestamp: Date | undefined) => T | undefined
 ) {
-  return (
-    messages
-      ?.map((msg) => decoder.decode(msg.payload, msg.timestamp))
-      .filter((poll: T | undefined): poll is T => !!poll) ?? []
-  )
+  return messages?.map((msg) => decode(msg.payload, msg.timestamp)).filter(isTruthy) ?? []
 }
 
 async function receiveNewWakuMessages(lastTimestamp: number, topic: string, waku: Waku | undefined) {
@@ -94,7 +91,7 @@ class WakuVoting {
     const lastTimestamp = this.timedPollInitMessages?.[0]?.timestamp ?? 0
 
     const newMessages = await receiveNewWakuMessages(lastTimestamp, this.pollInitTopic, this.waku)
-    const newPollInitMessages = decodeWakuMessages(newMessages, PollInit)
+    const newPollInitMessages = decodeWakuMessages(newMessages, PollInit.decode)
     if (newPollInitMessages.length > 0) {
       this.timedPollInitMessages = [...newPollInitMessages, ...this.timedPollInitMessages]
     }
@@ -123,7 +120,7 @@ class WakuVoting {
     const lastTimestamp = this.timedPollVotesMessages?.[0]?.timestamp ?? 0
 
     const newMessages = await receiveNewWakuMessages(lastTimestamp, this.timedPollVoteTopic, this.waku)
-    const newVoteMessages = decodeWakuMessages(newMessages, TimedPollVote)
+    const newVoteMessages = decodeWakuMessages(newMessages, TimedPollVote.decode)
     if (newVoteMessages.length > 0) {
       this.timedPollVotesMessages = [...newVoteMessages, ...this.timedPollVotesMessages]
     }

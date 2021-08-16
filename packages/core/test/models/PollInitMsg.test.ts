@@ -1,5 +1,5 @@
 import { expect } from 'chai'
-import { createSignMsgParams, PollInitMsg } from '../../src/models/PollInitMsg'
+import { PollInitMsg } from '../../src/models/PollInitMsg'
 import { MockProvider } from 'ethereum-waffle'
 import { PollType } from '../../src/types/PollType'
 import { BigNumber } from 'ethers'
