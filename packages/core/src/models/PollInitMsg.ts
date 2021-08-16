@@ -2,16 +2,7 @@ import { PollType } from '../types/PollType'
 import { BigNumber, utils, Wallet } from 'ethers'
 import { JsonRpcSigner } from '@ethersproject/providers'
 import { PollInit } from 'protons'
-
-function signFunction(signer: JsonRpcSigner | Wallet) {
-  return async (params: string[]) => {
-    if ('send' in signer.provider) {
-      return signer.provider.send('eth_signTypedData_v4', params)
-    } else {
-      throw `No send function in provider`
-    }
-  }
-}
+import { createSignedMsg } from '../utils/createSignedMsg'
 
 type Message = {
   owner: string
@@ -70,7 +61,7 @@ export class PollInitMsg {
   public signature: string
   public id: string
 
-  private constructor(signature: string, msg: Message) {
+  constructor(signature: string, msg: Message) {
     this.id = utils.id([msg.owner, msg.timestamp, signature].join())
     this.signature = signature
     this.owner = msg.owner
@@ -83,7 +74,11 @@ export class PollInitMsg {
   }
 
   static async _createWithSignFunction(
-    signFunction: (params: string[]) => Promise<string | undefined>,
+    signFunction: (
+      msg: any,
+      params: string[],
+      Class: new (sig: string, msg: any) => PollInitMsg
+    ) => Promise<PollInitMsg | undefined>,
     signer: JsonRpcSigner | Wallet,
     question: string,
     answers: string[],
@@ -104,18 +99,8 @@ export class PollInitMsg {
       endTime: endTime ? endTime : timestamp + 100000000,
       minToken,
     }
-
-    const params = createSignMsgParams(msg)
-
-    try {
-      const signature = await signFunction([msg.owner, JSON.stringify(params)])
-      if (!signature) {
-        return undefined
-      }
-      return new PollInitMsg(signature, msg)
-    } catch {
-      return undefined
-    }
+    const params = [msg.owner, JSON.stringify(createSignMsgParams(msg))]
+    return signFunction(msg, params, PollInitMsg)
   }
 
   static async create(
@@ -126,7 +111,7 @@ export class PollInitMsg {
     minToken?: BigNumber,
     endTime?: number
   ): Promise<PollInitMsg | undefined> {
-    return this._createWithSignFunction(signFunction(signer), signer, question, answers, pollType, minToken, endTime)
+    return this._createWithSignFunction(createSignedMsg(signer), signer, question, answers, pollType, minToken, endTime)
   }
 
   static fromProto(payload: PollInit, recoverFunction: ({ data, sig }: { data: any; sig: string }) => string) {

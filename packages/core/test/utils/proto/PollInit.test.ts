@@ -10,7 +10,7 @@ describe('PollInit', () => {
   const [alice] = provider.getWallets()
   it('success', async () => {
     const data = await PollInitMsg._createWithSignFunction(
-      async () => '0x01',
+      async (e) => new PollInitMsg('0x01', e),
       alice,
       'whats up',
       ['ab', 'cd', 'ef'],
@@ -21,7 +21,7 @@ describe('PollInit', () => {
       const payload = PollInit.encode(data)
       expect(payload).to.not.be.undefined
       if (payload) {
-        expect(PollInit.decode(payload, new Date(data.timestamp), () => data.owner)).to.deep.eq(data)
+        expect(PollInit.decode(payload, new Date(data.timestamp), () => alice.address)).to.deep.eq(data)
       }
     }
   })
@@ -36,7 +36,7 @@ describe('PollInit', () => {
 
   it('NON_WEIGHTED init', async () => {
     const data = await PollInitMsg._createWithSignFunction(
-      async () => '0x01',
+      async (e) => new PollInitMsg('0x01', e),
       alice,
       'whats up',
       ['ab', 'cd', 'ef'],
@@ -48,14 +48,14 @@ describe('PollInit', () => {
       const payload = PollInit.encode(data)
       expect(payload).to.not.be.undefined
       if (payload) {
-        expect(PollInit.decode(payload, new Date(data.timestamp), () => data.owner)).to.deep.eq(data)
+        expect(PollInit.decode(payload, new Date(data.timestamp), () => alice.address)).to.deep.eq(data)
       }
     }
   })
 
   it('NON_WEIGHTED no min token', async () => {
     const data = await PollInitMsg._createWithSignFunction(
-      async () => '0x01',
+      async (e) => new PollInitMsg('0x01', e),
       alice,
       'whats up',
       ['ab', 'cd', 'ef'],
@@ -67,7 +67,7 @@ describe('PollInit', () => {
 
       expect(payload).to.not.be.undefined
       if (payload) {
-        expect(PollInit.decode(payload, new Date(data.timestamp), () => data.owner)).to.deep.eq({
+        expect(PollInit.decode(payload, new Date(data.timestamp), () => alice.address)).to.deep.eq({
           ...data,
           minToken: BigNumber.from(1),
         })

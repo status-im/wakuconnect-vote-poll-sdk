@@ -10,12 +10,21 @@ describe('TimedPollVote', () => {
   const pollId = '0x14c336ef626274f156d094fc1d7ffad2bbc83cccc9817598dd55e42a86b56b72'
 
   it('success', async () => {
-    const data = await TimedPollVoteMsg.create(alice, pollId, 0)
-    const payload = TimedPollVote.encode(data)
+    const data = await TimedPollVoteMsg._createWithSignFunction(
+      async (e) => new TimedPollVoteMsg('0x01', e),
+      alice,
+      pollId,
+      0
+    )
 
-    expect(payload).to.not.be.undefined
-    if (payload) {
-      expect(TimedPollVote.decode(payload, new Date(data.timestamp))).to.deep.eq(data)
+    expect(data).to.not.be.undefined
+    if (data) {
+      const payload = TimedPollVote.encode(data)
+
+      expect(payload).to.not.be.undefined
+      if (payload) {
+        expect(TimedPollVote.decode(payload, new Date(data.timestamp), () => alice.address)).to.deep.eq(data)
+      }
     }
   })
 
@@ -28,16 +37,24 @@ describe('TimedPollVote', () => {
   })
 
   it('data with token', async () => {
-    const data = await TimedPollVoteMsg.create(alice, pollId, 0, BigNumber.from(120))
+    const data = await TimedPollVoteMsg._createWithSignFunction(
+      async (e) => new TimedPollVoteMsg('0x01', e),
+      alice,
+      pollId,
+      0,
+      BigNumber.from(120)
+    )
+    expect(data).to.not.be.undefined
+    if (data) {
+      const payload = TimedPollVote.encode(data)
 
-    const payload = TimedPollVote.encode(data)
-
-    expect(payload).to.not.be.undefined
-    if (payload) {
-      expect(TimedPollVote.decode(payload, new Date(data.timestamp))).to.deep.eq({
-        ...data,
-        tokenAmount: BigNumber.from(120),
-      })
+      expect(payload).to.not.be.undefined
+      if (payload) {
+        expect(TimedPollVote.decode(payload, new Date(data.timestamp), () => alice.address)).to.deep.eq({
+          ...data,
+          tokenAmount: BigNumber.from(120),
+        })
+      }
     }
   })
 })

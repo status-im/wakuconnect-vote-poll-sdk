@@ -1,6 +1,7 @@
 import protons, { TimedPollVote } from 'protons'
 import { utils } from 'ethers'
 import { TimedPollVoteMsg } from '../../models/TimedPollVoteMsg'
+import { recoverTypedSignature_v4 } from 'eth-sig-util'
 
 const proto = protons(`
 message TimedPollVote {
@@ -31,14 +32,21 @@ export function encode(timedPollVote: TimedPollVoteMsg) {
   }
 }
 
-export function decode(payload: Uint8Array, timestamp: Date | undefined) {
+export function decode(
+  payload: Uint8Array,
+  timestamp: Date | undefined,
+  recoverFunction?: ({ data, sig }: { data: any; sig: string }) => string
+) {
   try {
     const msg = proto.TimedPollVote.decode(payload)
     if (!timestamp || timestamp.getTime() != msg.timestamp) {
       return undefined
     }
     if (msg.id && msg.voter && msg.timestamp && msg.answer != undefined && msg.signature) {
-      return TimedPollVoteMsg.fromProto(msg)
+      if (recoverFunction) {
+        return TimedPollVoteMsg.fromProto(msg, recoverFunction)
+      }
+      return TimedPollVoteMsg.fromProto(msg, (e) => utils.getAddress(recoverTypedSignature_v4(e)))
     }
   } catch {
     return undefined

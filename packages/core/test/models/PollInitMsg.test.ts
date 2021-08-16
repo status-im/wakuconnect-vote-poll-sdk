@@ -10,7 +10,7 @@ describe('PollInitMsg', () => {
 
   it('success', async () => {
     const poll = await PollInitMsg._createWithSignFunction(
-      async (params) => params.join(),
+      async (e) => new PollInitMsg('0x01', e),
       alice,
       'test',
       ['one', 'two', 'three'],
@@ -26,28 +26,13 @@ describe('PollInitMsg', () => {
       expect(poll.pollType).to.eq(PollType.WEIGHTED)
       expect(poll.question).to.eq('test')
 
-      expect(poll.signature).to.eq(
-        [
-          poll.owner,
-          JSON.stringify(
-            createSignMsgParams({
-              owner: poll.owner,
-              timestamp: poll.timestamp,
-              question: poll.question,
-              answers: poll.answers,
-              pollType: poll.pollType,
-              endTime: poll.endTime,
-              minToken: poll.minToken,
-            })
-          ),
-        ].join()
-      )
+      expect(poll.signature).to.eq('0x01')
     }
   })
 
   it('success NON_WEIGHTED', async () => {
     const poll = await PollInitMsg._createWithSignFunction(
-      async (params) => params.join(),
+      async (e) => new PollInitMsg('0x01', e),
       alice,
       'test',
       ['one', 'two', 'three'],
@@ -57,28 +42,13 @@ describe('PollInitMsg', () => {
     expect(poll).to.not.be.undefined
     expect(poll?.minToken?.toNumber()).to.eq(123)
     if (poll) {
-      expect(poll.signature).to.eq(
-        [
-          poll.owner,
-          JSON.stringify(
-            createSignMsgParams({
-              owner: poll.owner,
-              timestamp: poll.timestamp,
-              question: poll.question,
-              answers: poll.answers,
-              pollType: poll.pollType,
-              endTime: poll.endTime,
-              minToken: poll.minToken,
-            })
-          ),
-        ].join()
-      )
+      expect(poll.signature).to.eq('0x01')
     }
   })
 
   it('NON_WEIGHTED no minToken', async () => {
     const poll = await PollInitMsg._createWithSignFunction(
-      async (params) => params.join(),
+      async (e) => new PollInitMsg('0x01', e),
       alice,
       'test',
       ['one', 'two', 'three'],
@@ -88,23 +58,13 @@ describe('PollInitMsg', () => {
     expect(poll?.minToken?.toNumber()).to.eq(1)
     expect(poll).to.not.be.undefined
     if (poll) {
-      const msg = createSignMsgParams({
-        owner: poll.owner,
-        timestamp: poll.timestamp,
-        question: poll.question,
-        answers: poll.answers,
-        pollType: poll.pollType,
-        endTime: poll.endTime,
-        minToken: poll.minToken,
-      })
-
-      expect(poll.signature).to.eq([poll.owner, JSON.stringify(msg)].join())
+      expect(poll.signature).to.eq('0x01')
     }
   })
 
   it('specific end time', async () => {
     const poll = await PollInitMsg._createWithSignFunction(
-      async () => 'a',
+      async (e) => new PollInitMsg('0x01', e),
       alice,
       'test',
       ['one', 'two', 'three'],

@@ -80,12 +80,14 @@ class WakuVoting {
     tokenAmount?: BigNumber
   ) {
     const pollVote = await TimedPollVoteMsg.create(signer, id, selectedAnswer, tokenAmount)
-    const payload = TimedPollVote.encode(pollVote)
-    if (payload && pollVote) {
-      const wakuMessage = await WakuMessage.fromBytes(payload, this.timedPollVoteTopic, {
-        timestamp: new Date(pollVote.timestamp),
-      })
-      await this.waku?.relay.send(wakuMessage)
+    if (pollVote) {
+      const payload = TimedPollVote.encode(pollVote)
+      if (payload) {
+        const wakuMessage = await WakuMessage.fromBytes(payload, this.timedPollVoteTopic, {
+          timestamp: new Date(pollVote.timestamp),
+        })
+        await this.waku?.relay.send(wakuMessage)
+      }
     }
   }
 
