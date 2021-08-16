@@ -9,12 +9,39 @@ import { TimedPollVoteMsg } from './models/TimedPollVoteMsg'
 import TimedPollVote from './utils/proto/TimedPollVote'
 import { DetailedTimedPoll } from './models/DetailedTimedPoll'
 
+function decodeWakuMessages<T>(
+  messages: WakuMessage[] | null | undefined,
+  decoder: { decode: (payload: Uint8Array | undefined, timestamp: Date | undefined) => T | undefined }
+) {
+  return (
+    messages
+      ?.map((msg) => decoder.decode(msg.payload, msg.timestamp))
+      .filter((poll: T | undefined): poll is T => !!poll) ?? []
+  )
+}
+
+async function receiveNewWakuMessages(lastTimestamp: number, topic: string, waku: Waku | undefined) {
+  const messages = await waku?.store.queryHistory({ contentTopics: [topic] })
+
+  if (messages) {
+    messages.sort((a, b) => (a.timestamp && b.timestamp && a.timestamp?.getTime() < b.timestamp?.getTime() ? 1 : -1))
+    const lastMessageIndex = messages.findIndex((message) => message.timestamp?.getTime() === lastTimestamp)
+    const newMessages = lastMessageIndex === -1 ? messages : messages.slice(0, lastMessageIndex)
+    return newMessages
+  }
+  return []
+}
+
 class WakuVoting {
   private appName: string
   private waku: Waku | undefined
   public tokenAddress: string
   private pollInitTopic: string
   private timedPollVoteTopic: string
+
+  private timedPollInitMessages: PollInitMsg[] = []
+  private timedPollVotesMessages: TimedPollVoteMsg[] = []
+
   private static async createWaku() {
     const waku = await Waku.create()
     const nodes = await getStatusFleetNodes()
@@ -64,13 +91,14 @@ class WakuVoting {
   }
 
   private async getTimedPolls() {
-    const messages = await this.waku?.store.queryHistory({ contentTopics: [this.pollInitTopic] })
-    return (
-      messages
-        ?.filter((e): e is WakuMessage & { payload: Uint8Array } => !!e?.payload)
-        .map((msg) => PollInit.decode(msg.payload, msg.timestamp))
-        .filter((poll): poll is PollInitMsg => !!poll) ?? []
-    )
+    const lastTimestamp = this.timedPollInitMessages?.[0]?.timestamp ?? 0
+
+    const newMessages = await receiveNewWakuMessages(lastTimestamp, this.pollInitTopic, this.waku)
+    const newPollInitMessages = decodeWakuMessages(newMessages, PollInit)
+    if (newPollInitMessages.length > 0) {
+      this.timedPollInitMessages = [...newPollInitMessages, ...this.timedPollInitMessages]
+    }
+    return this.timedPollInitMessages
   }
 
   public async sendTimedPollVote(
@@ -92,13 +120,14 @@ class WakuVoting {
   }
 
   private async getTimedPollsVotes() {
-    const messages = await this.waku?.store.queryHistory({ contentTopics: [this.timedPollVoteTopic] })
-    return (
-      messages
-        ?.filter((e): e is WakuMessage & { payload: Uint8Array } => !!e?.payload)
-        .map((msg) => TimedPollVote.decode(msg.payload, msg.timestamp))
-        .filter((poll): poll is TimedPollVoteMsg => !!poll) ?? []
-    )
+    const lastTimestamp = this.timedPollVotesMessages?.[0]?.timestamp ?? 0
+
+    const newMessages = await receiveNewWakuMessages(lastTimestamp, this.timedPollVoteTopic, this.waku)
+    const newVoteMessages = decodeWakuMessages(newMessages, TimedPollVote)
+    if (newVoteMessages.length > 0) {
+      this.timedPollVotesMessages = [...newVoteMessages, ...this.timedPollVotesMessages]
+    }
+    return this.timedPollVotesMessages
   }
 
   public async getDetailedTimedPolls() {

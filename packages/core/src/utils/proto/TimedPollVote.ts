@@ -33,10 +33,13 @@ export function encode(timedPollVote: TimedPollVoteMsg) {
 }
 
 export function decode(
-  payload: Uint8Array,
+  payload: Uint8Array | undefined,
   timestamp: Date | undefined,
   recoverFunction?: ({ data, sig }: { data: any; sig: string }) => string
 ) {
+  if (!payload) {
+    return undefined
+  }
   try {
     const msg = proto.TimedPollVote.decode(payload)
     if (!timestamp || timestamp.getTime() != msg.timestamp) {

@@ -30,9 +30,9 @@ function Example({ appName }: ExampleProps) {
     provider.send('eth_requestAccounts', [])
   }, [])
   return (
-    <Wrapper>
+    <Wrapper onClick={() => showNewPollBox && setShowNewPollBox(false)}>
       {showNewPollBox && (
-        <NewPollBoxWrapper>
+        <NewPollBoxWrapper onClick={(e) => e.stopPropagation()}>
           <NewPollBox>
             <NewPollBoxTitle>
               Question
@@ -83,7 +83,7 @@ function Example({ appName }: ExampleProps) {
           </NewPollBox>
         </NewPollBoxWrapper>
       )}
-      <button onClick={() => setShowNewPollBox(true)}>New Poll </button>
+      <button onClick={() => setShowNewPollBox(true)}>New Poll</button>
       <PollList wakuVoting={wakuVoting} signer={signer} />
     </Wrapper>
   )

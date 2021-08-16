@@ -16,10 +16,14 @@ export function Poll({ poll, wakuVoting, signer }: PollProps) {
   const [selectedAnswer, setSelectedAnswer] = useState(0)
   const [tokenAmount, setTokenAmount] = useState(0)
   const [address, setAddress] = useState('')
-
+  const [userInVoters, setUserInVoters] = useState(false)
   useEffect(() => {
     signer.getAddress().then((e) => setAddress(e))
   }, [signer])
+
+  useEffect(() => {
+    setUserInVoters(!!poll.votesMessages.find((vote) => vote.voter === address))
+  }, [poll])
 
   return (
     <PollWrapper>
@@ -28,7 +32,7 @@ export function Poll({ poll, wakuVoting, signer }: PollProps) {
         <PollTypeWrapper>{poll.poll.pollType === PollType.WEIGHTED ? 'WEIGHTED' : 'NON WEIGHTED'}</PollTypeWrapper>
       </PollTitle>
       <PollAnswersWrapper>
-        {!poll.votesMessages.find((vote) => vote.voter === address) && (
+        {!userInVoters && (
           <div>
             <div onChange={(e) => setSelectedAnswer(Number.parseInt((e.target as any).value ?? 0))}>
               {poll.poll.answers.map((answer, idx) => {
@@ -51,7 +55,7 @@ export function Poll({ poll, wakuVoting, signer }: PollProps) {
             )}
           </div>
         )}
-        {poll.votesMessages.find((vote) => vote.voter === address) && (
+        {userInVoters && (
           <div>
             Results
             {poll.answers.map((answer, idx) => {
@@ -65,21 +69,23 @@ export function Poll({ poll, wakuVoting, signer }: PollProps) {
           </div>
         )}
       </PollAnswersWrapper>
-      <button
-        onClick={() => {
-          if (wakuVoting) {
-            wakuVoting.sendTimedPollVote(
-              signer,
-              poll.poll.id,
-              selectedAnswer,
-              poll.poll.pollType === PollType.WEIGHTED ? BigNumber.from(tokenAmount) : undefined
-            )
-          }
-        }}
-      >
-        {' '}
-        Vote
-      </button>
+      {!userInVoters && (
+        <button
+          onClick={() => {
+            if (wakuVoting) {
+              wakuVoting.sendTimedPollVote(
+                signer,
+                poll.poll.id,
+                selectedAnswer,
+                poll.poll.pollType === PollType.WEIGHTED ? BigNumber.from(tokenAmount) : undefined
+              )
+            }
+          }}
+        >
+          {' '}
+          Vote
+        </button>
+      )}
     </PollWrapper>
   )
 }

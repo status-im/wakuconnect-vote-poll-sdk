@@ -39,7 +39,7 @@ export function createSignMsgParams(message: Message) {
 
   if (message.tokenAmount) {
     msgParams.message = { ...msgParams.message, tokenAmount: message.tokenAmount.toString() }
-    msgParams.types.Mail.push({ name: 'minToken', type: 'uint256' })
+    msgParams.types.Mail.push({ name: 'tokenAmount', type: 'uint256' })
   }
   return msgParams
 }
