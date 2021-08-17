@@ -29,7 +29,10 @@ export function Poll({ poll, wakuVoting, signer }: PollProps) {
     <PollWrapper>
       <PollTitle>
         <PollQuestion>{poll.poll.question}</PollQuestion>
-        <PollTypeWrapper>{poll.poll.pollType === PollType.WEIGHTED ? 'WEIGHTED' : 'NON WEIGHTED'}</PollTypeWrapper>
+        <TitleInfo>
+          <PollTypeWrapper>{poll.poll.pollType === PollType.WEIGHTED ? 'WEIGHTED' : 'NON WEIGHTED'}</PollTypeWrapper>
+          <DateWrapper>{new Date(poll.poll.endTime).toLocaleString()}</DateWrapper>
+        </TitleInfo>
       </PollTitle>
       <PollAnswersWrapper>
         {!userInVoters && (
@@ -70,7 +73,7 @@ export function Poll({ poll, wakuVoting, signer }: PollProps) {
         )}
       </PollAnswersWrapper>
       {!userInVoters && (
-        <button
+        <VoteButton
           onClick={() => {
             if (wakuVoting) {
               wakuVoting.sendTimedPollVote(
@@ -84,11 +87,32 @@ export function Poll({ poll, wakuVoting, signer }: PollProps) {
         >
           {' '}
           Vote
-        </button>
+        </VoteButton>
       )}
     </PollWrapper>
   )
 }
+
+const DateWrapper = styled.div`
+  font-size: 14px;
+  text-align: right;
+`
+
+const TitleInfo = styled.div`
+  display: flex;
+  flex-direction: column;
+  margin-right: 10px;
+  margin-left: auto;
+  margin-top: auto;
+`
+
+const VoteButton = styled.button`
+  width: 100px;
+  border-radius: 5px;
+  font-size: 20px;
+  font-weight: bold;
+  font-family: 'Times New Roman', Times, serif;
+`
 
 const VoteCount = styled.div`
   margin-left: auto;
@@ -108,7 +132,6 @@ const PollWrapper = styled.div`
 const PollTitle = styled.div`
   display: flex;
   padding: 10px;
-  height: 20px;
   border: 1px solid black;
   border-radius: 5px;
 `
@@ -117,16 +140,15 @@ const PollQuestion = styled.div`
   display: block;
   width: 200px;
   margin-left: 10px;
-  margin-top: auto;
-  overflow: hidden;
+  margin-top: 0px;
+  overflow: auto;
 `
 
 const PollTypeWrapper = styled.div`
   width: 150px;
-  margin-right: 10px;
-  margin-left: auto;
-  margin-top: auto;
+  text-align: right;
   color: green;
+  font-size: 14px;
   font-weight: bold;
 `
 

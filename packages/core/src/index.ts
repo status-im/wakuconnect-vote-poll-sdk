@@ -95,6 +95,7 @@ class WakuVoting {
     if (newPollInitMessages.length > 0) {
       this.timedPollInitMessages = [...newPollInitMessages, ...this.timedPollInitMessages]
     }
+    this.timedPollInitMessages = this.timedPollInitMessages.filter((e) => e.endTime > Date.now())
     return this.timedPollInitMessages
   }
 

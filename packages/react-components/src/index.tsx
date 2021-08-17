@@ -5,6 +5,13 @@ import { PollList } from './PollList'
 import styled from 'styled-components'
 import { PollType } from '@status-waku-voting/core/dist/esm/src/types/PollType'
 
+function getLocaleIsoTime(dateTime: Date) {
+  const MS_PER_MINUTE = 60000
+  const milliseconds = dateTime.getTime() - dateTime.getTimezoneOffset() * MS_PER_MINUTE
+  const newDate = new Date(milliseconds)
+  return newDate.toISOString().slice(0, -8)
+}
+
 const provider = new providers.Web3Provider((window as any).ethereum)
 
 type ExampleProps = {
@@ -20,6 +27,7 @@ function Example({ appName }: ExampleProps) {
   const [question, setQuestion] = useState('')
   const [showNewPollBox, setShowNewPollBox] = useState(false)
   const [selectedType, setSelectedType] = useState(PollType.WEIGHTED)
+  const [endTimePicker, setEndTimePicker] = useState(new Date(new Date().getTime() + 10000000))
 
   useEffect(() => {
     ;(window as any).ethereum.on('accountsChanged', async () => {
@@ -29,6 +37,7 @@ function Example({ appName }: ExampleProps) {
     WakuVoting.create(appName, '0x01').then((e) => setWakuVoting(e))
     provider.send('eth_requestAccounts', [])
   }, [])
+
   return (
     <Wrapper onClick={() => showNewPollBox && setShowNewPollBox(false)}>
       {showNewPollBox && (
@@ -39,6 +48,12 @@ function Example({ appName }: ExampleProps) {
               <CloseNewPollBoxButton onClick={() => setShowNewPollBox(false)}>X</CloseNewPollBoxButton>
             </NewPollBoxTitle>
             <input value={question} onChange={(e) => setQuestion(e.target.value)} />
+            Poll end time
+            <input
+              type="datetime-local"
+              value={getLocaleIsoTime(endTimePicker)}
+              onChange={(e) => setEndTimePicker(new Date(e.target.value))}
+            />
             Answers
             <button onClick={() => setAnswers((answers) => [...answers, ''])}>Add answer</button>
             {answers.map((answer, idx) => (
@@ -74,7 +89,14 @@ function Example({ appName }: ExampleProps) {
             </div>
             <SendButton
               onClick={async () => {
-                await wakuVoting?.createTimedPoll(signer, question, answers, selectedType)
+                await wakuVoting?.createTimedPoll(
+                  signer,
+                  question,
+                  answers,
+                  selectedType,
+                  undefined,
+                  endTimePicker.getTime()
+                )
                 setAnswers([])
               }}
             >

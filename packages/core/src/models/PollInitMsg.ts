@@ -22,9 +22,9 @@ export function createSignMsgParams(message: Message) {
     },
     message: {
       ...message,
-      timestamp: new Date(message.timestamp).toLocaleDateString(),
+      timestamp: new Date(message.timestamp).toLocaleString(),
       pollType: message.pollType === PollType.WEIGHTED ? 'Weighted' : 'Non weighted',
-      endTime: new Date(message.endTime).toLocaleDateString(),
+      endTime: new Date(message.endTime).toLocaleString(),
     },
     primaryType: 'Mail',
     types: {
