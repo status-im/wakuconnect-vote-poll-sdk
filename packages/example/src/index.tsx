@@ -1,10 +1,10 @@
 import React from 'react'
 import ReactDOM from 'react-dom'
-import { Example } from '@status-waku-voting/react-components'
+import { WakuPolling } from '@status-waku-voting/react-components'
 
 ReactDOM.render(
   <div>
-    <Example appName={'testApp_'} />
+    <WakuPolling appName={'testApp_'} />
   </div>,
   document.getElementById('root')
 )

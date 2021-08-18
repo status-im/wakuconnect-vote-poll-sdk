@@ -19,7 +19,7 @@ export function PollList({ wakuVoting, signer }: PollListProps) {
       if (wakuVoting) {
         setPolls(await wakuVoting.getDetailedTimedPolls())
       }
-    }, 5000)
+    }, 1000)
     return () => clearInterval(interval)
   }, [wakuVoting])
 
