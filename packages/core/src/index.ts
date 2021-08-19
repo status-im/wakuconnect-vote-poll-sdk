@@ -89,14 +89,19 @@ class WakuVoting {
 
   private async getTimedPolls() {
     const lastTimestamp = this.timedPollInitMessages?.[0]?.timestamp ?? 0
-
+    let updated = false
     const newMessages = await receiveNewWakuMessages(lastTimestamp, this.pollInitTopic, this.waku)
     const newPollInitMessages = decodeWakuMessages(newMessages, PollInit.decode)
     if (newPollInitMessages.length > 0) {
+      updated = true
       this.timedPollInitMessages = [...newPollInitMessages, ...this.timedPollInitMessages]
     }
+    const arrayLen = this.timedPollInitMessages.length
     this.timedPollInitMessages = this.timedPollInitMessages.filter((e) => e.endTime > Date.now())
-    return this.timedPollInitMessages
+    if (arrayLen != this.timedPollInitMessages.length) {
+      updated = true
+    }
+    return { polls: this.timedPollInitMessages, updatedPolls: updated }
   }
 
   public async sendTimedPollVote(
@@ -119,25 +124,29 @@ class WakuVoting {
 
   private async getTimedPollsVotes() {
     const lastTimestamp = this.timedPollVotesMessages?.[0]?.timestamp ?? 0
-
+    let updated = false
     const newMessages = await receiveNewWakuMessages(lastTimestamp, this.timedPollVoteTopic, this.waku)
     const newVoteMessages = decodeWakuMessages(newMessages, TimedPollVote.decode)
     if (newVoteMessages.length > 0) {
+      updated = true
       this.timedPollVotesMessages = [...newVoteMessages, ...this.timedPollVotesMessages]
     }
-    return this.timedPollVotesMessages
+    return { votes: this.timedPollVotesMessages, updatedVotes: updated }
   }
 
   public async getDetailedTimedPolls() {
-    const polls = await this.getTimedPolls()
-    const votes = await this.getTimedPollsVotes()
-    return polls.map(
-      (poll) =>
-        new DetailedTimedPoll(
-          poll,
-          votes.filter((vote) => vote.id === poll.id)
-        )
-    )
+    const { polls, updatedPolls } = await this.getTimedPolls()
+    const { votes, updatedVotes } = await this.getTimedPollsVotes()
+    return {
+      DetailedTimedPolls: polls.map(
+        (poll) =>
+          new DetailedTimedPoll(
+            poll,
+            votes.filter((vote) => vote.id === poll.id)
+          )
+      ),
+      updated: updatedPolls || updatedVotes,
+    }
   }
 }
 

@@ -13,25 +13,53 @@ type PollListProps = {
 
 export function PollList({ wakuVoting, signer }: PollListProps) {
   const [polls, setPolls] = useState<DetailedTimedPoll[]>([])
-
+  const [dividedPolls, setDividedPolls] = useState<DetailedTimedPoll[][]>([[], [], []])
   useEffect(() => {
     const interval = setInterval(async () => {
       if (wakuVoting) {
-        setPolls(await wakuVoting.getDetailedTimedPolls())
+        const { DetailedTimedPolls, updated } = await wakuVoting.getDetailedTimedPolls()
+        if (updated) {
+          setPolls(DetailedTimedPolls)
+        }
       }
     }, 1000)
     return () => clearInterval(interval)
   }, [wakuVoting])
 
+  useEffect(() => {
+    let arrayNo = 0
+    const newDividedPolls: DetailedTimedPoll[][] = [[], [], []]
+    polls.forEach((poll) => {
+      newDividedPolls[arrayNo].push(poll)
+      arrayNo++
+      if (arrayNo > 2) {
+        arrayNo = 0
+      }
+    })
+    setDividedPolls(newDividedPolls)
+  }, [polls])
+
   return (
     <PollListWrapper>
-      {polls.map((poll) => {
-        return <Poll key={poll.poll.id} poll={poll} wakuVoting={wakuVoting} signer={signer} />
+      {dividedPolls.map((pollArray, idx) => {
+        return (
+          <ColumnWrapper key={idx}>
+            {pollArray.map((poll) => {
+              return <Poll key={poll.poll.id} poll={poll} wakuVoting={wakuVoting} signer={signer} />
+            })}
+          </ColumnWrapper>
+        )
       })}
     </PollListWrapper>
   )
 }
 const PollListWrapper = styled.div`
   display: flex;
+  margin: 10px;
+`
+
+const ColumnWrapper = styled.div`
+  display: flex;
   flex-direction: column;
+  margin-right: 25px;
 `

@@ -39,12 +39,8 @@ function WakuPolling({ appName }: WakuPollingProps) {
 const Wrapper = styled.div`
   display: flex;
   flex-direction: column;
-  height: 600px;
-  width: 435px;
   overflow: auto;
-  border: 2px solid black;
-  padding 10px;
-  border-radius: 10px;
+  min-height: 500px;
 `
 
 export default WakuPolling

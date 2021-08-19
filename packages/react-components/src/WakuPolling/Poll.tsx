@@ -5,6 +5,8 @@ import React, { useEffect, useState } from 'react'
 import { JsonRpcSigner } from '@ethersproject/providers'
 import { PollType } from '@status-waku-voting/core/dist/esm/src/types/PollType'
 import styled from 'styled-components'
+import checkIcon from '../assets/svg/checkIcon.svg'
+import { RadioGroup } from '../components/radioGroup'
 
 type PollProps = {
   poll: DetailedTimedPoll
@@ -27,25 +29,11 @@ export function Poll({ poll, wakuVoting, signer }: PollProps) {
 
   return (
     <PollWrapper>
-      <PollTitle>
-        <PollQuestion>{poll.poll.question}</PollQuestion>
-        <TitleInfo>
-          <PollTypeWrapper>{poll.poll.pollType === PollType.WEIGHTED ? 'WEIGHTED' : 'NON WEIGHTED'}</PollTypeWrapper>
-          <DateWrapper>{new Date(poll.poll.endTime).toLocaleString()}</DateWrapper>
-        </TitleInfo>
-      </PollTitle>
+      <PollTitle>{poll.poll.question}</PollTitle>
       <PollAnswersWrapper>
         {!userInVoters && (
           <div>
-            <div onChange={(e) => setSelectedAnswer(Number.parseInt((e.target as any).value ?? 0))}>
-              {poll.poll.answers.map((answer, idx) => {
-                return (
-                  <PollAnswer key={idx}>
-                    <input type="radio" value={idx} name={poll.poll.id} /> {answer}
-                  </PollAnswer>
-                )
-              })}
-            </div>
+            <RadioGroup options={poll.poll.answers} setSelectedOption={(e) => undefined} />
             {poll.poll.pollType === PollType.WEIGHTED && (
               <div>
                 Token amount
@@ -93,19 +81,6 @@ export function Poll({ poll, wakuVoting, signer }: PollProps) {
   )
 }
 
-const DateWrapper = styled.div`
-  font-size: 14px;
-  text-align: right;
-`
-
-const TitleInfo = styled.div`
-  display: flex;
-  flex-direction: column;
-  margin-right: 10px;
-  margin-left: auto;
-  margin-top: auto;
-`
-
 const VoteButton = styled.button`
   width: 100px;
   border-radius: 5px;
@@ -121,35 +96,20 @@ const VoteCount = styled.div`
 
 const PollWrapper = styled.div`
   display: flex;
+  width: 442px;
   flex-direction: column;
   box-shadow: 10px 10px 31px -2px #a3a1a1;
   border-radius: 5px;
-  background-color: lightgray;
-  margin: 10px;
-  padding: 10px;
+  background-color: #fbfcfe;
+  margin-bottom: 24px;
 `
 
 const PollTitle = styled.div`
-  display: flex;
-  padding: 10px;
-  border: 1px solid black;
-  border-radius: 5px;
-`
-
-const PollQuestion = styled.div`
-  display: block;
-  width: 200px;
-  margin-left: 10px;
-  margin-top: 0px;
-  overflow: auto;
-`
-
-const PollTypeWrapper = styled.div`
-  width: 150px;
-  text-align: right;
-  color: green;
-  font-size: 14px;
+  margin-top: 32px;
+  width: 100%;
+  text-align: center;
   font-weight: bold;
+  font-size: 22px;
 `
 
 const PollAnswersWrapper = styled.div`
@@ -162,8 +122,6 @@ const PollAnswer = styled.div`
   display: flex;
   margin: 20px;
   width: 300px;
-  border-bottom: 1px solid black;
-  border-radius: 10px;
 `
 
 const PollAnswerText = styled.div`
