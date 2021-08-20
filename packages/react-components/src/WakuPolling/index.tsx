@@ -4,6 +4,7 @@ import { providers } from 'ethers'
 import { PollList } from './PollList'
 import styled from 'styled-components'
 import { PollCreation } from './PollCreation'
+import { Button } from '../components/misc/Buttons'
 
 const provider = new providers.Web3Provider((window as any).ethereum)
 
@@ -30,11 +31,25 @@ function WakuPolling({ appName }: WakuPollingProps) {
       {showPollCreation && (
         <PollCreation signer={signer} wakuVoting={wakuVoting} setShowPollCreation={setShowPollCreation} />
       )}
-      <button onClick={() => setShowPollCreation(true)}>New Poll</button>
+      <CreatePollButton onClick={() => setShowPollCreation(true)}>Create a poll</CreatePollButton>
       <PollList wakuVoting={wakuVoting} signer={signer} />
     </Wrapper>
   )
 }
+
+const CreatePollButton = styled(Button)`
+  width: 343px;
+  margin-left: auto;
+  margin-right: auto;
+  margin-bottom: 44px;
+  margin-top: 49px;
+  background-color: #ffb571;
+  color: #ffffff;
+
+  &:hover {
+    border: 1px solid #a53607;
+  }
+`
 
 const Wrapper = styled.div`
   display: flex;

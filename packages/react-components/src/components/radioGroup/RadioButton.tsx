@@ -1,17 +1,18 @@
-import React, { useState } from 'react'
+import React from 'react'
 import styled from 'styled-components'
 import checkIcon from '../../assets/svg/checkIcon.svg'
 
 type RadioButtonProps = {
   text: string
-  setOption: () => void
+  setOption: (id: number) => void
+  selected: boolean
+  id: number
 }
 
-export function RadioButton({ text, setOption }: RadioButtonProps) {
-  const [icon, setIcon] = useState(false)
+export function RadioButton({ text, setOption, id, selected }: RadioButtonProps) {
   return (
-    <Wrapper onClick={() => setIcon(!icon)}>
-      <Circle className={icon ? 'icon' : ''} />
+    <Wrapper onClick={() => setOption(id)}>
+      <Circle className={selected ? 'icon' : ''} />
       <TextWrapper>{text}</TextWrapper>
     </Wrapper>
   )
@@ -33,9 +34,14 @@ const Circle = styled.div`
     background-image: url(${checkIcon});
     background-size: cover;
   }
+
+  &:hover {
+    border: 1px solid #a53607;
+  }
 `
 
 const TextWrapper = styled.div`
   margin-left: 20px;
+  width: 300px;
   font-size: 22px;
 `

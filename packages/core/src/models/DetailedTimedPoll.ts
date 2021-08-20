@@ -12,6 +12,7 @@ export class DetailedTimedPoll {
   public answers: TimedPollAnswer[]
   public poll: PollInitMsg
   public votesMessages: TimedPollVoteMsg[]
+  public numberOfVotes: BigNumber = BigNumber.from(0)
 
   constructor(poll: PollInitMsg, answers: TimedPollVoteMsg[]) {
     this.poll = poll
@@ -26,10 +27,12 @@ export class DetailedTimedPoll {
           if (poll.pollType === PollType.WEIGHTED && answer.tokenAmount) {
             filteredAnswers.push(answer)
             summedAnswers[answer.answer].votes = summedAnswers[answer.answer].votes.add(answer.tokenAmount)
+            this.numberOfVotes = this.numberOfVotes.add(answer.tokenAmount)
           }
           if (poll.pollType === PollType.NON_WEIGHTED) {
             filteredAnswers.push(answer)
             summedAnswers[answer.answer].votes = summedAnswers[answer.answer].votes.add(1)
+            this.numberOfVotes = this.numberOfVotes.add(1)
           }
         }
       })
