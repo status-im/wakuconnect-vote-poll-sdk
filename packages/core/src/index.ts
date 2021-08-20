@@ -38,6 +38,7 @@ class WakuVoting {
 
   private timedPollInitMessages: PollInitMsg[] = []
   private timedPollVotesMessages: TimedPollVoteMsg[] = []
+  private asyncUpdating = false
 
   private static async createWaku() {
     const waku = await Waku.create()
@@ -135,17 +136,23 @@ class WakuVoting {
   }
 
   public async getDetailedTimedPolls() {
-    const { polls, updatedPolls } = await this.getTimedPolls()
-    const { votes, updatedVotes } = await this.getTimedPollsVotes()
+    let updated = false
+    if (!this.asyncUpdating) {
+      this.asyncUpdating = true
+      const { polls, updatedPolls } = await this.getTimedPolls()
+      const { votes, updatedVotes } = await this.getTimedPollsVotes()
+      updated = updatedPolls || updatedVotes
+      this.asyncUpdating = false
+    }
     return {
-      DetailedTimedPolls: polls.map(
+      DetailedTimedPolls: this.timedPollInitMessages.map(
         (poll) =>
           new DetailedTimedPoll(
             poll,
-            votes.filter((vote) => vote.id === poll.id)
+            this.timedPollVotesMessages.filter((vote) => vote.id === poll.id)
           )
       ),
-      updated: updatedPolls || updatedVotes,
+      updated,
     }
   }
 }
