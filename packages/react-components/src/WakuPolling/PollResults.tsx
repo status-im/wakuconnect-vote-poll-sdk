@@ -2,12 +2,14 @@ import React from 'react'
 import { DetailedTimedPoll } from '@status-waku-voting/core/dist/esm/src/models/DetailedTimedPoll'
 import styled from 'styled-components'
 import { colorRouletteGenerator } from '../style/colors'
+import checkCircle from '../assets/svg/checkCircle.svg'
 
 type PollResultsProps = {
   poll: DetailedTimedPoll
+  selectedVote: number
 }
 
-export function PollResults({ poll }: PollResultsProps) {
+export function PollResults({ poll, selectedVote }: PollResultsProps) {
   const colors = colorRouletteGenerator()
   return (
     <Wrapper>
@@ -21,6 +23,7 @@ export function PollResults({ poll }: PollResultsProps) {
             <ColorBar style={{ backgroundColor: colors.next().value ?? '', width: `${percentage}%` }} />
             <Transparent>
               <PollAnswerText>{answer.text}</PollAnswerText>
+              {selectedVote === idx && <CheckCircle />}
               <VoteCount>{`${percentage}%`}</VoteCount>
             </Transparent>
           </PollAnswer>
@@ -34,6 +37,15 @@ export function PollResults({ poll }: PollResultsProps) {
     </Wrapper>
   )
 }
+
+const CheckCircle = styled.div`
+  width: 14px;
+  height: 14px;
+  margin-top: auto;
+  margin-bottom: auto;
+  margin-left: 8px;
+  background-image: url(${checkCircle});
+`
 
 const Transparent = styled.div`
   width: 100%;
@@ -63,26 +75,40 @@ const ResultInfoWrapper = styled.div`
   margin-right: auto;
   margin-bottom: 32px;
   margin-top: 32px;
+  font-style: normal;
+  font-weight: normal;
   font-size: 15px;
+  line-height: 22px;
   text-align: center;
 `
 
 const VoteCount = styled.div`
   margin-left: auto;
+  margin-top: auto;
+  margin-bottom: auto;
   font-weight: 400;
-  font-size: 12px;
+  font-size: 16px;
+  line-height: 16px;
   font-family: 'Inter, sans-serif';
 `
 
 const PollAnswer = styled.div`
   display: flex;
-  margin-bottom: 8px;
+  margin-bottom: 16px;
+  height: 40px;
   position: relative;
   font-family: 'Inter, sans-serif';
 `
 
 const PollAnswerText = styled.div`
-  width: 200px;
-  font-weight: 700;
-  font-size: 10px;
+  height: 100%;
+  margin-top: 12px;
+  margin-bottom: 12px;
+  margin-left: 8px;
+  font-weight: 500;
+  font-size: 16px;
+  line-height: 16px;
+  align-items: center;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
 `

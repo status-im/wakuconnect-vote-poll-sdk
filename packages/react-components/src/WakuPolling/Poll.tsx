@@ -5,7 +5,6 @@ import React, { useEffect, useState } from 'react'
 import { JsonRpcSigner } from '@ethersproject/providers'
 import { PollType } from '@status-waku-voting/core/dist/esm/src/types/PollType'
 import styled from 'styled-components'
-import checkIcon from '../assets/svg/checkIcon.svg'
 import { RadioGroup } from '../components/radioGroup'
 import { SmallButton } from '../components/misc/Buttons'
 import { PollResults } from './PollResults'
@@ -20,21 +19,22 @@ export function Poll({ poll, wakuVoting, signer }: PollProps) {
   const [selectedAnswer, setSelectedAnswer] = useState<number | undefined>(undefined)
   const [tokenAmount, setTokenAmount] = useState(0)
   const [address, setAddress] = useState('')
-  const [userInVoters, setUserInVoters] = useState(false)
+  const [userInVoters, setUserInVoters] = useState(-1)
 
   useEffect(() => {
     signer.getAddress().then((e) => setAddress(e))
   }, [signer])
 
   useEffect(() => {
-    setUserInVoters(!!poll.votesMessages.find((vote) => vote.voter === address))
+    const msg = poll.votesMessages.find((vote) => vote.voter === address)
+    setUserInVoters(msg?.answer ?? -1)
   }, [poll, address])
 
   return (
     <PollWrapper>
       <PollTitle>{poll.poll.question}</PollTitle>
       <PollAnswersWrapper>
-        {!userInVoters && (
+        {userInVoters < 0 && (
           <VotingWrapper>
             <RadioGroup
               options={poll.poll.answers}
@@ -53,9 +53,9 @@ export function Poll({ poll, wakuVoting, signer }: PollProps) {
             )}
           </VotingWrapper>
         )}
-        {userInVoters && <PollResults poll={poll} />}
+        {userInVoters > -1 && <PollResults poll={poll} selectedVote={userInVoters} />}
       </PollAnswersWrapper>
-      {!userInVoters && (
+      {userInVoters < 0 && (
         <SmallButton
           onClick={() => {
             if (wakuVoting) {

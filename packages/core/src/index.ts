@@ -139,8 +139,8 @@ class WakuVoting {
     let updated = false
     if (!this.asyncUpdating) {
       this.asyncUpdating = true
-      const { polls, updatedPolls } = await this.getTimedPolls()
-      const { votes, updatedVotes } = await this.getTimedPollsVotes()
+      const { updatedPolls } = await this.getTimedPolls()
+      const { updatedVotes } = await this.getTimedPollsVotes()
       updated = updatedPolls || updatedVotes
       this.asyncUpdating = false
     }

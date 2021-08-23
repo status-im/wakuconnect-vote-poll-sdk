@@ -55,7 +55,7 @@ const Wrapper = styled.div`
   display: flex;
   flex-direction: column;
   overflow: auto;
-  min-height: 500px;
+  height: 100%;
 `
 
 export default WakuPolling
