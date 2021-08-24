@@ -145,6 +145,6 @@ const BoxWrapper = styled.div`
 
 const NewPollBoxWrapper = styled.div`
   position: relative;
-  top: 10px;
-  left: 10px;
+  top: 50px;
+  left: calc(50% - 234px);
 `
