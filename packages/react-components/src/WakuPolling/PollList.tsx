@@ -8,7 +8,7 @@ import styled from 'styled-components'
 
 type PollListProps = {
   wakuVoting: WakuVoting | undefined
-  signer: Wallet | JsonRpcSigner
+  signer: Wallet | JsonRpcSigner | undefined
 }
 
 export function PollList({ wakuVoting, signer }: PollListProps) {

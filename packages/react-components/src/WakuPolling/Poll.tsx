@@ -12,7 +12,7 @@ import { PollResults } from './PollResults'
 type PollProps = {
   poll: DetailedTimedPoll
   wakuVoting: WakuVoting | undefined
-  signer: Wallet | JsonRpcSigner
+  signer: Wallet | JsonRpcSigner | undefined
 }
 
 export function Poll({ poll, wakuVoting, signer }: PollProps) {
@@ -22,7 +22,11 @@ export function Poll({ poll, wakuVoting, signer }: PollProps) {
   const [userInVoters, setUserInVoters] = useState(-1)
 
   useEffect(() => {
-    signer.getAddress().then((e) => setAddress(e))
+    if (signer) {
+      signer.getAddress().then((e) => setAddress(e))
+    } else {
+      setAddress('')
+    }
   }, [signer])
 
   useEffect(() => {
@@ -57,8 +61,9 @@ export function Poll({ poll, wakuVoting, signer }: PollProps) {
       </PollAnswersWrapper>
       {userInVoters < 0 && (
         <SmallButton
+          disabled={!signer}
           onClick={() => {
-            if (wakuVoting) {
+            if (wakuVoting && signer) {
               wakuVoting.sendTimedPollVote(
                 signer,
                 poll.poll.id,

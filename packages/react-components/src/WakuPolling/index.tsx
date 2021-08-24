@@ -5,33 +5,29 @@ import { PollList } from './PollList'
 import styled from 'styled-components'
 import { PollCreation } from './PollCreation'
 import { Button } from '../components/misc/Buttons'
-
-const provider = new providers.Web3Provider((window as any).ethereum)
+import { JsonRpcSigner } from '@ethersproject/providers'
 
 type WakuPollingProps = {
   appName: string
+  signer: JsonRpcSigner | undefined
 }
 
-function WakuPolling({ appName }: WakuPollingProps) {
-  const [signer, setSigner] = useState(provider.getSigner())
+function WakuPolling({ appName, signer }: WakuPollingProps) {
   const [wakuVoting, setWakuVoting] = useState<WakuVoting | undefined>(undefined)
   const [showPollCreation, setShowPollCreation] = useState(false)
 
   useEffect(() => {
-    ;(window as any).ethereum.on('accountsChanged', async () => {
-      provider.send('eth_requestAccounts', [])
-      setSigner(provider.getSigner())
-    })
     WakuVoting.create(appName, '0x01').then((e) => setWakuVoting(e))
-    provider.send('eth_requestAccounts', [])
   }, [])
 
   return (
     <Wrapper onClick={() => showPollCreation && setShowPollCreation(false)}>
-      {showPollCreation && (
+      {showPollCreation && signer && (
         <PollCreation signer={signer} wakuVoting={wakuVoting} setShowPollCreation={setShowPollCreation} />
       )}
-      <CreatePollButton onClick={() => setShowPollCreation(true)}>Create a poll</CreatePollButton>
+      <CreatePollButton disabled={!signer} onClick={() => setShowPollCreation(true)}>
+        Create a poll
+      </CreatePollButton>
       <PollList wakuVoting={wakuVoting} signer={signer} />
     </Wrapper>
   )
