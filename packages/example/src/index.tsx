@@ -1,7 +1,10 @@
 import React from 'react'
 import ReactDOM from 'react-dom'
-import { WakuPolling } from '@status-waku-voting/react-components'
+
 import styled, { createGlobalStyle } from 'styled-components'
+import { Polling } from './pages/Poling'
+import { BrowserRouter } from 'react-router-dom'
+import { Redirect, Route, Switch } from 'react-router'
 
 export const GlobalStyle = createGlobalStyle`
   * {
@@ -22,7 +25,12 @@ const Page = styled.div`
 ReactDOM.render(
   <Page>
     <GlobalStyle />
-    <WakuPolling appName={'testApp_'} />
+    <BrowserRouter>
+      <Switch>
+        <Route exact path="/" render={() => <Redirect to="/polling" />} />
+        <Route exact path="/polling" component={Polling} />
+      </Switch>
+    </BrowserRouter>
   </Page>,
   document.getElementById('root')
 )

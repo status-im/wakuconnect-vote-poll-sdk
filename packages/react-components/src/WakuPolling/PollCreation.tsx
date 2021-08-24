@@ -132,7 +132,7 @@ const NewPollBox = styled.div`
   box-shadow: 10px 10px 31px -2px #a3a1a1;
   border-radius: 5px;
   overflow: auto;
-  z-index: 5;
+  z-index: 8;
   width: 468px;
 `
 

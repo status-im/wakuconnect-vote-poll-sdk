@@ -19,13 +19,17 @@ export function PollResults({ poll, selectedVote }: PollResultsProps) {
           percentage = answer.votes.mul(1000).div(poll.numberOfVotes).toNumber() / 10
         }
         return (
-          <PollAnswer key={idx}>
-            <ColorBar style={{ backgroundColor: colors.next().value ?? '', width: `${percentage}%` }} />
-            <Transparent>
-              <PollAnswerText>{answer.text}</PollAnswerText>
-              {selectedVote === idx && <CheckCircle />}
-              <VoteCount>{`${percentage}%`}</VoteCount>
-            </Transparent>
+          <PollAnswer
+            key={idx}
+            style={{
+              background: `linear-gradient(90deg, ${
+                colors.next().value ?? ''
+              } ${percentage}%, rgba(255,255,255,0) ${percentage}%)`,
+            }}
+          >
+            <PollAnswerText>{answer.text}</PollAnswerText>
+            {selectedVote === idx && <CheckCircle />}
+            <VoteCount>{`${percentage}%`}</VoteCount>
           </PollAnswer>
         )
       })}
@@ -45,23 +49,6 @@ const CheckCircle = styled.div`
   margin-bottom: auto;
   margin-left: 8px;
   background-image: url(${checkCircle});
-`
-
-const Transparent = styled.div`
-  width: 100%;
-  height: 100%;
-  display: flex;
-  z-index: 2;
-`
-
-const ColorBar = styled.div`
-  width: 100%;
-  height: 100%;
-  border-radius: 2px;
-  position: absolute;
-  top: 0px;
-  left: 0px;
-  z-index: 1;
 `
 
 const Wrapper = styled.div`
@@ -96,7 +83,6 @@ const PollAnswer = styled.div`
   display: flex;
   margin-bottom: 16px;
   height: 40px;
-  position: relative;
   font-family: 'Inter, sans-serif';
 `
 
