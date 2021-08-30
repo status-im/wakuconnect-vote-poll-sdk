@@ -21,7 +21,7 @@ function WakuPolling({ appName, signer }: WakuPollingProps) {
   }, [])
 
   return (
-    <Wrapper onClick={() => showPollCreation && setShowPollCreation(false)}>
+    <Wrapper>
       {showPollCreation && signer && (
         <PollCreation signer={signer} wakuVoting={wakuVoting} setShowPollCreation={setShowPollCreation} />
       )}

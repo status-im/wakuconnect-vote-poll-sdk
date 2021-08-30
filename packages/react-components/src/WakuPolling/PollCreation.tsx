@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { Wallet } from 'ethers'
 import { JsonRpcSigner } from '@ethersproject/providers'
 import styled from 'styled-components'
@@ -25,65 +25,100 @@ type PollCreationProps = {
 export function PollCreation({ signer, wakuVoting, setShowPollCreation }: PollCreationProps) {
   const [answers, setAnswers] = useState<string[]>(['', ''])
   const [question, setQuestion] = useState('')
+  const [showCreateConfirmation, setShowCreateConfirmation] = useState(false)
   const [selectedType, setSelectedType] = useState(PollType.NON_WEIGHTED)
   const [endTimePicker, setEndTimePicker] = useState(new Date(new Date().getTime() + 10000000))
+  const body = document.getElementById('root')
+
+  useEffect(() => {
+    if (body) {
+      body.style.position = 'fixed'
+      return () => {
+        body.style.position = 'static'
+      }
+    }
+  }, [])
 
   return (
-    <NewPollBoxWrapper onClick={(e) => e.stopPropagation()}>
-      <NewPollBox>
+    <NewPollBoxWrapper
+      onClick={() => {
+        setShowPollCreation(false)
+      }}
+    >
+      <NewPollBox onClick={(e) => e.stopPropagation()}>
         <NewPollBoxTitle>
           Create a poll
           <CloseNewPollBoxButton onClick={() => setShowPollCreation(false)} />
         </NewPollBoxTitle>
-        <PollForm>
-          <Input
-            label={'Question or title of the poll'}
-            placeholder={'E.g. What is your favourite color?'}
-            value={question}
-            onChange={(e) => setQuestion(e.target.value)}
-          />
+        {!showCreateConfirmation && (
+          <PollForm>
+            <Input
+              label={'Question or title of the poll'}
+              placeholder={'E.g. What is your favourite color?'}
+              value={question}
+              onChange={(e) => setQuestion(e.target.value)}
+            />
 
-          <AnswersWraper>
-            {answers.map((answer, idx) => (
-              <Input
-                key={idx}
-                label={`Option ${idx + 1}`}
-                value={answer}
-                onChange={(e) =>
-                  setAnswers((answers) => {
-                    const newAnswers = [...answers]
-                    newAnswers[idx] = e.target.value
-                    return newAnswers
-                  })
-                }
-              />
-            ))}
-          </AnswersWraper>
-          <NewOptionButton
-            onClick={(e) => {
-              e.preventDefault()
-              setAnswers((answers) => [...answers, ''])
-            }}
-          >
-            Add another option
-          </NewOptionButton>
-          <SmallButton
-            onClick={async (e) => {
-              e.preventDefault()
-              await wakuVoting?.createTimedPoll(
-                signer,
-                question,
-                answers,
-                selectedType,
-                undefined,
-                endTimePicker.getTime()
-              )
-              setShowPollCreation(false)
-            }}
-          >
-            Create a poll
-          </SmallButton>
-        </PollForm>
+            <AnswersWraper>
+              {answers.map((answer, idx) => (
+                <Input
+                  key={idx}
+                  label={`Option ${idx + 1}`}
+                  value={answer}
+                  onChange={(e) =>
+                    setAnswers((answers) => {
+                      const newAnswers = [...answers]
+                      newAnswers[idx] = e.target.value
+                      return newAnswers
+                    })
+                  }
+                />
+              ))}
+            </AnswersWraper>
+            <NewOptionButton
+              onClick={(e) => {
+                e.preventDefault()
+                setAnswers((answers) => [...answers, ''])
+              }}
+            >
+              Add another option
+            </NewOptionButton>
+            <SmallButton
+              onClick={async (e) => {
+                e.preventDefault()
+                await wakuVoting?.createTimedPoll(
+                  signer,
+                  question,
+                  answers,
+                  selectedType,
+                  undefined,
+                  endTimePicker.getTime()
+                )
+                setShowCreateConfirmation(true)
+              }}
+            >
+              Create a poll
+            </SmallButton>
+          </PollForm>
+        )}
+
+        {showCreateConfirmation && (
+          <Confirmation>
+            <ConfirmationText>
+              Your poll has been created!
+              <br />
+              It will appear at the top of the poll list.
+            </ConfirmationText>
+            <SmallButton
+              onClick={(e) => {
+                e.preventDefault()
+                setShowPollCreation(false)
+              }}
+            >
+              Close
+            </SmallButton>
+          </Confirmation>
+        )}
       </NewPollBox>
     </NewPollBoxWrapper>
   )
@@ -156,16 +191,20 @@ const NewPollBox = styled.div`
   display: flex;
   flex-direction: column;
   justify-content: space-between;
+  width: 468px;
+  max-height: 90vh;
   background-color: white;
+  margin: 20vh auto 2vh;
   padding: 24px 24px 32px;
   box-shadow: 10px 10px 31px -2px #a3a1a1;
   border-radius: 5px;
-  overflow: auto;
+  overflow: scroll;
   z-index: 9998;
   width: 468px;
 
   @media (max-width: 600px) {
     padding: 16px 16px 32px;
+    margin: 0;
   }
 `
 
@@ -175,16 +214,16 @@ const NewPollBoxWrapper = styled.div`
   position: fixed;
   display: flex;
   justify-content: center;
-  align-items: center;
+  align-items: flex-start;
   top: 0;
   left: 0;
   background-color: rgba(0, 0, 0, 0.4);
   z-index: 9999;
   transition: all 0.3s;
-  overflow: auto;
 
   @media (max-width: 600px) {
     padding: 16px;
+    align-items: center;
   }
 `
 const PollForm = styled.form`
@@ -193,4 +232,14 @@ const PollForm = styled.form`
   align-items: center;
   font-size: 15px;
   line-height: 22px;
+`
+const Confirmation = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+`
+
+const ConfirmationText = styled.div`
+  text-align: center;
+  margin: 32px 0;
 `
