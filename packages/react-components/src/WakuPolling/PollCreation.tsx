@@ -161,7 +161,7 @@ const NewPollBox = styled.div`
   box-shadow: 10px 10px 31px -2px #a3a1a1;
   border-radius: 5px;
   overflow: auto;
-  z-index: 8;
+  z-index: 9998;
   width: 468px;
 
   @media (max-width: 600px) {

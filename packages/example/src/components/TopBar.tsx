@@ -156,9 +156,12 @@ const Logo = styled.div`
 `
 
 const Wrapper = styled.div`
-  height: 96px;
-  background: #fbfcfe;
   display: flex;
+  height: 96px;
+  width: 100%;
+  position: fixed;
+  background: #fbfcfe;
+  z-index: 10;
 
   @media (max-width: 600px) {
     height: 64px;

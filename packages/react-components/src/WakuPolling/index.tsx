@@ -57,7 +57,7 @@ const CreatePollButton = styled(Button)`
   }
 
   @media (max-width: 425px) {
-    position: absolute;
+    position: fixed;
     bottom: 0;
     z-index: 10;
     margin-bottom: 16px;
@@ -71,12 +71,16 @@ const Wrapper = styled.div`
   flex-direction: column;
   align-items: center;
   max-width: 1082px;
-  height: 100%;
+  position: relative;
   margin: 0 auto;
-  padding: 50px 0;
+  padding: 150px 0 50px;
 
   @media (max-width: 600px) {
-    padding: 32px 16px;
+    padding: 132px 16px 32px;
+  }
+
+  @media (max-width: 425px) {
+    padding: 96px 16px 84px;
   }
 `
 
