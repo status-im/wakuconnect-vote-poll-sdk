@@ -55,7 +55,7 @@ export function PollList({ wakuVoting, signer }: PollListProps) {
 }
 const PollListWrapper = styled.div`
   display: flex;
-  margin: 10px;
+  width: 100%;
 `
 
 const ColumnWrapper = styled.div`

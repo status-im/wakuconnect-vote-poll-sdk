@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState } from 'react'
 import styled from 'styled-components'
 import { useEthers, shortenAddress } from '@usedapp/core'
 type TopBarProps = {
@@ -7,24 +7,37 @@ type TopBarProps = {
 }
 
 export function TopBar({ logo, title }: TopBarProps) {
-  const { activateBrowserWallet, account } = useEthers()
+  const { activateBrowserWallet, deactivate, account } = useEthers()
+  const [isOpened, setIsOpened] = useState(false)
 
   return (
     <Wrapper>
-      <Logo style={{ backgroundImage: `url(${logo})` }} />
-      <TitleWrapper>
-        {title.split(' ').map((text) => (
-          <div>{text}</div>
-        ))}
-      </TitleWrapper>
-      {account ? (
-        <AccountDiv>
-          <GreenDot />
-          <>{shortenAddress(account)}</>
-        </AccountDiv>
-      ) : (
-        <Button onClick={() => activateBrowserWallet()}>Connect</Button>
-      )}
+      <ContentWrapper>
+        <Logo style={{ backgroundImage: `url(${logo})` }} />
+        <TitleWrapper>
+          {title.split(' ').map((text) => (
+            <div>{text}</div>
+          ))}
+        </TitleWrapper>
+        {account ? (
+          <AccountWrap>
+            <Account
+              onClick={(e) => {
+                e.stopPropagation()
+                setIsOpened(!isOpened)
+              }}
+            >
+              <GreenDot />
+              <>{shortenAddress(account)}</>
+            </Account>
+            <ButtonDisconnect className={isOpened ? 'opened' : undefined} onClick={() => deactivate()}>
+              Disconnect
+            </ButtonDisconnect>
+          </AccountWrap>
+        ) : (
+          <Button onClick={() => activateBrowserWallet()}>Connect</Button>
+        )}
+      </ContentWrapper>
     </Wrapper>
   )
 }
@@ -36,25 +49,26 @@ const GreenDot = styled.div`
   background: #4ebc60;
   margin-right: 5px;
 `
+const AccountWrap = styled.div`
+  position: relative;
+`
 
-const AccountDiv = styled.div`
-  width: 130px;
-  height: 44px;
+const Account = styled.button`
+  display: flex;
+  flex-direction: row;
+  align-items: center;
   background: #ffffff;
   border: 1px solid #eef2f5;
   box-sizing: border-box;
   border-radius: 21px;
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  padding: 0px 12px;
-  margin: auto;
-  margin-right: 40px;
-  font-family: Inter;
-  font-style: normal;
+  padding: 11px 12px 11px 17px;
   font-weight: 500;
   font-size: 13px;
   line-height: 22px;
+
+  &:hover {
+    border: 1px solid #ffb571;
+  }
 `
 
 const TitleWrapper = styled.div`
@@ -70,24 +84,97 @@ const TitleWrapper = styled.div`
 `
 
 const Button = styled.button`
+  padding: 10px 28px;
+  background-color: #ffb571;
+  color: #ffffff;
+  font-weight: bold;
+  font-size: 15px;
+  line-height: 24px;
   border-radius: 8px;
   border: 0px;
-  margin: auto;
-  margin-right: 40px;
-  height: 44px;
-  width: 117px;
+  outline: none;
+
+  &:not(:disabled):hover {
+    background: #a53607;
+  }
+
+  &:not(:disabled):active {
+    background: #f4b77e;
+  }
+
+  &:disabled {
+    background: #888888;
+    filter: grayscale(1);
+  }
+
+  @media (max-width: 600px) {
+    padding: 3px 28px;
+  }
+`
+
+const ButtonDisconnect = styled.button`
+  position: absolute;
+  top: calc(100% + 4px);
+  right: 0;
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  font-weight: 500;
+  font-size: 15px;
+  line-height: 22px;
+  text-align: center;
+  padding: 15px 32px;
+  color: #a53607;
+  background: #ffffff;
+  border: 1px solid #eef2f5;
+  border-radius: 16px 4px 16px 16px;
+  box-shadow: 0px 2px 16px rgba(0, 9, 26, 0.12);
+  transition: all 0.3s;
+  outline: none;
+
+  &:hover {
+    background: #a53607;
+    color: #ffffff;
+  }
+
+  &:active {
+    background: #f4b77e;
+    color: #ffffff;
+  }
+
+  &.opened {
+    opacity: 1;
+    visibility: visible;
+    pointer-events: auto;
+    z-index: 10;
+  }
 `
 
 const Logo = styled.div`
   height: 30px;
   width: 32px;
-  margin-left: 40px;
-  margin-top: auto;
-  margin-bottom: auto;
 `
 
 const Wrapper = styled.div`
   height: 96px;
   background: #fbfcfe;
   display: flex;
+
+  @media (max-width: 600px) {
+    height: 64px;
+  }
+`
+const ContentWrapper = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 32px 40px;
+  max-width: 1440px;
+  margin: 0 auto;
+  width: 100%;
+
+  @media (max-width: 600px) {
+    padding: 16px;
+    padding-left: 24px;
+  }
 `

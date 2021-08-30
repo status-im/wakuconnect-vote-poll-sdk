@@ -28,20 +28,23 @@ const Circle = styled.div`
   border-radius: 50%;
   width: 24px;
   height: 24px;
+  box-shadow: 0px 1px 2px rgba(31, 41, 55, 0.08);
+  flex-shrink: 0;
 
   &.icon {
-    border: 1px solid rgba(255, 255, 255, 1);
     background-image: url(${checkIcon});
     background-size: cover;
+    border: 1px solid #ffb571;
   }
 
   &:hover {
-    border: 1px solid #a53607;
+    border: 1px solid #ffb571;
+    border-radius: 50%;
   }
 `
 
 const TextWrapper = styled.div`
-  margin-left: 20px;
-  width: 300px;
+  margin-left: 16px;
   font-size: 22px;
+  line-height: 24px;
 `

@@ -82,29 +82,33 @@ export function Poll({ poll, wakuVoting, signer }: PollProps) {
 }
 
 const VotingWrapper = styled.div`
-  margin-left: 46px;
-  margin-top: 38px;
+  width: 100%;
+  margin-top: 40px;
 `
 
 const PollWrapper = styled.div`
   display: flex;
-  width: 442px;
+  width: 344px;
   flex-direction: column;
-  box-shadow: 0px 2px 12px 0px #000000;
-  border-radius: 5px;
+  align-items: center;
+  box-shadow: 0px 2px 12px rgba(0, 0, 0, 0.15);
+  border-radius: 6px;
   background-color: #fbfbfe;
   margin-bottom: 24px;
+  padding: 32px;
 `
 
 const PollTitle = styled.div`
-  margin-top: 32px;
   width: 100%;
   text-align: center;
   font-weight: bold;
   font-size: 22px;
+  line-height: 24px;
 `
 
 const PollAnswersWrapper = styled.div`
   display: flex;
   flex-direction: column;
+  align-self: flex-start;
+  width: 100%;
 `

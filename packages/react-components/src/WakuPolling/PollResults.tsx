@@ -27,8 +27,10 @@ export function PollResults({ poll, selectedVote }: PollResultsProps) {
               } ${percentage}%, rgba(255,255,255,0) ${percentage}%)`,
             }}
           >
-            <PollAnswerText>{answer.text}</PollAnswerText>
-            {selectedVote === idx && <CheckCircle />}
+            <PollAnswerWrapper>
+              <PollAnswerText>{answer.text}</PollAnswerText>
+              {selectedVote === idx && <CheckCircle />}
+            </PollAnswerWrapper>
             <VoteCount>{`${percentage}%`}</VoteCount>
           </PollAnswer>
         )
@@ -42,59 +44,51 @@ export function PollResults({ poll, selectedVote }: PollResultsProps) {
   )
 }
 
-const CheckCircle = styled.div`
-  width: 14px;
-  height: 14px;
-  margin-top: auto;
-  margin-bottom: auto;
-  margin-left: 8px;
-  background-image: url(${checkCircle});
-`
-
 const Wrapper = styled.div`
-  margin-left: 77px;
   margin-top: 32px;
-  width: 288px;
-`
-
-const ResultInfoWrapper = styled.div`
-  margin-left: auto;
-  margin-right: auto;
-  margin-bottom: 32px;
-  margin-top: 32px;
-  font-style: normal;
-  font-weight: normal;
-  font-size: 15px;
-  line-height: 22px;
-  text-align: center;
-`
-
-const VoteCount = styled.div`
-  margin-left: auto;
-  margin-top: auto;
-  margin-bottom: auto;
-  font-weight: 400;
-  font-size: 16px;
-  line-height: 16px;
-  font-family: 'Inter, sans-serif';
 `
 
 const PollAnswer = styled.div`
   display: flex;
+  justify-content: space-between;
+  align-items: center;
   margin-bottom: 16px;
-  height: 40px;
-  font-family: 'Inter, sans-serif';
-`
-
-const PollAnswerText = styled.div`
-  height: 100%;
-  margin-top: 12px;
-  margin-bottom: 12px;
-  margin-left: 8px;
-  font-weight: 500;
+  padding: 8px 0 8px 8px;
   font-size: 16px;
   line-height: 16px;
+
+  &:last-child {
+    margin-bottom: 0;
+  }
+`
+
+const PollAnswerWrapper = styled.div`
+  display: flex;
+`
+const PollAnswerText = styled.div`
+  display: inline-block;
+  height: 100%;
+  font-weight: 500;
   align-items: center;
   letter-spacing: 1.5px;
   text-transform: uppercase;
+`
+
+const VoteCount = styled.div`
+  font-weight: 400;
+`
+
+const CheckCircle = styled.div`
+  display: inline-block;
+  width: 14px;
+  height: 14px;
+  margin-left: 8px;
+  background-image: url(${checkCircle});
+`
+
+const ResultInfoWrapper = styled.div`
+  margin-top: 32px;
+  font-size: 15px;
+  line-height: 22px;
+  text-align: center;
 `

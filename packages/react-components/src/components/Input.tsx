@@ -22,15 +22,25 @@ const StyledInput = styled.input`
   border: 0px;
   height: 44px;
   padding-left: 20px;
-  font-weight: 400px;
   font-size: 15px;
-  font-family: 'Inter, sans-serif';
+  border: 1px solid #eef2f5;
+  outline: none;
+
+  &::placeholder {
+    font-size: 15px;
+    line-height: 22px;
+  }
+
+  &:active,
+  &:focus {
+    border: 1px solid #ffb571;
+    caret-color: #ffb571;
+  }
 `
 
 const LabelWrapper = styled.div`
-  font-weight: 400px;
   font-size: 15px;
-  font-family: 'Inter, sans-serif';
+  line-height: 22px;
   margin-bottom: 10px;
 `
 
@@ -38,4 +48,5 @@ const InputWrapper = styled.div`
   display: flex;
   flex-direction: column;
   margin-top: 32px;
+  width: 100%;
 `

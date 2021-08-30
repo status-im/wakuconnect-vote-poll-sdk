@@ -35,23 +35,49 @@ function WakuPolling({ appName, signer }: WakuPollingProps) {
 
 const CreatePollButton = styled(Button)`
   width: 343px;
-  margin-left: auto;
-  margin-right: auto;
-  margin-bottom: 44px;
-  margin-top: 49px;
   background-color: #ffb571;
   color: #ffffff;
+  font-weight: bold;
+  font-size: 15px;
+  line-height: 24px;
+  padding: 10px 125.5px;
+  margin-bottom: 48px;
 
-  &:hover {
-    border: 1px solid #a53607;
+  &:not(:disabled):hover {
+    background: #a53607;
+  }
+
+  &:not(:disabled):active {
+    background: #f4b77e;
+  }
+
+  &:disabled {
+    background: #888888;
+    filter: grayscale(1);
+  }
+
+  @media (max-width: 425px) {
+    position: absolute;
+    bottom: 0;
+    z-index: 10;
+    margin-bottom: 16px;
+    width: calc(100% - 32px);
+    padding: 0;
   }
 `
 
 const Wrapper = styled.div`
   display: flex;
   flex-direction: column;
-  overflow: auto;
+  align-items: center;
+  max-width: 1082px;
   height: 100%;
+  margin: 0 auto;
+  padding: 50px 0;
+
+  @media (max-width: 600px) {
+    padding: 32px 16px;
+  }
 `
 
 export default WakuPolling
