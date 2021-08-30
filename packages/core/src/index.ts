@@ -1,4 +1,4 @@
-import { Waku, getStatusFleetNodes } from 'js-waku'
+import { Waku } from 'js-waku'
 import { JsonRpcSigner } from '@ethersproject/providers'
 import { PollInitMsg } from './models/PollInitMsg'
 import { PollType } from './types/PollType'
@@ -18,7 +18,7 @@ function decodeWakuMessages<T>(
 }
 
 async function receiveNewWakuMessages(lastTimestamp: number, topic: string, waku: Waku | undefined) {
-  const messages = await waku?.store.queryHistory({ contentTopics: [topic] })
+  const messages = await waku?.store.queryHistory([topic])
 
   if (messages) {
     messages.sort((a, b) => (a.timestamp && b.timestamp && a.timestamp?.getTime() < b.timestamp?.getTime() ? 1 : -1))
@@ -40,19 +40,6 @@ class WakuVoting {
   private timedPollVotesMessages: TimedPollVoteMsg[] = []
   private asyncUpdating = false
 
-  private static async createWaku() {
-    const waku = await Waku.create()
-    const nodes = await getStatusFleetNodes()
-    await Promise.all(
-      nodes.map((addr) => {
-        if (waku) {
-          return waku.dial(addr)
-        }
-      })
-    )
-    return waku
-  }
-
   private constructor(appName: string, tokenAddress: string, waku: Waku) {
     this.appName = appName
     this.tokenAddress = tokenAddress
@@ -63,7 +50,7 @@ class WakuVoting {
 
   public static async create(appName: string, tokenAddress: string, waku?: Waku) {
     if (!waku) {
-      waku = await this.createWaku()
+      waku = await Waku.create({ bootstrap: true })
     }
     return new WakuVoting(appName, tokenAddress, waku)
   }
