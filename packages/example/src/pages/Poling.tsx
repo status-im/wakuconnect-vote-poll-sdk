@@ -17,7 +17,7 @@ export function Polling() {
   return (
     <Wrapper>
       <TopBar logo={pollingIcon} title={'Polling Dapp'} />
-      <WakuPolling appName={'testApp_'} signer={signer} />
+      <WakuPolling appName={'testApp_'} signer={signer} localhost={process.env.ENV === 'localhost'} />
     </Wrapper>
   )
 }

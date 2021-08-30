@@ -10,14 +10,35 @@ import { JsonRpcSigner } from '@ethersproject/providers'
 type WakuPollingProps = {
   appName: string
   signer: JsonRpcSigner | undefined
+  localhost?: boolean
 }
 
-function WakuPolling({ appName, signer }: WakuPollingProps) {
+function WakuPolling({ appName, signer, localhost }: WakuPollingProps) {
   const [wakuVoting, setWakuVoting] = useState<WakuVoting | undefined>(undefined)
   const [showPollCreation, setShowPollCreation] = useState(false)
-
+  let waku: any | undefined = undefined
+  if (localhost) {
+    waku = {
+      messages: {},
+      relay: {
+        send(msg: any) {
+          if (!(this as any).messages[msg.contentTopic]) {
+            ;(this as any).messages[msg.contentTopic] = []
+          }
+          ;(this as any).messages[msg.contentTopic] = [...(this as any).messages[msg.contentTopic], msg]
+        },
+      },
+      store: {
+        queryHistory(topic: any) {
+          return (this as any).messages[topic[0]]
+        },
+      },
+    }
+    waku.relay.send = waku.relay.send.bind(waku)
+    waku.store.queryHistory = waku.store.queryHistory.bind(waku)
+  }
   useEffect(() => {
-    WakuVoting.create(appName, '0x01').then((e) => setWakuVoting(e))
+    WakuVoting.create(appName, '0x01', waku).then((e) => setWakuVoting(e))
   }, [])
 
   return (
