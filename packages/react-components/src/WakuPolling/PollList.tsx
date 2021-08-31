@@ -53,13 +53,26 @@ export function PollList({ wakuVoting, signer }: PollListProps) {
     </PollListWrapper>
   )
 }
+
 const PollListWrapper = styled.div`
   display: flex;
+  flex-wrap: wrap;
   width: 100%;
+  gap: 24px;
+  align-items: flex-start;
+
+  @media (max-width: 768px) {
+    gap: 16px;
+    justify-content: center;
+  }
 `
 
 const ColumnWrapper = styled.div`
   display: flex;
   flex-direction: column;
-  margin-right: 25px;
+  gap: 24px;
+
+  @media (max-width: 768px) {
+    gap: 16px;
+  }
 `

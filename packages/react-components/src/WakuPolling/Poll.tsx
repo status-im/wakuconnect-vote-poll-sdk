@@ -94,8 +94,11 @@ const PollWrapper = styled.div`
   box-shadow: 0px 2px 12px rgba(0, 0, 0, 0.15);
   border-radius: 6px;
   background-color: #fbfbfe;
-  margin-bottom: 24px;
   padding: 32px;
+
+  @media (max-width: 768px) {
+    padding: 24px;
+  }
 `
 
 const PollTitle = styled.div`
