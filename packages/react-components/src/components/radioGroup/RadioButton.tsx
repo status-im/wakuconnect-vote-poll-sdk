@@ -47,4 +47,5 @@ const TextWrapper = styled.div`
   margin-left: 16px;
   font-size: 22px;
   line-height: 24px;
+  word-break: break-word;
 `

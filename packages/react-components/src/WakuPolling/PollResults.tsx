@@ -64,14 +64,14 @@ const PollAnswer = styled.div`
 
 const PollAnswerWrapper = styled.div`
   display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  max-width: 65%;
 `
 const PollAnswerText = styled.div`
   display: inline-block;
-  height: 100%;
-  font-weight: 500;
-  align-items: center;
   letter-spacing: 1.5px;
-  text-transform: uppercase;
+  word-break: break-word;
 `
 
 const VoteCount = styled.div`
@@ -84,6 +84,7 @@ const CheckCircle = styled.div`
   height: 14px;
   margin-left: 8px;
   background-image: url(${checkCircle});
+  flex-shrink: 0;
 `
 
 const ResultInfoWrapper = styled.div`

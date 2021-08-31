@@ -91,10 +91,11 @@ const Wrapper = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
-  max-width: 1082px;
+  max-width: 1146px;
   position: relative;
   margin: 0 auto;
-  padding: 150px 0 50px;
+  padding: 150px 32px 50px;
+  width: 100%;
 
   @media (max-width: 600px) {
     padding: 132px 16px 32px;

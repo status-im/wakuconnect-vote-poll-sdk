@@ -82,8 +82,8 @@ export function Poll({ poll, wakuVoting, signer }: PollProps) {
 }
 
 const VotingWrapper = styled.div`
-  width: 100%;
   margin-top: 40px;
+  margin-left: 32px;
 `
 
 const PollWrapper = styled.div`

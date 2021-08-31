@@ -36,7 +36,7 @@ export const GlobalStyle = createGlobalStyle`
   }
 
   html {
-    font-family: 'Inter', 'sans-serif';
+    font-family: Inter;
     font-style: normal;
   }
 
