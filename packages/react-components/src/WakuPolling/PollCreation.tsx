@@ -6,8 +6,8 @@ import { PollType } from '@status-waku-voting/core/dist/esm/src/types/PollType'
 import WakuVoting from '@status-waku-voting/core'
 import { Input } from '../components/Input'
 import addIcon from '../assets/svg/addIcon.svg'
-import closeButton from '../assets/svg/close.svg'
 import { SmallButton } from '../components/misc/Buttons'
+import { Modal } from '../components/Modal'
 
 function getLocaleIsoTime(dateTime: Date) {
   const MS_PER_MINUTE = 60000
@@ -28,28 +28,10 @@ export function PollCreation({ signer, wakuVoting, setShowPollCreation }: PollCr
   const [showCreateConfirmation, setShowCreateConfirmation] = useState(false)
   const [selectedType, setSelectedType] = useState(PollType.NON_WEIGHTED)
   const [endTimePicker, setEndTimePicker] = useState(new Date(new Date().getTime() + 10000000))
-  const body = document.getElementById('root')
-
-  useEffect(() => {
-    if (body) {
-      body.style.position = 'fixed'
-      return () => {
-        body.style.position = 'static'
-      }
-    }
-  }, [])
 
   return (
-    <NewPollBoxWrapper
-      onClick={() => {
-        setShowPollCreation(false)
-      }}
-    >
-      <NewPollBox onClick={(e) => e.stopPropagation()}>
-        <NewPollBoxTitle>
-          Create a poll
-          <CloseNewPollBoxButton onClick={() => setShowPollCreation(false)} />
-        </NewPollBoxTitle>
+    <Modal heading="Create a poll" setShowModal={setShowPollCreation}>
+      <NewPollBox>
         {!showCreateConfirmation && (
           <PollForm>
             <Input
@@ -119,27 +101,10 @@ export function PollCreation({ signer, wakuVoting, setShowPollCreation }: PollCr
             </SmallButton>
           </Confirmation>
         )}
-      </NewPollBox>
-    </NewPollBoxWrapper>
+      </NewPollBox>{' '}
+    </Modal>
   )
 }
-
-const CloseNewPollBoxButton = styled.button`
-  width: 24px;
-  height: 24px;
-  background-image: url(${closeButton});
-  background-color: transparent;
-  border: none;
-`
-
-const NewPollBoxTitle = styled.div`
-  display: flex;
-  justify-content: space-between;
-  font-style: normal;
-  font-weight: bold;
-  font-size: 17px;
-  line-height: 24px;
-`
 
 const NewOptionButton = styled.button`
   display: flex;
@@ -189,54 +154,21 @@ const AnswersWraper = styled.div`
 
 const NewPollBox = styled.div`
   display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  width: 468px;
-  max-height: 90vh;
-  background-color: white;
-  margin: 20vh auto 2vh;
-  padding: 24px 24px 32px;
-  box-shadow: 10px 10px 31px -2px #a3a1a1;
-  border-radius: 5px;
-  overflow: scroll;
-  z-index: 9998;
-  width: 468px;
-
-  @media (max-width: 600px) {
-    padding: 16px 16px 32px;
-    margin: 0;
-  }
 `
 
-const NewPollBoxWrapper = styled.div`
-  height: 100vh;
-  width: 100%;
-  position: fixed;
-  display: flex;
-  justify-content: center;
-  align-items: flex-start;
-  top: 0;
-  left: 0;
-  background-color: rgba(0, 0, 0, 0.4);
-  z-index: 9999;
-  transition: all 0.3s;
-
-  @media (max-width: 600px) {
-    padding: 16px;
-    align-items: center;
-  }
-`
 const PollForm = styled.form`
   display: flex;
   flex-direction: column;
   align-items: center;
   font-size: 15px;
   line-height: 22px;
+  width: 100%;
 `
 const Confirmation = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
+  width: 100%;
 `
 
 const ConfirmationText = styled.div`
