@@ -57,7 +57,7 @@ const PopUpWindow = styled.div`
   flex-direction: column;
   justify-content: space-between;
   width: 468px;
-  max-height: 90vh;
+  max-height: 75vh;
   background-color: white;
   margin: 20vh auto 2vh;
   padding: 24px 24px 32px;

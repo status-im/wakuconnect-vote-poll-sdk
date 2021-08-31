@@ -15,8 +15,8 @@ export function TopBar({ logo, title }: TopBarProps) {
       <ContentWrapper>
         <Logo style={{ backgroundImage: `url(${logo})` }} />
         <TitleWrapper>
-          {title.split(' ').map((text) => (
-            <div>{text}</div>
+          {title.split(' ').map((text, idx) => (
+            <div key={idx}>{text}</div>
           ))}
         </TitleWrapper>
         {account ? (
