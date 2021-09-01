@@ -4,7 +4,7 @@ import { PollInitMsg } from './models/PollInitMsg'
 import { PollType } from './types/PollType'
 import { BigNumber, Wallet } from 'ethers'
 import PollInit from './utils/proto/PollInit'
-import { WakuMessage } from 'js-waku'
+import { WakuMessage, StoreCodec } from 'js-waku'
 import { TimedPollVoteMsg } from './models/TimedPollVoteMsg'
 import TimedPollVote from './utils/proto/TimedPollVote'
 import { DetailedTimedPoll } from './models/DetailedTimedPoll'
@@ -51,6 +51,13 @@ class WakuVoting {
   public static async create(appName: string, tokenAddress: string, waku?: Waku) {
     if (!waku) {
       waku = await Waku.create({ bootstrap: true })
+      await new Promise((resolve) => {
+        waku?.libp2p.peerStore.on('change:protocols', ({ protocols }) => {
+          if (protocols.includes(StoreCodec)) {
+            resolve('')
+          }
+        })
+      })
     }
     return new WakuVoting(appName, tokenAddress, waku)
   }
