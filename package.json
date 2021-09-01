@@ -12,9 +12,11 @@
   },
   "scripts": {
     "start": "yarn --cwd ./packages/example start",
+    "watch": "wsrun -m watch",
     "lint": "wsrun -c -s lint",
     "lint:fix": "wsrun -c -s lint:fix",
     "build": "wsrun -e -c -s build",
+    "clean:all": "wsrun -e -c -s clean:all && rm -r ./node_modules",
     "test": "wsrun -e -c -s --exclude-missing test"
   },
   "dependencies": {
