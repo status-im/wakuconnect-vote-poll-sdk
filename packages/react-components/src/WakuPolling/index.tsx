@@ -1,11 +1,14 @@
 import React, { useState, useEffect } from 'react'
 import WakuVoting from '@status-waku-voting/core'
+import { useEthers } from '@usedapp/core'
 import { providers } from 'ethers'
 import { PollList } from './PollList'
 import styled from 'styled-components'
 import { PollCreation } from './PollCreation'
 import { Button } from '../components/misc/Buttons'
 import { JsonRpcSigner } from '@ethersproject/providers'
+import { Modal } from '../components/Modal'
+import { Networks } from '../components/Networks'
 
 type WakuPollingProps = {
   appName: string
@@ -14,8 +17,11 @@ type WakuPollingProps = {
 }
 
 function WakuPolling({ appName, signer, localhost }: WakuPollingProps) {
+  const { activateBrowserWallet, account } = useEthers()
   const [wakuVoting, setWakuVoting] = useState<WakuVoting | undefined>(undefined)
   const [showPollCreation, setShowPollCreation] = useState(false)
+  const [selectConnect, setSelectConnect] = useState(false)
+
   let waku: any | undefined = undefined
   if (localhost) {
     waku = {
@@ -46,9 +52,27 @@ function WakuPolling({ appName, signer, localhost }: WakuPollingProps) {
       {showPollCreation && signer && (
         <PollCreation signer={signer} wakuVoting={wakuVoting} setShowPollCreation={setShowPollCreation} />
       )}
-      <CreatePollButton disabled={!signer} onClick={() => setShowPollCreation(true)}>
-        Create a poll
-      </CreatePollButton>
+      {account ? (
+        <CreatePollButton disabled={!signer} onClick={() => setShowPollCreation(true)}>
+          Create a poll
+        </CreatePollButton>
+      ) : (
+        <CreatePollButton
+          onClick={() => {
+            if ((window as any).ethereum) {
+              activateBrowserWallet()
+            } else setSelectConnect(true)
+          }}
+        >
+          Connect to vote
+        </CreatePollButton>
+      )}
+      {selectConnect && (
+        <Modal heading="Connect" setShowModal={setSelectConnect}>
+          <Networks />
+        </Modal>
+      )}
+
       <PollList wakuVoting={wakuVoting} signer={signer} />
     </Wrapper>
   )
@@ -61,7 +85,6 @@ const CreatePollButton = styled(Button)`
   font-weight: bold;
   font-size: 15px;
   line-height: 24px;
-  padding: 10px 125.5px;
   margin-bottom: 48px;
 
   &:not(:disabled):hover {
@@ -70,11 +93,6 @@ const CreatePollButton = styled(Button)`
 
   &:not(:disabled):active {
     background: #f4b77e;
-  }
-
-  &:disabled {
-    background: #888888;
-    filter: grayscale(1);
   }
 
   @media (max-width: 425px) {

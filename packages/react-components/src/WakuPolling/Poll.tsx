@@ -109,6 +109,7 @@ const PollTitle = styled.div`
   font-weight: bold;
   font-size: 22px;
   line-height: 24px;
+  word-break: break-all;
 `
 
 const PollAnswersWrapper = styled.div`
