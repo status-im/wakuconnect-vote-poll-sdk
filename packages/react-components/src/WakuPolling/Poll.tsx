@@ -8,6 +8,7 @@ import styled from 'styled-components'
 import { RadioGroup } from '../components/radioGroup'
 import { SmallButton } from '../components/misc/Buttons'
 import { PollResults } from './PollResults'
+import { useEthers } from '@usedapp/core'
 
 type PollProps = {
   poll: DetailedTimedPoll
@@ -16,6 +17,7 @@ type PollProps = {
 }
 
 export function Poll({ poll, wakuVoting, signer }: PollProps) {
+  const { account } = useEthers()
   const [selectedAnswer, setSelectedAnswer] = useState<number | undefined>(undefined)
   const [tokenAmount, setTokenAmount] = useState(0)
   const [address, setAddress] = useState('')
@@ -61,7 +63,7 @@ export function Poll({ poll, wakuVoting, signer }: PollProps) {
       </PollAnswersWrapper>
       {userInVoters < 0 && (
         <SmallButton
-          disabled={!signer}
+          disabled={!signer || !account}
           onClick={() => {
             if (wakuVoting && signer) {
               wakuVoting.sendTimedPollVote(

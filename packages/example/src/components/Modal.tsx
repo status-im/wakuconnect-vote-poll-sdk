@@ -1,6 +1,6 @@
 import React, { ReactNode, useEffect } from 'react'
 import styled from 'styled-components'
-import closeButton from '../assets/svg/close.svg'
+import closeButton from '../assets/images/close.svg'
 
 type ModalProps = {
   heading: string
