@@ -2,6 +2,7 @@ const path = require('path')
 const HtmlWebpackPlugin = require('html-webpack-plugin')
 const ForkTsCheckerWebpackPlugin = require('fork-ts-checker-webpack-plugin')
 const webpack = require('webpack')
+const { ESBuildMinifyPlugin } = require('esbuild-loader')
 
 module.exports = (env) => {
     let environment = 'development'
@@ -30,8 +31,12 @@ module.exports = (env) => {
             rules: [
                 {
                     test: /\.tsx?$/,
-                    use: 'ts-loader',
+                    loader: 'esbuild-loader',
                     exclude: /node_modules/,
+                    options: {
+                        loader: 'tsx',
+                        target: 'es2018',
+                    },
                 },
                 {
                     enforce: 'pre',
@@ -45,6 +50,13 @@ module.exports = (env) => {
                 },
             ],
         },
+        optimization: {
+            minimizer: [
+              new ESBuildMinifyPlugin({
+                target: 'es2018',
+              }),
+            ],
+          },
         plugins: [
             new ForkTsCheckerWebpackPlugin(),
             new HtmlWebpackPlugin({

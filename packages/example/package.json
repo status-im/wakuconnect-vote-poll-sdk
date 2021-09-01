@@ -1,6 +1,6 @@
 {
   "name": "@status-waku-voting/example",
-  "version": "1.0.0",
+  "version": "0.1.0",
   "main": "index.js",
   "license": "MIT",
   "scripts": {
@@ -13,7 +13,7 @@
     "lint:prettier": "yarn prettier './{src,test}/**/*.{ts,tsx}'"
   },
   "dependencies": {
-    "@status-waku-voting/react-components": "link:../react-components",
+    "@status-waku-voting/react-components": "^0.1.0",
     "@usedapp/core": "^0.4.6",
     "assert": "^2.0.0",
     "buffer": "^6.0.3",
@@ -38,6 +38,7 @@
     "@typescript-eslint/eslint-plugin": "^4.29.0",
     "@typescript-eslint/parser": "^4.29.0",
     "chai": "^4.3.4",
+    "esbuild-loader": "^2.15.1",
     "eslint": "^7.32.0",
     "eslint-plugin-hooks": "^0.2.0",
     "eslint-plugin-react": "^7.24.0",
