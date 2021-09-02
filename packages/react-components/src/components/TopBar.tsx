@@ -1,14 +1,19 @@
 import React, { useState } from 'react'
 import styled from 'styled-components'
 import { useEthers, shortenAddress } from '@usedapp/core'
-import { Modal, metamaskIcon, statusIcon, dappIcon } from '@status-waku-voting/react-components'
+import metamaskIcon from '../assets/svg/metamask.svg'
+import statusIcon from '../assets/svg/status.svg'
+import dappIcon from '../assets/svg/dapp.svg'
+import { Modal } from './Modal'
+import { ConnectButton, Account, ButtonDisconnect } from './misc/Buttons'
 
 type TopBarProps = {
   logo: string
   title: string
+  theme: string
 }
 
-export function TopBar({ logo, title }: TopBarProps) {
+export function TopBar({ logo, title, theme }: TopBarProps) {
   const { activateBrowserWallet, deactivate, account } = useEthers()
   const [isOpened, setIsOpened] = useState(false)
   const [selectConnect, setSelectConnect] = useState(false)
@@ -25,6 +30,7 @@ export function TopBar({ logo, title }: TopBarProps) {
         {account ? (
           <AccountWrap>
             <Account
+              theme={theme}
               onClick={(e) => {
                 e.stopPropagation()
                 setIsOpened(!isOpened)
@@ -38,7 +44,8 @@ export function TopBar({ logo, title }: TopBarProps) {
             </ButtonDisconnect>
           </AccountWrap>
         ) : (
-          <Button
+          <ConnectButton
+            theme={theme}
             onClick={() => {
               if ((window as any).ethereum) {
                 activateBrowserWallet()
@@ -46,7 +53,7 @@ export function TopBar({ logo, title }: TopBarProps) {
             }}
           >
             Connect
-          </Button>
+          </ConnectButton>
         )}
       </ContentWrapper>
 
@@ -74,24 +81,6 @@ const AccountWrap = styled.div`
   position: relative;
 `
 
-const Account = styled.button`
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  background: #ffffff;
-  border: 1px solid #eef2f5;
-  box-sizing: border-box;
-  border-radius: 21px;
-  padding: 11px 12px 11px 17px;
-  font-weight: 500;
-  font-size: 13px;
-  line-height: 22px;
-
-  &:hover {
-    border: 1px solid #ffb571;
-  }
-`
-
 const TitleWrapper = styled.div`
   display: flex;
   flex-direction: column;
@@ -102,73 +91,6 @@ const TitleWrapper = styled.div`
   font-weight: 600;
   font-size: 20px;
   line-height: 17px;
-`
-
-const Button = styled.button`
-  padding: 10px 28px;
-  background-color: #ffb571;
-  color: #ffffff;
-  font-weight: bold;
-  font-size: 15px;
-  line-height: 24px;
-  border-radius: 8px;
-  border: 0px;
-  outline: none;
-
-  &:not(:disabled):hover {
-    background: #a53607;
-  }
-
-  &:not(:disabled):active {
-    background: #f4b77e;
-  }
-
-  &:disabled {
-    background: #888888;
-    filter: grayscale(1);
-  }
-
-  @media (max-width: 600px) {
-    padding: 3px 28px;
-  }
-`
-
-const ButtonDisconnect = styled.button`
-  position: absolute;
-  top: calc(100% + 4px);
-  right: 0;
-  opacity: 0;
-  visibility: hidden;
-  pointer-events: none;
-  font-weight: 500;
-  font-size: 15px;
-  line-height: 22px;
-  text-align: center;
-  padding: 15px 32px;
-  color: #a53607;
-  background: #ffffff;
-  border: 1px solid #eef2f5;
-  border-radius: 16px 4px 16px 16px;
-  box-shadow: 0px 2px 16px rgba(0, 9, 26, 0.12);
-  transition: all 0.3s;
-  outline: none;
-
-  &:hover {
-    background: #a53607;
-    color: #ffffff;
-  }
-
-  &:active {
-    background: #f4b77e;
-    color: #ffffff;
-  }
-
-  &.opened {
-    opacity: 1;
-    visibility: visible;
-    pointer-events: auto;
-    z-index: 10;
-  }
 `
 
 const Logo = styled.div`

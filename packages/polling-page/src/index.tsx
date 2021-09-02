@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from 'react'
-import styled, { createGlobalStyle } from 'styled-components'
+import styled from 'styled-components'
 import { DAppProvider, ChainId } from '@usedapp/core'
 import { DEFAULT_CONFIG } from '@usedapp/core/dist/cjs/src/model/config/default'
 import { WakuPolling } from './components/WakuPolling'
-import { TopBar } from './components/TopBar'
+import { TopBar, GlobalStyle } from '@status-waku-voting/react-components'
 import pollingIcon from './assets/images/pollingIcon.svg'
 import { JsonRpcSigner } from '@ethersproject/providers'
 import { useEthers } from '@usedapp/core'
@@ -24,33 +24,6 @@ const config = {
   },
 }
 
-export const GlobalStyle = createGlobalStyle`
-  * {
-    box-sizing: border-box;
-  }
-
-  body, html, #root {
-    margin: 0;
-    width: 100%;
-    height: 100%;
-  }
-
-  html {
-    font-family: Inter;
-    font-style: normal;
-  }
-
-  a, 
-  button {
-    cursor: pointer;
-  }
-`
-
-const Page = styled.div`
-  height: 100%;
-  width: 100%;
-`
-
 export function Polling() {
   const { account, library } = useEthers()
   const [signer, setSigner] = useState<undefined | JsonRpcSigner>(undefined)
@@ -61,16 +34,11 @@ export function Polling() {
 
   return (
     <Wrapper>
-      <TopBar logo={pollingIcon} title={'Polling Dapp'} />
+      <TopBar logo={pollingIcon} title={'Polling Dapp'} theme={'orange'} />
       <WakuPolling appName={'testApp_'} signer={signer} />
     </Wrapper>
   )
 }
-
-const Wrapper = styled.div`
-  height: 100%;
-  width: 100%;
-`
 
 export function PollingPage() {
   return (
@@ -82,3 +50,13 @@ export function PollingPage() {
     </Page>
   )
 }
+
+const Page = styled.div`
+  height: 100%;
+  width: 100%;
+`
+
+const Wrapper = styled.div`
+  height: 100%;
+  width: 100%;
+`
