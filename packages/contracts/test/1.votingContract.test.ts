@@ -94,7 +94,9 @@ async function fixture([alice, firstAddress, secondAddress]: any[], provider: an
   await provider.send('evm_mine', [Math.floor(Date.now() / 1000)])
   return { contract, alice, firstAddress, secondAddress, provider }
 }
-before(async () => {
+
+before(async function () {
+  this.timeout(10000)
   const { contract } = await loadFixture(fixture)
   typedData.domain.chainId = 1
   typedData.domain.verifyingContract = contract.address
