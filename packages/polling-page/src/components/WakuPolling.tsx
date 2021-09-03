@@ -18,7 +18,7 @@ export function WakuPolling({ appName, signer, theme }: WakuPollingProps) {
   const { activateBrowserWallet, account } = useEthers()
   const [showPollCreation, setShowPollCreation] = useState(false)
   const [selectConnect, setSelectConnect] = useState(false)
-  const wakuPolling = useWakuPolling(appName, '0x01')
+  const wakuPolling = useWakuPolling(appName, '0x80ee48b5ba5c3ea556b7ff6d850d2fb2c4bc7412')
   return (
     <Wrapper>
       {showPollCreation && signer && (

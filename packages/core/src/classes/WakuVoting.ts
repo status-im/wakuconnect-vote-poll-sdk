@@ -30,12 +30,6 @@ export class WakuVoting {
     this.chainId = chainId
   }
 
-  public static async create(appName: string, tokenAddress: string, provider: Provider, waku?: Waku) {
-    const network = await provider.getNetwork()
-    const wakuVoting = new WakuVoting(appName, tokenAddress, await createWaku(waku), provider, network.chainId)
-    return wakuVoting
-  }
-
   public cleanUp() {
     this.observers.forEach((observer) => this.waku.relay.deleteObserver(observer.callback, observer.topics))
     this.wakuMessages = {}
