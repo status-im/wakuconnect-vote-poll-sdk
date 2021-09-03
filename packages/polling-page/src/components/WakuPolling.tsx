@@ -5,14 +5,16 @@ import styled from 'styled-components'
 import { PollList, PollCreation } from '@status-waku-voting/polling-components'
 import { JsonRpcSigner } from '@ethersproject/providers'
 import { useWakuPolling } from '@status-waku-voting/polling-hooks'
-import { Modal, Networks, Button } from '@status-waku-voting/react-components'
+import { Modal, Networks, CreateButton } from '@status-waku-voting/react-components'
+import { Theme } from '@status-waku-voting/react-components/dist/esm/src/style/themes'
 
 type WakuPollingProps = {
   appName: string
   signer: JsonRpcSigner | undefined
+  theme: Theme
 }
 
-export function WakuPolling({ appName, signer }: WakuPollingProps) {
+export function WakuPolling({ appName, signer, theme }: WakuPollingProps) {
   const { activateBrowserWallet, account } = useEthers()
   const [showPollCreation, setShowPollCreation] = useState(false)
   const [selectConnect, setSelectConnect] = useState(false)
@@ -23,11 +25,12 @@ export function WakuPolling({ appName, signer }: WakuPollingProps) {
         <PollCreation signer={signer} wakuPolling={wakuPolling} setShowPollCreation={setShowPollCreation} />
       )}
       {account ? (
-        <CreatePollButton disabled={!signer} onClick={() => setShowPollCreation(true)}>
+        <CreateButton theme={theme} disabled={!signer} onClick={() => setShowPollCreation(true)}>
           Create a poll
-        </CreatePollButton>
+        </CreateButton>
       ) : (
-        <CreatePollButton
+        <CreateButton
+          theme={theme}
           onClick={() => {
             if ((window as any).ethereum) {
               activateBrowserWallet()
@@ -35,7 +38,7 @@ export function WakuPolling({ appName, signer }: WakuPollingProps) {
           }}
         >
           Connect to vote
-        </CreatePollButton>
+        </CreateButton>
       )}
       {selectConnect && (
         <Modal heading="Connect" setShowModal={setSelectConnect}>
@@ -47,30 +50,6 @@ export function WakuPolling({ appName, signer }: WakuPollingProps) {
     </Wrapper>
   )
 }
-
-const CreatePollButton = styled(Button)`
-  width: 343px;
-  background-color: #ffb571;
-  color: #ffffff;
-  font-weight: bold;
-  font-size: 15px;
-  line-height: 24px;
-  margin-bottom: 48px;
-  &:not(:disabled):hover {
-    background: #a53607;
-  }
-  &:not(:disabled):active {
-    background: #f4b77e;
-  }
-  @media (max-width: 425px) {
-    position: fixed;
-    bottom: 0;
-    z-index: 10;
-    margin-bottom: 16px;
-    width: calc(100% - 32px);
-    padding: 0;
-  }
-`
 
 const Wrapper = styled.div`
   display: flex;

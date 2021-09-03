@@ -42,7 +42,7 @@ export function Polling() {
         account={account}
         deactivate={deactivate}
       />
-      <WakuPolling appName={'testApp_'} signer={signer} />
+      <WakuPolling theme={orangeTheme} appName={'testApp_'} signer={signer} />
     </Wrapper>
   )
 }

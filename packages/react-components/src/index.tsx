@@ -3,7 +3,7 @@ import { Input } from './components/Input'
 import { Networks } from './components/Networks'
 import { TopBar } from './components/TopBar'
 import { RadioGroup } from './components/radioGroup'
-import { Button, SmallButton, ConnectButton, ButtonDisconnect, Account } from './components/misc/Buttons'
+import { Button, SmallButton, ConnectButton, CreateButton, ButtonDisconnect, Account } from './components/misc/Buttons'
 import { colorRouletteGenerator } from './style/colors'
 import { GlobalStyle } from './style/GlobalStyle'
 import checkCircleIcon from './assets/svg/checkCircle.svg'
@@ -23,6 +23,7 @@ export {
   Button,
   SmallButton,
   ConnectButton,
+  CreateButton,
   ButtonDisconnect,
   Account,
   colorRouletteGenerator,

@@ -1,5 +1,6 @@
 import styled, { css } from 'styled-components'
 import { Theme } from '../../style/themes'
+
 export const Button = styled.button`
   height: 44px;
   border-radius: 8px;
@@ -58,6 +59,35 @@ export const ConnectButton = styled(Button)<ConnectButtonProps>`
 
   &:not(:disabled):active {
     background: ${({ theme }) => theme.activeBackgroundColor};
+  }
+`
+interface CreateButtonProps {
+  theme: Theme
+}
+
+export const CreateButton = styled(Button)<CreateButtonProps>`
+  width: 343px;
+  background-color: ${({ theme }) => theme.primaryColor};
+  color: #ffffff;
+  font-weight: bold;
+  font-size: 15px;
+  line-height: 24px;
+  margin-bottom: 48px;
+
+  &:not(:disabled):hover {
+    background: ${({ theme }) => theme.secondaryColor};
+  }
+  &:not(:disabled):active {
+    background: ${({ theme }) => theme.activeBackgroundColor};
+  }
+
+  @media (max-width: 425px) {
+    position: fixed;
+    bottom: 0;
+    z-index: 10;
+    margin-bottom: 16px;
+    width: calc(100% - 32px);
+    padding: 0;
   }
 `
 

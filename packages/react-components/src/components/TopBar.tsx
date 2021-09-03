@@ -20,7 +20,7 @@ export function TopBar({ logo, title, theme, activate, deactivate, account }: To
   const [selectConnect, setSelectConnect] = useState(false)
 
   return (
-    <Wrapper>
+    <Wrapper theme={theme}>
       <ContentWrapper>
         <Logo style={{ backgroundImage: `url(${logo})` }} />
         <TitleWrapper>
@@ -95,7 +95,11 @@ const Logo = styled.div`
   width: 32px;
 `
 
-const Wrapper = styled.div`
+interface WrapperProps {
+  theme: Theme
+}
+
+const Wrapper = styled.div<WrapperProps>`
   display: flex;
   height: 96px;
   width: 100%;
@@ -105,6 +109,10 @@ const Wrapper = styled.div`
 
   @media (max-width: 600px) {
     height: 64px;
+  }
+
+  @media (max-width: 425px) {
+    background-color: ${({ theme }) => theme.backgroundColor};
   }
 `
 const ContentWrapper = styled.div`
