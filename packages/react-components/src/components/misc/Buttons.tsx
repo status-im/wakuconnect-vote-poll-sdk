@@ -1,5 +1,5 @@
 import styled, { css } from 'styled-components'
-
+import { Theme } from '../../style/themes'
 export const Button = styled.button`
   height: 44px;
   border-radius: 8px;
@@ -31,31 +31,8 @@ export const SmallButton = styled(Button)`
   }
 `
 
-const orangeStyles = css`
-  background-color: #ffb571;
-
-  &:not(:disabled):hover {
-    background: #a53607;
-  }
-
-  &:not(:disabled):active {
-    background: #f4b77e;
-  }
-`
-
-const blueStyles = css`
-  background-color: #5d7be2;
-
-  &:not(:disabled):hover {
-    background: #0f3595;
-  }
-
-  &:not(:disabled):active {
-    background: #7e98f4;
-  }
-`
 interface ConnectButtonProps {
-  theme: string
+  theme: Theme
 }
 
 export const ConnectButton = styled(Button)<ConnectButtonProps>`
@@ -73,24 +50,19 @@ export const ConnectButton = styled(Button)<ConnectButtonProps>`
     padding: 3px 28px;
   }
 
-  ${({ theme }) => theme === 'orange' && orangeStyles};
-  ${({ theme }) => theme === 'blue' && blueStyles};
-`
+  background-color: ${({ theme }) => theme.primaryColor};
 
-const orangeAccountStyles = css`
-  &:hover {
-    border: 1px solid #ffb571;
+  &:not(:disabled):hover {
+    background: ${({ theme }) => theme.secondaryColor};
   }
-`
 
-const blueAccountStyles = css`
-  &:hover {
-    border: 1px solid #5d7be2;
+  &:not(:disabled):active {
+    background: ${({ theme }) => theme.activeBackgroundColor};
   }
 `
 
 interface AccountProps {
-  theme: string
+  theme: Theme
 }
 
 export const Account = styled.button<AccountProps>`
@@ -106,36 +78,13 @@ export const Account = styled.button<AccountProps>`
   font-size: 13px;
   line-height: 22px;
 
-  ${({ theme }) => theme === 'orange' && orangeAccountStyles};
-  ${({ theme }) => theme === 'blue' && blueAccountStyles};
-`
-
-const orangeDisconnectStyles = css`
   &:hover {
-    background: #a53607;
-    color: #ffffff;
-  }
-
-  &:active {
-    background: #f4b77e;
-    color: #ffffff;
-  }
-`
-
-const blueDisconnectStyles = css`
-  &:hover {
-    background: #0f3595;
-    color: #ffffff;
-  }
-
-  &:active {
-    background: #f4b77e;
-    color: #7e98f4;
+    border: 1px solid ${({ theme }) => theme.primaryColor};
   }
 `
 
 interface DisconnectProps {
-  theme: string
+  theme: Theme
 }
 
 export const ButtonDisconnect = styled.button<DisconnectProps>`
@@ -150,7 +99,7 @@ export const ButtonDisconnect = styled.button<DisconnectProps>`
   line-height: 22px;
   text-align: center;
   padding: 15px 32px;
-  color: #a53607;
+  color: ${({ theme }) => theme.secondaryColor};
   background: #ffffff;
   border: 1px solid #eef2f5;
   border-radius: 16px 4px 16px 16px;
@@ -165,6 +114,13 @@ export const ButtonDisconnect = styled.button<DisconnectProps>`
     z-index: 10;
   }
 
-  ${({ theme }) => theme === 'orange' && orangeDisconnectStyles};
-  ${({ theme }) => theme === 'blue' && blueDisconnectStyles};
+  &:hover {
+    background: ${({ theme }) => theme.secondaryColor};
+    color: #ffffff;
+  }
+
+  &:active {
+    background: #f4b77e;
+    color: ${({ theme }) => theme.activeTextColor};
+  }
 `

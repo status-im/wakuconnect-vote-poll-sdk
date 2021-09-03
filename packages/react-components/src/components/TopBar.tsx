@@ -4,11 +4,12 @@ import { useEthers, shortenAddress } from '@usedapp/core'
 import { Modal } from './Modal'
 import { ConnectButton, Account, ButtonDisconnect } from './misc/Buttons'
 import { Networks } from './Networks'
+import { Theme } from '../style/themes'
 
 type TopBarProps = {
   logo: string
   title: string
-  theme: string
+  theme: Theme
 }
 
 export function TopBar({ logo, title, theme }: TopBarProps) {
@@ -37,7 +38,7 @@ export function TopBar({ logo, title, theme }: TopBarProps) {
               <GreenDot />
               <>{shortenAddress(account)}</>
             </Account>
-            <ButtonDisconnect className={isOpened ? 'opened' : undefined} onClick={() => deactivate()}>
+            <ButtonDisconnect theme={theme} className={isOpened ? 'opened' : undefined} onClick={() => deactivate()}>
               Disconnect
             </ButtonDisconnect>
           </AccountWrap>

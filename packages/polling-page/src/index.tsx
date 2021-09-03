@@ -7,6 +7,7 @@ import { TopBar, GlobalStyle } from '@status-waku-voting/react-components'
 import pollingIcon from './assets/images/pollingIcon.svg'
 import { JsonRpcSigner } from '@ethersproject/providers'
 import { useEthers } from '@usedapp/core'
+import { orangeTheme } from '@status-waku-voting/react-components/dist/esm/src/style/themes'
 
 const config = {
   readOnlyChainId: ChainId.Ropsten,
@@ -34,7 +35,7 @@ export function Polling() {
 
   return (
     <Wrapper>
-      <TopBar logo={pollingIcon} title={'Polling Dapp'} theme={'orange'} />
+      <TopBar logo={pollingIcon} title={'Polling Dapp'} theme={orangeTheme} />
       <WakuPolling appName={'testApp_'} signer={signer} />
     </Wrapper>
   )

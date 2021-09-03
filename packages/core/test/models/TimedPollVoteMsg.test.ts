@@ -16,7 +16,6 @@ describe('TimedPollVoteMsg', () => {
         pollId,
         0
       )
-      console.log(alice.address)
 
       if (vote) {
         expect(vote.voter).to.eq(alice.address)

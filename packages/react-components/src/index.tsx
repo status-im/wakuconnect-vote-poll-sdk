@@ -13,7 +13,7 @@ import closeIcon from './assets/svg/close.svg'
 import dappIcon from './assets/svg/dapp.svg'
 import metamaskIcon from './assets/metamask.png'
 import statusIcon from './assets/svg/status.svg'
-
+import themes, { Theme } from './style/themes'
 export {
   Modal,
   Input,
@@ -34,4 +34,6 @@ export {
   dappIcon,
   metamaskIcon,
   statusIcon,
+  themes,
+  Theme,
 }
