@@ -3,7 +3,6 @@ import { JsonRpcSigner } from '@ethersproject/providers'
 import protons, { TimedPollVote } from 'protons'
 import { Wallet } from 'ethers'
 import { createSignedMsg } from '../utils/createSignedMsg'
-import { recoverTypedSignature_v4 } from 'eth-sig-util'
 import { verifySignature } from '../utils/verifySignature'
 
 const proto = protons(`

@@ -3,7 +3,6 @@ import { BigNumber, utils, Wallet } from 'ethers'
 import { JsonRpcSigner } from '@ethersproject/providers'
 import protons, { PollInit } from 'protons'
 import { createSignedMsg } from '../utils/createSignedMsg'
-import { recoverTypedSignature_v4 } from 'eth-sig-util'
 import { verifySignature } from '../utils/verifySignature'
 
 const proto = protons(`
