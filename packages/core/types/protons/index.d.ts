@@ -15,7 +15,7 @@ declare module 'protons' {
     }
 
     export type TimedPollVote = {
-        id: Uint8Array
+        pollId: Uint8Array
         voter: Uint8Array
         timestamp: number
         answer: number
@@ -26,11 +26,11 @@ declare module 'protons' {
     function protons(init: string): {
         PollInit: {
             encode: (pollInit: PollInit) => Uint8Array,
-            decode: (payload: Uint8Array) => PollInit
+            decode: (payload: Uint8Array | undefined) => PollInit
         }
         TimedPollVote:{
             encode: (timedPollVote: TimedPollVote) => Uint8Array,
-            decode: (payload: Uint8Array) => TimedPollVote
+            decode: (payload: Uint8Array | undefined) => TimedPollVote
         }
     }
     export = protons

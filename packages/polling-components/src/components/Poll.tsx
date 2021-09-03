@@ -1,4 +1,4 @@
-import WakuVoting from '@status-waku-voting/core'
+import { WakuPolling } from '@status-waku-voting/core'
 import { DetailedTimedPoll } from '@status-waku-voting/core/dist/esm/src/models/DetailedTimedPoll'
 import { Wallet, BigNumber } from 'ethers'
 import React, { useEffect, useState } from 'react'
@@ -11,11 +11,11 @@ import { useEthers } from '@usedapp/core'
 
 type PollProps = {
   poll: DetailedTimedPoll
-  wakuVoting: WakuVoting | undefined
+  wakuPolling: WakuPolling | undefined
   signer: Wallet | JsonRpcSigner | undefined
 }
 
-export function Poll({ poll, wakuVoting, signer }: PollProps) {
+export function Poll({ poll, wakuPolling, signer }: PollProps) {
   const { account } = useEthers()
   const [selectedAnswer, setSelectedAnswer] = useState<number | undefined>(undefined)
   const [tokenAmount, setTokenAmount] = useState(0)
@@ -64,8 +64,8 @@ export function Poll({ poll, wakuVoting, signer }: PollProps) {
         <SmallButton
           disabled={!signer || !account}
           onClick={() => {
-            if (wakuVoting && signer) {
-              wakuVoting.sendTimedPollVote(
+            if (wakuPolling && signer) {
+              wakuPolling.sendTimedPollVote(
                 signer,
                 poll.poll.id,
                 selectedAnswer ?? 0,

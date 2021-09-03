@@ -3,7 +3,7 @@ import { Wallet } from 'ethers'
 import { JsonRpcSigner } from '@ethersproject/providers'
 import styled from 'styled-components'
 import { PollType } from '@status-waku-voting/core/dist/esm/src/types/PollType'
-import WakuVoting from '@status-waku-voting/core'
+import { WakuPolling } from '@status-waku-voting/core'
 import { Input, addIcon, SmallButton, Modal } from '@status-waku-voting/react-components'
 
 function getLocaleIsoTime(dateTime: Date) {
@@ -15,11 +15,11 @@ function getLocaleIsoTime(dateTime: Date) {
 
 type PollCreationProps = {
   signer: JsonRpcSigner | Wallet
-  wakuVoting: WakuVoting | undefined
+  wakuPolling: WakuPolling | undefined
   setShowPollCreation: (val: boolean) => void
 }
 
-export function PollCreation({ signer, wakuVoting, setShowPollCreation }: PollCreationProps) {
+export function PollCreation({ signer, wakuPolling, setShowPollCreation }: PollCreationProps) {
   const [answers, setAnswers] = useState<string[]>(['', ''])
   const [question, setQuestion] = useState('')
   const [showCreateConfirmation, setShowCreateConfirmation] = useState(false)
@@ -65,7 +65,7 @@ export function PollCreation({ signer, wakuVoting, setShowPollCreation }: PollCr
             <SmallButton
               onClick={async (e) => {
                 e.preventDefault()
-                await wakuVoting?.createTimedPoll(
+                await wakuPolling?.createTimedPoll(
                   signer,
                   question,
                   answers,

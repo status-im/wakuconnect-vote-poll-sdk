@@ -1,6 +1,6 @@
 import { expect } from 'chai'
 import { Waku } from 'js-waku'
-import WakuVoting from '../src'
+import { WakuVoting } from '../src'
 
 describe('WakuVoting', () => {
   it('success', async () => {

@@ -4,7 +4,7 @@ import { useEthers } from '@usedapp/core'
 import styled from 'styled-components'
 import { PollList, PollCreation } from '@status-waku-voting/polling-components'
 import { JsonRpcSigner } from '@ethersproject/providers'
-import { useWakuVoting } from '@status-waku-voting/polling-hooks'
+import { useWakuPolling } from '@status-waku-voting/polling-hooks'
 import { Modal, Networks, Button } from '@status-waku-voting/react-components'
 
 type WakuPollingProps = {
@@ -16,11 +16,11 @@ export function WakuPolling({ appName, signer }: WakuPollingProps) {
   const { activateBrowserWallet, account } = useEthers()
   const [showPollCreation, setShowPollCreation] = useState(false)
   const [selectConnect, setSelectConnect] = useState(false)
-  const wakuVoting = useWakuVoting(appName, '0x01')
+  const wakuPolling = useWakuPolling(appName, '0x01')
   return (
     <Wrapper>
       {showPollCreation && signer && (
-        <PollCreation signer={signer} wakuVoting={wakuVoting} setShowPollCreation={setShowPollCreation} />
+        <PollCreation signer={signer} wakuPolling={wakuPolling} setShowPollCreation={setShowPollCreation} />
       )}
       {account ? (
         <CreatePollButton disabled={!signer} onClick={() => setShowPollCreation(true)}>
@@ -43,7 +43,7 @@ export function WakuPolling({ appName, signer }: WakuPollingProps) {
         </Modal>
       )}
 
-      <PollList wakuVoting={wakuVoting} signer={signer} />
+      <PollList wakuPolling={wakuPolling} signer={signer} />
     </Wrapper>
   )
 }

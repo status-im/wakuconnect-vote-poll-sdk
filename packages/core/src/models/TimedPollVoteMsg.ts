@@ -1,11 +1,24 @@
 import { BigNumber, utils } from 'ethers'
 import { JsonRpcSigner } from '@ethersproject/providers'
-import { TimedPollVote } from 'protons'
+import protons, { TimedPollVote } from 'protons'
 import { Wallet } from 'ethers'
 import { createSignedMsg } from '../utils/createSignedMsg'
+import { recoverTypedSignature_v4 } from 'eth-sig-util'
+import { verifySignature } from '../utils/verifySignature'
+
+const proto = protons(`
+message TimedPollVote {
+    bytes pollId = 1; // id of a poll
+    bytes voter = 2; // Address of a voter
+    int64 timestamp = 3; // Timestamp of a waku message
+    int64 answer = 4; // specified poll answer
+    optional bytes tokenAmount = 5; // amount of token used for WEIGHTED voting
+    bytes signature = 6; // signature of all above fields
+}
+`)
 
 type Message = {
-  id: string
+  pollId: string
   voter: string
   timestamp: number
   answer: number
@@ -29,7 +42,7 @@ export function createSignMsgParams(message: Message) {
         { name: 'version', type: 'string' },
       ],
       Mail: [
-        { name: 'id', type: 'string' },
+        { name: 'pollId', type: 'string' },
         { name: 'voter', type: 'string' },
         { name: 'timestamp', type: 'string' },
         { name: 'answer', type: 'string' },
@@ -45,20 +58,21 @@ export function createSignMsgParams(message: Message) {
 }
 
 export class TimedPollVoteMsg {
-  public id: string
+  public pollId: string
   public voter: string
   public timestamp: number
   public answer: number
   public tokenAmount?: BigNumber
   public signature: string
+  public id: string
 
   constructor(signature: string, msg: Message) {
-    this.id = msg.id
+    this.id = utils.id([msg.voter, msg.timestamp, signature].join())
+    this.pollId = msg.pollId
     this.voter = msg.voter
     this.timestamp = msg.timestamp
     this.answer = msg.answer
     this.tokenAmount = msg.tokenAmount
-
     this.signature = signature
   }
 
@@ -69,45 +83,70 @@ export class TimedPollVoteMsg {
       Class: new (sig: string, msg: any) => TimedPollVoteMsg
     ) => Promise<TimedPollVoteMsg | undefined>,
     signer: JsonRpcSigner | Wallet,
-    id: string,
+    pollId: string,
     answer: number,
     tokenAmount?: BigNumber
   ): Promise<TimedPollVoteMsg | undefined> {
     const voter = await signer.getAddress()
-    const msg = { id, voter, timestamp: Date.now(), answer, tokenAmount }
+    const msg = { pollId, voter, timestamp: Date.now(), answer, tokenAmount }
     const params = [msg.voter, JSON.stringify(createSignMsgParams(msg))]
-
     return signFunction(msg, params, TimedPollVoteMsg)
   }
   static async create(
     signer: JsonRpcSigner | Wallet,
-    id: string,
+    pollId: string,
     answer: number,
     tokenAmount?: BigNumber
   ): Promise<TimedPollVoteMsg | undefined> {
-    return this._createWithSignFunction(createSignedMsg(signer), signer, id, answer, tokenAmount)
+    return this._createWithSignFunction(createSignedMsg(signer), signer, pollId, answer, tokenAmount)
   }
 
-  static fromProto(payload: TimedPollVote, recoverFunction: ({ data, sig }: { data: any; sig: string }) => string) {
-    const signature = utils.hexlify(payload.signature)
-
-    const msg = {
-      id: utils.hexlify(payload.id),
-      answer: payload.answer,
-      voter: utils.getAddress(utils.hexlify(payload.voter)),
-      timestamp: payload.timestamp,
-      tokenAmount: payload.tokenAmount ? BigNumber.from(payload.tokenAmount) : undefined,
-    }
-
-    const params = createSignMsgParams(msg)
-    const verifiedAddress = recoverFunction({
-      data: params,
-      sig: signature,
-    })
-    if (verifiedAddress != msg.voter) {
+  encode() {
+    try {
+      const voteProto: TimedPollVote = {
+        pollId: utils.arrayify(this.pollId),
+        voter: utils.arrayify(this.voter),
+        timestamp: this.timestamp,
+        answer: this.answer,
+        tokenAmount: this.tokenAmount ? utils.arrayify(this.tokenAmount) : undefined,
+        signature: utils.arrayify(this.signature),
+      }
+      return proto.TimedPollVote.encode(voteProto)
+    } catch {
       return undefined
     }
+  }
 
-    return new TimedPollVoteMsg(signature, msg)
+  static decode(
+    rawPayload: Uint8Array | undefined,
+    timestamp: Date | undefined,
+    verifyFunction?: (params: any, address: string) => boolean
+  ) {
+    try {
+      const payload = proto.TimedPollVote.decode(rawPayload)
+      if (!timestamp || !payload.timestamp || timestamp?.getTime() != payload.timestamp) {
+        return undefined
+      }
+      const signature = utils.hexlify(payload.signature)
+
+      const msg = {
+        pollId: utils.hexlify(payload.pollId),
+        answer: payload.answer,
+        voter: utils.getAddress(utils.hexlify(payload.voter)),
+        timestamp: payload.timestamp,
+        tokenAmount: payload.tokenAmount ? BigNumber.from(payload.tokenAmount) : undefined,
+      }
+
+      const params = {
+        data: createSignMsgParams(msg),
+        sig: signature,
+      }
+      if (verifyFunction ? !verifyFunction : !verifySignature(params, msg.voter)) {
+        return undefined
+      }
+      return new TimedPollVoteMsg(signature, msg)
+    } catch {
+      return undefined
+    }
   }
 }

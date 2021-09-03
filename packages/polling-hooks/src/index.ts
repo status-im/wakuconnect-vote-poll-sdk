@@ -1,3 +1,3 @@
-import { useWakuVoting } from './hooks/useWakuVoting'
+import { useWakuPolling } from './hooks/useWakuPolling'
 
-export { useWakuVoting }
+export { useWakuPolling }

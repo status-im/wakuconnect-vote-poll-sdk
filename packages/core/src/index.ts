@@ -3,63 +3,116 @@ import { JsonRpcSigner } from '@ethersproject/providers'
 import { PollInitMsg } from './models/PollInitMsg'
 import { PollType } from './types/PollType'
 import { BigNumber, Wallet } from 'ethers'
-import PollInit from './utils/proto/PollInit'
 import { WakuMessage, StoreCodec } from 'js-waku'
 import { TimedPollVoteMsg } from './models/TimedPollVoteMsg'
-import TimedPollVote from './utils/proto/TimedPollVote'
 import { DetailedTimedPoll } from './models/DetailedTimedPoll'
 import { isTruthy } from './utils'
+import { createWaku } from './utils/createWaku'
 
-function decodeWakuMessages<T>(
-  messages: WakuMessage[] | null | undefined,
-  decode: (payload: Uint8Array | undefined, timestamp: Date | undefined) => T | undefined
-) {
-  return messages?.map((msg) => decode(msg.payload, msg.timestamp)).filter(isTruthy) ?? []
+type WakuMessageStore = {
+  topic: string
+  hashMap: { [id: string]: boolean }
+  arr: any[]
+  updateFunction: (msg: WakuMessage[]) => void
 }
 
-async function receiveNewWakuMessages(lastTimestamp: number, topic: string, waku: Waku | undefined) {
-  const messages = await waku?.store.queryHistory([topic])
-
-  if (messages) {
-    messages.sort((a, b) => (a.timestamp && b.timestamp && a.timestamp?.getTime() < b.timestamp?.getTime() ? 1 : -1))
-    const lastMessageIndex = messages.findIndex((message) => message.timestamp?.getTime() === lastTimestamp)
-    const newMessages = lastMessageIndex === -1 ? messages : messages.slice(0, lastMessageIndex)
-    return newMessages
-  }
-  return []
+type WakuMessageStores = {
+  [messageType: string]: WakuMessageStore
 }
 
 class WakuVoting {
-  private appName: string
-  private waku: Waku | undefined
+  protected appName: string
+  protected waku: Waku
   public tokenAddress: string
-  private pollInitTopic: string
-  private timedPollVoteTopic: string
 
-  private timedPollInitMessages: PollInitMsg[] = []
-  private timedPollVotesMessages: TimedPollVoteMsg[] = []
-  private asyncUpdating = false
-
-  private constructor(appName: string, tokenAddress: string, waku: Waku) {
+  protected wakuMessages: WakuMessageStores = {}
+  protected observers: { callback: (msg: WakuMessage) => void; topics: string[] }[] = []
+  protected constructor(appName: string, tokenAddress: string, waku: Waku) {
     this.appName = appName
     this.tokenAddress = tokenAddress
-    this.pollInitTopic = `/${this.appName}/waku-polling/timed-polls-init/proto/`
-    this.timedPollVoteTopic = `/${this.appName}/waku-polling/votes/proto/`
     this.waku = waku
   }
 
   public static async create(appName: string, tokenAddress: string, waku?: Waku) {
-    if (!waku) {
-      waku = await Waku.create({ bootstrap: true })
-      await new Promise((resolve) => {
-        waku?.libp2p.peerStore.on('change:protocols', ({ protocols }) => {
-          if (protocols.includes(StoreCodec)) {
-            resolve('')
-          }
-        })
-      })
+    return new WakuVoting(appName, tokenAddress, await createWaku(waku))
+  }
+
+  public cleanUp() {
+    this.observers.forEach((observer) => this.waku.relay.deleteObserver(observer.callback, observer.topics))
+  }
+
+  protected async setObserver(msgObj: WakuMessageStore) {
+    const storeMessages = await this.waku?.store.queryHistory([msgObj.topic])
+    if (storeMessages) {
+      msgObj.updateFunction(storeMessages)
     }
-    return new WakuVoting(appName, tokenAddress, waku)
+    this.waku.relay.addObserver((msg) => msgObj.updateFunction([msg]), [msgObj.topic])
+    this.observers.push({ callback: (msg) => msgObj.updateFunction([msg]), topics: [msgObj.topic] })
+  }
+
+  protected decodeMsgAndSetArray<T extends { id: string; timestamp: number }>(
+    messages: WakuMessage[],
+    decode: (payload: Uint8Array | undefined, timestamp: Date | undefined) => T | undefined,
+    msgObj: WakuMessageStore,
+    filterFunction?: (e: T) => boolean
+  ) {
+    messages
+      .map((msg) => decode(msg.payload, msg.timestamp))
+      .sort((a, b) => ((a?.timestamp ?? new Date(0)) > (b?.timestamp ?? new Date(0)) ? 1 : -1))
+      .forEach((e) => {
+        if (e) {
+          if (filterFunction ? filterFunction(e) : true && !msgObj.hashMap?.[e.id]) {
+            msgObj.arr.unshift(e)
+            msgObj.hashMap[e.id] = true
+          }
+        }
+      })
+  }
+
+  protected async sendWakuMessage<T extends { encode: () => Uint8Array | undefined; timestamp: number }>(
+    msgObj: WakuMessageStore,
+    decodedMsg: T | undefined
+  ) {
+    const payload = decodedMsg?.encode()
+    if (payload && decodedMsg) {
+      const wakuMessage = await WakuMessage.fromBytes(payload, msgObj.topic, {
+        timestamp: new Date(decodedMsg.timestamp),
+      })
+      await this.waku?.relay.send(wakuMessage)
+      msgObj.updateFunction([wakuMessage])
+    }
+  }
+}
+
+class WakuPolling extends WakuVoting {
+  protected constructor(appName: string, tokenAddress: string, waku: Waku) {
+    super(appName, tokenAddress, waku)
+    this.wakuMessages['pollInit'] = {
+      topic: `/${this.appName}/waku-polling/timed-polls-init/proto/`,
+      hashMap: {},
+      arr: [],
+      updateFunction: (msg: WakuMessage[]) =>
+        this.decodeMsgAndSetArray(
+          msg,
+          PollInitMsg.decode,
+          this.wakuMessages['pollInit'],
+          (e) => e.endTime > Date.now()
+        ),
+    }
+    this.wakuMessages['pollVote'] = {
+      topic: `/${this.appName}/waku-polling/votes/proto/`,
+      hashMap: {},
+      arr: [],
+      updateFunction: (msg: WakuMessage[]) =>
+        this.decodeMsgAndSetArray(msg, TimedPollVoteMsg.decode, this.wakuMessages['pollVote']),
+    }
+  }
+
+  public static async create(appName: string, tokenAddress: string, waku?: Waku) {
+    const wakuPolling = new WakuPolling(appName, tokenAddress, await createWaku(waku))
+    wakuPolling.setObserver(wakuPolling.wakuMessages['pollInit'])
+    wakuPolling.setObserver(wakuPolling.wakuMessages['pollVote'])
+    return wakuPolling
   }
 
   public async createTimedPoll(
@@ -71,84 +124,28 @@ class WakuVoting {
     endTime?: number
   ) {
     const pollInit = await PollInitMsg.create(signer, question, answers, pollType, minToken, endTime)
-    if (pollInit) {
-      const payload = PollInit.encode(pollInit)
-      if (payload) {
-        const wakuMessage = await WakuMessage.fromBytes(payload, this.pollInitTopic, {
-          timestamp: new Date(pollInit.timestamp),
-        })
-        await this.waku?.relay.send(wakuMessage)
-      }
-    }
-  }
-
-  private async getTimedPolls() {
-    const lastTimestamp = this.timedPollInitMessages?.[0]?.timestamp ?? 0
-    let updated = false
-    const newMessages = await receiveNewWakuMessages(lastTimestamp, this.pollInitTopic, this.waku)
-    const newPollInitMessages = decodeWakuMessages(newMessages, PollInit.decode)
-    if (newPollInitMessages.length > 0) {
-      updated = true
-      this.timedPollInitMessages = [...newPollInitMessages, ...this.timedPollInitMessages]
-    }
-    const arrayLen = this.timedPollInitMessages.length
-    this.timedPollInitMessages = this.timedPollInitMessages.filter((e) => e.endTime > Date.now())
-    if (arrayLen != this.timedPollInitMessages.length) {
-      updated = true
-    }
-    return { polls: this.timedPollInitMessages, updatedPolls: updated }
+    await this.sendWakuMessage(this.wakuMessages['pollInit'], pollInit)
   }
 
   public async sendTimedPollVote(
     signer: JsonRpcSigner | Wallet,
-    id: string,
+    pollId: string,
     selectedAnswer: number,
     tokenAmount?: BigNumber
   ) {
-    const pollVote = await TimedPollVoteMsg.create(signer, id, selectedAnswer, tokenAmount)
-    if (pollVote) {
-      const payload = TimedPollVote.encode(pollVote)
-      if (payload) {
-        const wakuMessage = await WakuMessage.fromBytes(payload, this.timedPollVoteTopic, {
-          timestamp: new Date(pollVote.timestamp),
-        })
-        await this.waku?.relay.send(wakuMessage)
-      }
-    }
-  }
-
-  private async getTimedPollsVotes() {
-    const lastTimestamp = this.timedPollVotesMessages?.[0]?.timestamp ?? 0
-    let updated = false
-    const newMessages = await receiveNewWakuMessages(lastTimestamp, this.timedPollVoteTopic, this.waku)
-    const newVoteMessages = decodeWakuMessages(newMessages, TimedPollVote.decode)
-    if (newVoteMessages.length > 0) {
-      updated = true
-      this.timedPollVotesMessages = [...newVoteMessages, ...this.timedPollVotesMessages]
-    }
-    return { votes: this.timedPollVotesMessages, updatedVotes: updated }
+    const pollVote = await TimedPollVoteMsg.create(signer, pollId, selectedAnswer, tokenAmount)
+    await this.sendWakuMessage(this.wakuMessages['pollVote'], pollVote)
   }
 
   public async getDetailedTimedPolls() {
-    let updated = false
-    if (!this.asyncUpdating) {
-      this.asyncUpdating = true
-      const { updatedPolls } = await this.getTimedPolls()
-      const { updatedVotes } = await this.getTimedPollsVotes()
-      updated = updatedPolls || updatedVotes
-      this.asyncUpdating = false
-    }
-    return {
-      DetailedTimedPolls: this.timedPollInitMessages.map(
-        (poll) =>
-          new DetailedTimedPoll(
-            poll,
-            this.timedPollVotesMessages.filter((vote) => vote.id === poll.id)
-          )
-      ),
-      updated,
-    }
+    return this.wakuMessages['pollInit'].arr.map(
+      (poll) =>
+        new DetailedTimedPoll(
+          poll,
+          this.wakuMessages['pollVote'].arr.filter((vote) => vote.pollId === poll.id)
+        )
+    )
   }
 }
 
-export default WakuVoting
+export { WakuVoting, WakuPolling }

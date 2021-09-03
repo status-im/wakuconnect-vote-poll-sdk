@@ -7,40 +7,91 @@ describe('TimedPollVoteMsg', () => {
   const provider = new MockProvider()
   const [alice] = provider.getWallets()
   const pollId = '0x14c336ef626274f156d094fc1d7ffad2bbc83cccc9817598dd55e42a86b56b72'
-  it('success', async () => {
-    const poll = await TimedPollVoteMsg._createWithSignFunction(
-      async (e) => new TimedPollVoteMsg('0x01', e),
-      alice,
-      pollId,
-      0
-    )
 
-    expect(poll).to.not.be.undefined
-    if (poll) {
-      expect(poll.voter).to.eq(alice.address)
-      expect(poll.answer).to.eq(0)
-      expect(poll.id).to.be.eq(pollId)
-      expect(poll.tokenAmount).to.be.undefined
-      expect(poll.signature).to.eq('0x01')
-    }
+  describe('create', () => {
+    it('success', async () => {
+      const vote = await TimedPollVoteMsg._createWithSignFunction(
+        async (e) => new TimedPollVoteMsg('0x01', e),
+        alice,
+        pollId,
+        0
+      )
+      console.log(alice.address)
+
+      if (vote) {
+        expect(vote.voter).to.eq(alice.address)
+        expect(vote.answer).to.eq(0)
+        expect(vote.pollId).to.be.eq(pollId)
+        expect(vote.tokenAmount).to.be.undefined
+        expect(vote.signature).to.eq('0x01')
+      }
+    })
+
+    it('success token amount', async () => {
+      const vote = await TimedPollVoteMsg._createWithSignFunction(
+        async (e) => new TimedPollVoteMsg('0x01', e),
+        alice,
+        pollId,
+        1,
+        BigNumber.from(100)
+      )
+
+      expect(vote).to.not.be.undefined
+      if (vote) {
+        expect(vote.voter).to.eq(alice.address)
+        expect(vote.answer).to.eq(1)
+        expect(vote.pollId).to.be.eq(pollId)
+        expect(vote.tokenAmount).to.deep.eq(BigNumber.from(100))
+        expect(vote.signature).to.eq('0x01')
+      }
+    })
   })
 
-  it('success token amount', async () => {
-    const poll = await TimedPollVoteMsg._createWithSignFunction(
-      async (e) => new TimedPollVoteMsg('0x01', e),
-      alice,
-      pollId,
-      1,
-      BigNumber.from(100)
-    )
+  describe('decode/encode', () => {
+    it('success', async () => {
+      const data = await TimedPollVoteMsg._createWithSignFunction(
+        async (e) => new TimedPollVoteMsg('0x01', e),
+        alice,
+        pollId,
+        0
+      )
 
-    expect(poll).to.not.be.undefined
-    if (poll) {
-      expect(poll.voter).to.eq(alice.address)
-      expect(poll.answer).to.eq(1)
-      expect(poll.id).to.be.eq(pollId)
-      expect(poll.tokenAmount).to.deep.eq(BigNumber.from(100))
-      expect(poll.signature).to.eq('0x01')
-    }
+      expect(data).to.not.be.undefined
+      if (data) {
+        const payload = await data.encode()
+
+        expect(payload).to.not.be.undefined
+        if (payload) {
+          expect(await TimedPollVoteMsg.decode(payload, new Date(data.timestamp), () => true)).to.deep.eq(data)
+        }
+      }
+    })
+
+    it('random decode', async () => {
+      expect(TimedPollVoteMsg.decode(new Uint8Array([12, 12, 3, 32, 31, 212, 31, 32, 23]), new Date(10))).to.be
+        .undefined
+    })
+
+    it('data with token', async () => {
+      const data = await TimedPollVoteMsg._createWithSignFunction(
+        async (e) => new TimedPollVoteMsg('0x01', e),
+        alice,
+        pollId,
+        0,
+        BigNumber.from(120)
+      )
+      expect(data).to.not.be.undefined
+      if (data) {
+        const payload = data.encode()
+
+        expect(payload).to.not.be.undefined
+        if (payload) {
+          expect(TimedPollVoteMsg.decode(payload, new Date(data.timestamp), () => true)).to.deep.eq({
+            ...data,
+            tokenAmount: BigNumber.from(120),
+          })
+        }
+      }
+    })
   })
 })

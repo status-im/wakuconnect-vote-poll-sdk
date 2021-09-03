@@ -1,8 +1,27 @@
 import { PollType } from '../types/PollType'
 import { BigNumber, utils, Wallet } from 'ethers'
 import { JsonRpcSigner } from '@ethersproject/providers'
-import { PollInit } from 'protons'
+import protons, { PollInit } from 'protons'
 import { createSignedMsg } from '../utils/createSignedMsg'
+import { recoverTypedSignature_v4 } from 'eth-sig-util'
+import { verifySignature } from '../utils/verifySignature'
+
+const proto = protons(`
+message PollInit {
+    bytes owner = 1; 
+    int64 timestamp = 2;
+    string question = 3;
+    repeated string answers = 4;
+    enum PollType {
+        WEIGHTED = 0;
+        NON_WEIGHTED = 1;
+    }
+    PollType pollType = 5;
+    optional bytes minToken = 6;
+    int64 endTime = 7;
+    bytes signature = 8;
+}
+`)
 
 type Message = {
   owner: string
@@ -114,24 +133,63 @@ export class PollInitMsg {
     return this._createWithSignFunction(createSignedMsg(signer), signer, question, answers, pollType, minToken, endTime)
   }
 
-  static fromProto(payload: PollInit, recoverFunction: ({ data, sig }: { data: any; sig: string }) => string) {
-    const signature = utils.hexlify(payload.signature)
+  encode() {
+    try {
+      const arrayify = utils.arrayify
+      const pollProto: PollInit = {
+        owner: arrayify(this.owner),
+        timestamp: this.timestamp,
+        question: this.question,
+        answers: this.answers,
+        pollType: this.pollType,
+        endTime: this.endTime,
+        signature: arrayify(this.signature),
+      }
 
-    const msg = {
-      ...payload,
-      owner: utils.getAddress(utils.hexlify(payload.owner)),
-      minToken: payload.minToken ? BigNumber.from(payload.minToken) : undefined,
-    }
-
-    const params = createSignMsgParams(msg)
-    const verifiedAddress = recoverFunction({
-      data: params,
-      sig: signature,
-    })
-    if (verifiedAddress != msg.owner) {
+      if (this.pollType === PollType.NON_WEIGHTED) {
+        if (this.minToken) {
+          pollProto.minToken = arrayify(this.minToken)
+        } else {
+          return undefined
+        }
+      }
+      return proto.PollInit.encode(pollProto)
+    } catch {
       return undefined
     }
+  }
 
-    return new PollInitMsg(signature, msg)
+  static decode(
+    rawPayload: Uint8Array | undefined,
+    timestamp: Date | undefined,
+    verifyFunction?: (params: any, address: string) => boolean
+  ) {
+    try {
+      const payload = proto.PollInit.decode(rawPayload)
+      if (!timestamp || timestamp.getTime() != payload.timestamp) {
+        return undefined
+      }
+
+      const msg: Message = {
+        timestamp: payload.timestamp,
+        question: payload.question,
+        answers: payload.answers,
+        pollType: payload.pollType,
+        endTime: payload.endTime,
+        owner: utils.getAddress(utils.hexlify(payload.owner)),
+        minToken: payload.minToken ? BigNumber.from(payload.minToken) : undefined,
+      }
+      const signature = utils.hexlify(payload.signature)
+      const params = {
+        data: createSignMsgParams(msg),
+        sig: signature,
+      }
+      if (verifyFunction ? !verifyFunction : !verifySignature(params, msg.owner)) {
+        return undefined
+      }
+      return new PollInitMsg(signature, msg)
+    } catch {
+      return undefined
+    }
   }
 }

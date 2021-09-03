@@ -1,6 +1,6 @@
 import { ethers } from 'ethers'
 import { deployContract } from 'ethereum-waffle'
-import { VotingContract, Directory } from '../abi'
+import { VotingContract } from '../abi'
 
 const deploy = async () => {
     const providerName = process.env.ETHEREUM_PROVIDER
