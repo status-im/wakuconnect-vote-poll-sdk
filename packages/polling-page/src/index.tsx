@@ -1,12 +1,11 @@
 import React, { useEffect, useState } from 'react'
 import styled from 'styled-components'
-import { DAppProvider, ChainId } from '@usedapp/core'
+import { DAppProvider, ChainId, useEthers } from '@usedapp/core'
 import { DEFAULT_CONFIG } from '@usedapp/core/dist/cjs/src/model/config/default'
 import { WakuPolling } from './components/WakuPolling'
 import { TopBar, GlobalStyle } from '@status-waku-voting/react-components'
 import pollingIcon from './assets/images/pollingIcon.svg'
 import { JsonRpcSigner } from '@ethersproject/providers'
-import { useEthers } from '@usedapp/core'
 import { orangeTheme } from '@status-waku-voting/react-components/dist/esm/src/style/themes'
 
 const config = {
@@ -26,7 +25,7 @@ const config = {
 }
 
 export function Polling() {
-  const { account, library } = useEthers()
+  const { account, library, activateBrowserWallet, deactivate } = useEthers()
   const [signer, setSigner] = useState<undefined | JsonRpcSigner>(undefined)
 
   useEffect(() => {
@@ -35,7 +34,14 @@ export function Polling() {
 
   return (
     <Wrapper>
-      <TopBar logo={pollingIcon} title={'Polling Dapp'} theme={orangeTheme} />
+      <TopBar
+        logo={pollingIcon}
+        title={'Polling Dapp'}
+        theme={orangeTheme}
+        activate={activateBrowserWallet}
+        account={account}
+        deactivate={deactivate}
+      />
       <WakuPolling appName={'testApp_'} signer={signer} />
     </Wrapper>
   )

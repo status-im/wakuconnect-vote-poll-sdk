@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import styled from 'styled-components'
-import { useEthers, shortenAddress } from '@usedapp/core'
+import { shortenAddress } from '@usedapp/core'
 import { Modal } from './Modal'
 import { ConnectButton, Account, ButtonDisconnect } from './misc/Buttons'
 import { Networks } from './Networks'
@@ -10,10 +10,12 @@ type TopBarProps = {
   logo: string
   title: string
   theme: Theme
+  activate: () => void
+  deactivate: () => void
+  account: string | undefined | null
 }
 
-export function TopBar({ logo, title, theme }: TopBarProps) {
-  const { activateBrowserWallet, deactivate, account } = useEthers()
+export function TopBar({ logo, title, theme, activate, deactivate, account }: TopBarProps) {
   const [isOpened, setIsOpened] = useState(false)
   const [selectConnect, setSelectConnect] = useState(false)
 
@@ -47,7 +49,7 @@ export function TopBar({ logo, title, theme }: TopBarProps) {
             theme={theme}
             onClick={() => {
               if ((window as any).ethereum) {
-                activateBrowserWallet()
+                activate()
               } else setSelectConnect(true)
             }}
           >
