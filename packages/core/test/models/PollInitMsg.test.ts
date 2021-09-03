@@ -10,11 +10,12 @@ describe('PollInitMsg', () => {
   describe('create', () => {
     it('success', async () => {
       const poll = await PollInitMsg._createWithSignFunction(
-        async (e) => new PollInitMsg('0x01', e),
+        async () => '0x01',
         alice,
         'test',
         ['one', 'two', 'three'],
-        PollType.WEIGHTED
+        PollType.WEIGHTED,
+        0
       )
 
       expect(poll).to.not.be.undefined
@@ -32,11 +33,12 @@ describe('PollInitMsg', () => {
 
     it('success NON_WEIGHTED', async () => {
       const poll = await PollInitMsg._createWithSignFunction(
-        async (e) => new PollInitMsg('0x01', e),
+        async () => '0x01',
         alice,
         'test',
         ['one', 'two', 'three'],
         PollType.NON_WEIGHTED,
+        0,
         BigNumber.from(123)
       )
       expect(poll).to.not.be.undefined
@@ -48,11 +50,12 @@ describe('PollInitMsg', () => {
 
     it('NON_WEIGHTED no minToken', async () => {
       const poll = await PollInitMsg._createWithSignFunction(
-        async (e) => new PollInitMsg('0x01', e),
+        async () => '0x01',
         alice,
         'test',
         ['one', 'two', 'three'],
-        PollType.NON_WEIGHTED
+        PollType.NON_WEIGHTED,
+        0
       )
 
       expect(poll?.minToken?.toNumber()).to.eq(1)
@@ -64,11 +67,12 @@ describe('PollInitMsg', () => {
 
     it('specific end time', async () => {
       const poll = await PollInitMsg._createWithSignFunction(
-        async (e) => new PollInitMsg('0x01', e),
+        async () => '0x01',
         alice,
         'test',
         ['one', 'two', 'three'],
         PollType.NON_WEIGHTED,
+        0,
         undefined,
         100
       )
@@ -79,33 +83,35 @@ describe('PollInitMsg', () => {
   describe('decode/encode', () => {
     it('success', async () => {
       const data = await PollInitMsg._createWithSignFunction(
-        async (e) => new PollInitMsg('0x01', e),
+        async () => '0x01',
         alice,
         'whats up',
         ['ab', 'cd', 'ef'],
-        PollType.WEIGHTED
+        PollType.WEIGHTED,
+        0
       )
       expect(data).to.not.be.undefined
       if (data) {
         const payload = data.encode()
         expect(payload).to.not.be.undefined
         if (payload) {
-          expect(PollInitMsg.decode(payload, new Date(data.timestamp), () => true)).to.deep.eq(data)
+          expect(PollInitMsg.decode(payload, new Date(data.timestamp), 0, () => true)).to.deep.eq(data)
         }
       }
     })
 
     it('random decode', async () => {
-      expect(PollInitMsg.decode(new Uint8Array([12, 12, 3, 32, 31, 212, 31, 32, 23]), new Date(10))).to.be.undefined
+      expect(PollInitMsg.decode(new Uint8Array([12, 12, 3, 32, 31, 212, 31, 32, 23]), new Date(10), 0)).to.be.undefined
     })
 
     it('NON_WEIGHTED init', async () => {
       const data = await PollInitMsg._createWithSignFunction(
-        async (e) => new PollInitMsg('0x01', e),
+        async () => '0x01',
         alice,
         'whats up',
         ['ab', 'cd', 'ef'],
         PollType.NON_WEIGHTED,
+        0,
         BigNumber.from(10)
       )
       expect(data).to.not.be.undefined
@@ -113,18 +119,19 @@ describe('PollInitMsg', () => {
         const payload = data.encode()
         expect(payload).to.not.be.undefined
         if (payload) {
-          expect(PollInitMsg.decode(payload, new Date(data.timestamp), () => true)).to.deep.eq(data)
+          expect(PollInitMsg.decode(payload, new Date(data.timestamp), 0, () => true)).to.deep.eq(data)
         }
       }
     })
 
     it('NON_WEIGHTED no min token', async () => {
       const data = await PollInitMsg._createWithSignFunction(
-        async (e) => new PollInitMsg('0x01', e),
+        async () => '0x01',
         alice,
         'whats up',
         ['ab', 'cd', 'ef'],
-        PollType.NON_WEIGHTED
+        PollType.NON_WEIGHTED,
+        0
       )
       expect(data).to.not.be.undefined
       if (data) {
@@ -132,7 +139,7 @@ describe('PollInitMsg', () => {
 
         expect(payload).to.not.be.undefined
         if (payload) {
-          expect(PollInitMsg.decode(payload, new Date(data.timestamp), () => true)).to.deep.eq({
+          expect(PollInitMsg.decode(payload, new Date(data.timestamp), 0, () => true)).to.deep.eq({
             ...data,
             minToken: BigNumber.from(1),
           })

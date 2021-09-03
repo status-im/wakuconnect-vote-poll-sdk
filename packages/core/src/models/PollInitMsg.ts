@@ -2,7 +2,7 @@ import { PollType } from '../types/PollType'
 import { BigNumber, utils, Wallet } from 'ethers'
 import { JsonRpcSigner } from '@ethersproject/providers'
 import protons, { PollInit } from 'protons'
-import { createSignedMsg } from '../utils/createSignedMsg'
+import { createSignFunction } from '../utils/createSignFunction'
 import { verifySignature } from '../utils/verifySignature'
 
 const proto = protons(`
@@ -32,11 +32,12 @@ type Message = {
   minToken?: BigNumber
 }
 
-export function createSignMsgParams(message: Message) {
+export function createSignMsgParams(message: Message, chainId: number) {
   const msgParams: any = {
     domain: {
       name: 'Waku polling',
       version: '1',
+      chainId,
     },
     message: {
       ...message,
@@ -49,6 +50,7 @@ export function createSignMsgParams(message: Message) {
       EIP712Domain: [
         { name: 'name', type: 'string' },
         { name: 'version', type: 'string' },
+        { name: 'chainId', type: 'uint256' },
       ],
       Mail: [
         { name: 'owner', type: 'address' },
@@ -78,8 +80,8 @@ export class PollInitMsg {
   public endTime: number
   public signature: string
   public id: string
-
-  constructor(signature: string, msg: Message) {
+  public chainId: number
+  constructor(signature: string, msg: Message, chainId: number) {
     this.id = utils.id([msg.owner, msg.timestamp, signature].join())
     this.signature = signature
     this.owner = msg.owner
@@ -89,18 +91,16 @@ export class PollInitMsg {
     this.pollType = msg.pollType
     this.minToken = msg.minToken
     this.endTime = msg.endTime
+    this.chainId = chainId
   }
 
   static async _createWithSignFunction(
-    signFunction: (
-      msg: any,
-      params: string[],
-      Class: new (sig: string, msg: any) => PollInitMsg
-    ) => Promise<PollInitMsg | undefined>,
+    signFunction: (params: string[]) => Promise<string | undefined>,
     signer: JsonRpcSigner | Wallet,
     question: string,
     answers: string[],
     pollType: PollType,
+    chainId: number,
     minToken?: BigNumber,
     endTime?: number
   ): Promise<PollInitMsg | undefined> {
@@ -117,8 +117,13 @@ export class PollInitMsg {
       endTime: endTime ? endTime : timestamp + 100000000,
       minToken,
     }
-    const params = [msg.owner, JSON.stringify(createSignMsgParams(msg))]
-    return signFunction(msg, params, PollInitMsg)
+    const params = [msg.owner, JSON.stringify(createSignMsgParams(msg, chainId))]
+    const signature = await signFunction(params)
+    if (signature) {
+      return new PollInitMsg(signature, msg, chainId)
+    } else {
+      return undefined
+    }
   }
 
   static async create(
@@ -126,10 +131,20 @@ export class PollInitMsg {
     question: string,
     answers: string[],
     pollType: PollType,
+    chainId: number,
     minToken?: BigNumber,
     endTime?: number
   ): Promise<PollInitMsg | undefined> {
-    return this._createWithSignFunction(createSignedMsg(signer), signer, question, answers, pollType, minToken, endTime)
+    return this._createWithSignFunction(
+      createSignFunction(signer),
+      signer,
+      question,
+      answers,
+      pollType,
+      chainId,
+      minToken,
+      endTime
+    )
   }
 
   encode() {
@@ -161,6 +176,7 @@ export class PollInitMsg {
   static decode(
     rawPayload: Uint8Array | undefined,
     timestamp: Date | undefined,
+    chainId: number,
     verifyFunction?: (params: any, address: string) => boolean
   ) {
     try {
@@ -180,13 +196,13 @@ export class PollInitMsg {
       }
       const signature = utils.hexlify(payload.signature)
       const params = {
-        data: createSignMsgParams(msg),
+        data: createSignMsgParams(msg, chainId),
         sig: signature,
       }
       if (verifyFunction ? !verifyFunction : !verifySignature(params, msg.owner)) {
         return undefined
       }
-      return new PollInitMsg(signature, msg)
+      return new PollInitMsg(signature, msg, chainId)
     } catch {
       return undefined
     }

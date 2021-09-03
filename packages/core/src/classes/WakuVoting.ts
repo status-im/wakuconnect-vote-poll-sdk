@@ -1,6 +1,7 @@
 import { Waku } from 'js-waku'
 import { WakuMessage } from 'js-waku'
 import { createWaku } from '../utils/createWaku'
+import { Provider } from '@ethersproject/providers'
 
 type WakuMessageStore = {
   topic: string
@@ -17,21 +18,27 @@ export class WakuVoting {
   protected appName: string
   protected waku: Waku
   public tokenAddress: string
-
+  protected provider: Provider
+  protected chainId = 0
   protected wakuMessages: WakuMessageStores = {}
   protected observers: { callback: (msg: WakuMessage) => void; topics: string[] }[] = []
-  protected constructor(appName: string, tokenAddress: string, waku: Waku) {
+  protected constructor(appName: string, tokenAddress: string, waku: Waku, provider: Provider, chainId: number) {
     this.appName = appName
     this.tokenAddress = tokenAddress
     this.waku = waku
+    this.provider = provider
+    this.chainId = chainId
   }
 
-  public static async create(appName: string, tokenAddress: string, waku?: Waku) {
-    return new WakuVoting(appName, tokenAddress, await createWaku(waku))
+  public static async create(appName: string, tokenAddress: string, provider: Provider, waku?: Waku) {
+    const network = await provider.getNetwork()
+    const wakuVoting = new WakuVoting(appName, tokenAddress, await createWaku(waku), provider, network.chainId)
+    return wakuVoting
   }
 
   public cleanUp() {
     this.observers.forEach((observer) => this.waku.relay.deleteObserver(observer.callback, observer.topics))
+    this.wakuMessages = {}
   }
 
   protected async setObserver() {
@@ -49,12 +56,12 @@ export class WakuVoting {
 
   protected decodeMsgAndSetArray<T extends { id: string; timestamp: number }>(
     messages: WakuMessage[],
-    decode: (payload: Uint8Array | undefined, timestamp: Date | undefined) => T | undefined,
+    decode: (payload: Uint8Array | undefined, timestamp: Date | undefined, chainId: number) => T | undefined,
     msgObj: WakuMessageStore,
     filterFunction?: (e: T) => boolean
   ) {
     messages
-      .map((msg) => decode(msg.payload, msg.timestamp))
+      .map((msg) => decode(msg.payload, msg.timestamp, this.chainId))
       .sort((a, b) => ((a?.timestamp ?? new Date(0)) > (b?.timestamp ?? new Date(0)) ? 1 : -1))
       .forEach((e) => {
         if (e) {

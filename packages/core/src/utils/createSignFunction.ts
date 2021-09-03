@@ -1,13 +1,13 @@
 import { JsonRpcSigner } from '@ethersproject/providers'
 import { Wallet } from 'ethers'
 
-export function createSignedMsg(signer: JsonRpcSigner | Wallet) {
-  return async <T>(msg: any, params: string[], Class: new (sig: string, msg: any) => T): Promise<T | undefined> => {
+export function createSignFunction(signer: JsonRpcSigner | Wallet) {
+  return async (params: string[]) => {
     if ('send' in signer.provider) {
       try {
         const signature = await signer.provider.send('eth_signTypedData_v4', params)
         if (signature) {
-          return new Class(signature, msg)
+          return signature
         }
       } catch {
         return undefined

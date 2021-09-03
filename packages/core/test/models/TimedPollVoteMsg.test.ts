@@ -10,12 +10,7 @@ describe('TimedPollVoteMsg', () => {
 
   describe('create', () => {
     it('success', async () => {
-      const vote = await TimedPollVoteMsg._createWithSignFunction(
-        async (e) => new TimedPollVoteMsg('0x01', e),
-        alice,
-        pollId,
-        0
-      )
+      const vote = await TimedPollVoteMsg._createWithSignFunction(async () => '0x01', alice, pollId, 0, 0)
 
       if (vote) {
         expect(vote.voter).to.eq(alice.address)
@@ -28,10 +23,11 @@ describe('TimedPollVoteMsg', () => {
 
     it('success token amount', async () => {
       const vote = await TimedPollVoteMsg._createWithSignFunction(
-        async (e) => new TimedPollVoteMsg('0x01', e),
+        async () => '0x01',
         alice,
         pollId,
         1,
+        0,
         BigNumber.from(100)
       )
 
@@ -48,12 +44,7 @@ describe('TimedPollVoteMsg', () => {
 
   describe('decode/encode', () => {
     it('success', async () => {
-      const data = await TimedPollVoteMsg._createWithSignFunction(
-        async (e) => new TimedPollVoteMsg('0x01', e),
-        alice,
-        pollId,
-        0
-      )
+      const data = await TimedPollVoteMsg._createWithSignFunction(async () => '0x01', alice, pollId, 0, 0)
 
       expect(data).to.not.be.undefined
       if (data) {
@@ -61,21 +52,22 @@ describe('TimedPollVoteMsg', () => {
 
         expect(payload).to.not.be.undefined
         if (payload) {
-          expect(await TimedPollVoteMsg.decode(payload, new Date(data.timestamp), () => true)).to.deep.eq(data)
+          expect(await TimedPollVoteMsg.decode(payload, new Date(data.timestamp), 0, () => true)).to.deep.eq(data)
         }
       }
     })
 
     it('random decode', async () => {
-      expect(TimedPollVoteMsg.decode(new Uint8Array([12, 12, 3, 32, 31, 212, 31, 32, 23]), new Date(10))).to.be
+      expect(TimedPollVoteMsg.decode(new Uint8Array([12, 12, 3, 32, 31, 212, 31, 32, 23]), new Date(10), 0)).to.be
         .undefined
     })
 
     it('data with token', async () => {
       const data = await TimedPollVoteMsg._createWithSignFunction(
-        async (e) => new TimedPollVoteMsg('0x01', e),
+        async () => '0x01',
         alice,
         pollId,
+        0,
         0,
         BigNumber.from(120)
       )
@@ -85,7 +77,7 @@ describe('TimedPollVoteMsg', () => {
 
         expect(payload).to.not.be.undefined
         if (payload) {
-          expect(TimedPollVoteMsg.decode(payload, new Date(data.timestamp), () => true)).to.deep.eq({
+          expect(TimedPollVoteMsg.decode(payload, new Date(data.timestamp), 0, () => true)).to.deep.eq({
             ...data,
             tokenAmount: BigNumber.from(120),
           })
