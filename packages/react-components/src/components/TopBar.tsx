@@ -1,11 +1,9 @@
 import React, { useState } from 'react'
 import styled from 'styled-components'
 import { useEthers, shortenAddress } from '@usedapp/core'
-import metamaskIcon from '../assets/svg/metamask.svg'
-import statusIcon from '../assets/svg/status.svg'
-import dappIcon from '../assets/svg/dapp.svg'
 import { Modal } from './Modal'
 import { ConnectButton, Account, ButtonDisconnect } from './misc/Buttons'
+import { Networks } from './Networks'
 
 type TopBarProps = {
   logo: string
@@ -59,11 +57,7 @@ export function TopBar({ logo, title, theme }: TopBarProps) {
 
       {selectConnect && (
         <Modal heading="Connect" setShowModal={setSelectConnect}>
-          <Networks>
-            <Network href="https://ethereum.org/en/dapps/" style={{ backgroundImage: `url(${dappIcon})` }} />
-            <Network href="https://status.im/get/" style={{ backgroundImage: `url(${statusIcon})` }} />
-            <Network href="https://metamask.io/" style={{ backgroundImage: `url(${metamaskIcon})` }} />
-          </Networks>
+          <Networks />
         </Modal>
       )}
     </Wrapper>
@@ -123,20 +117,4 @@ const ContentWrapper = styled.div`
     padding: 16px;
     padding-left: 24px;
   }
-`
-const Networks = styled.div`
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  width: 100%;
-`
-
-const Network = styled.a`
-  width: 176px;
-  height: 64px;
-  margin-top: 32px;
-  border: none;
-  background-repeat: no-repeat;
-  background-position: center;
-  background-color: transparent;
 `

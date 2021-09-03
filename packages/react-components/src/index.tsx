@@ -11,7 +11,7 @@ import addIcon from './assets/svg/addIcon.svg'
 import checkIcon from './assets/svg/checkIcon.svg'
 import closeIcon from './assets/svg/close.svg'
 import dappIcon from './assets/svg/dapp.svg'
-import metamaskIcon from './assets/svg/metamask.svg'
+import metamaskIcon from './assets/metamask.png'
 import statusIcon from './assets/svg/status.svg'
 
 export {
