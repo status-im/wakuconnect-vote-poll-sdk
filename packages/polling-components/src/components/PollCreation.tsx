@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { ReactNode, useEffect, useState } from 'react'
 import { Wallet } from 'ethers'
 import { JsonRpcSigner } from '@ethersproject/providers'
 import styled from 'styled-components'
@@ -13,6 +13,27 @@ function getLocaleIsoTime(dateTime: Date) {
   return newDate.toISOString().slice(0, -8)
 }
 
+type ConfirmScreenProps = {
+  setShowModal: (val: boolean) => void
+  children: ReactNode
+}
+
+function ConfirmScreen({ children, setShowModal }: ConfirmScreenProps) {
+  return (
+    <Confirmation>
+      <ConfirmationText>{children}</ConfirmationText>
+      <SmallButton
+        onClick={(e) => {
+          e.preventDefault()
+          setShowModal(false)
+        }}
+      >
+        Close
+      </SmallButton>
+    </Confirmation>
+  )
+}
+
 type PollCreationProps = {
   signer: JsonRpcSigner | Wallet
   wakuPolling: WakuPolling | undefined
@@ -23,13 +44,14 @@ export function PollCreation({ signer, wakuPolling, setShowPollCreation }: PollC
   const [answers, setAnswers] = useState<string[]>(['', ''])
   const [question, setQuestion] = useState('')
   const [showCreateConfirmation, setShowCreateConfirmation] = useState(false)
+  const [showNotEnoughTokens, setShowNotEnoughTokens] = useState(false)
   const [selectedType, setSelectedType] = useState(PollType.NON_WEIGHTED)
   const [endTimePicker, setEndTimePicker] = useState(new Date(new Date().getTime() + 10000000))
 
   return (
     <Modal heading="Create a poll" setShowModal={setShowPollCreation}>
       <NewPollBox>
-        {!showCreateConfirmation && (
+        {!showCreateConfirmation && !showNotEnoughTokens && (
           <PollForm>
             <Input
               label={'Question or title of the poll'}
@@ -65,7 +87,7 @@ export function PollCreation({ signer, wakuPolling, setShowPollCreation }: PollC
             <SmallButton
               onClick={async (e) => {
                 e.preventDefault()
-                await wakuPolling?.createTimedPoll(
+                const result = await wakuPolling?.createTimedPoll(
                   signer,
                   question,
                   answers,
@@ -73,7 +95,12 @@ export function PollCreation({ signer, wakuPolling, setShowPollCreation }: PollC
                   undefined,
                   endTimePicker.getTime()
                 )
-                setShowCreateConfirmation(true)
+                if (result === 0) {
+                  setShowCreateConfirmation(true)
+                }
+                if (result === 1) {
+                  setShowNotEnoughTokens(true)
+                }
               }}
             >
               Create a poll
@@ -82,21 +109,14 @@ export function PollCreation({ signer, wakuPolling, setShowPollCreation }: PollC
         )}
 
         {showCreateConfirmation && (
-          <Confirmation>
-            <ConfirmationText>
-              Your poll has been created!
-              <br />
-              It will appear at the top of the poll list.
-            </ConfirmationText>
-            <SmallButton
-              onClick={(e) => {
-                e.preventDefault()
-                setShowPollCreation(false)
-              }}
-            >
-              Close
-            </SmallButton>
-          </Confirmation>
+          <ConfirmScreen setShowModal={setShowPollCreation}>
+            Your poll has been created!
+            <br />
+            It will appear at the top of the poll list.
+          </ConfirmScreen>
+        )}
+        {showNotEnoughTokens && (
+          <ConfirmScreen setShowModal={setShowPollCreation}>You don't have enough tokens to create poll</ConfirmScreen>
         )}
       </NewPollBox>{' '}
     </Modal>

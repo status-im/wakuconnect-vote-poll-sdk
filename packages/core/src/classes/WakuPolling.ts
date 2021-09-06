@@ -16,6 +16,13 @@ const ABI = [
   'function aggregate(tuple(address target, bytes callData)[] calls) view returns (uint256 blockNumber, bytes[] returnData)',
 ]
 
+export enum MESSEGAGE_SENDING_RESULT {
+  ok = 0,
+  notEnoughToken = 1,
+  errorCreatingMessage = 2,
+  pollNotFound = 3,
+}
+
 export class WakuPolling extends WakuVoting {
   protected multicall: string
 
@@ -78,8 +85,19 @@ export class WakuPolling extends WakuVoting {
     minToken?: BigNumber,
     endTime?: number
   ) {
-    const pollInit = await PollInitMsg.create(signer, question, answers, pollType, this.chainId, minToken, endTime)
-    await this.sendWakuMessage(this.wakuMessages['pollInit'], pollInit)
+    const address = await signer.getAddress()
+    await this.updateBalances(address)
+    if (this.addressesBalances[address] && this.addressesBalances[address]?.gt(minToken ?? BigNumber.from(0))) {
+      const pollInit = await PollInitMsg.create(signer, question, answers, pollType, this.chainId, minToken, endTime)
+      if (pollInit) {
+        await this.sendWakuMessage(this.wakuMessages['pollInit'], pollInit)
+        return MESSEGAGE_SENDING_RESULT.ok
+      } else {
+        return MESSEGAGE_SENDING_RESULT.errorCreatingMessage
+      }
+    } else {
+      return MESSEGAGE_SENDING_RESULT.notEnoughToken
+    }
   }
 
   public async sendTimedPollVote(
@@ -88,18 +106,35 @@ export class WakuPolling extends WakuVoting {
     selectedAnswer: number,
     tokenAmount?: BigNumber
   ) {
-    const pollVote = await TimedPollVoteMsg.create(signer, pollId, selectedAnswer, this.chainId, tokenAmount)
-    await this.sendWakuMessage(this.wakuMessages['pollVote'], pollVote)
+    const address = await signer.getAddress()
+    const poll = this.wakuMessages['pollInit'].arr.find((poll: PollInitMsg): poll is PollInitMsg => poll.id === pollId)
+    if (poll) {
+      await this.updateBalances(address)
+      if (this.addressesBalances[address] && this.addressesBalances[address]?.gt(poll.minToken ?? BigNumber.from(0))) {
+        const pollVote = await TimedPollVoteMsg.create(signer, pollId, selectedAnswer, this.chainId, tokenAmount)
+        if (pollVote) {
+          await this.sendWakuMessage(this.wakuMessages['pollVote'], pollVote)
+        } else {
+          return MESSEGAGE_SENDING_RESULT.errorCreatingMessage
+        }
+      } else {
+        return MESSEGAGE_SENDING_RESULT.notEnoughToken
+      }
+    } else {
+      return MESSEGAGE_SENDING_RESULT.pollNotFound
+    }
   }
 
   protected addressesBalances: { [address: string]: BigNumber } = {}
   protected lastBlockBalances = 0
 
-  protected async updateBalances() {
+  protected async updateBalances(newAddress?: string) {
     const addresses: string[] = [
       ...this.wakuMessages['pollInit'].arr.map((msg) => msg.owner),
       ...this.wakuMessages['pollVote'].arr.map((msg) => msg.voter),
     ]
+
+    if (newAddress) addresses.push(newAddress)
     const addressesToUpdate: { [addr: string]: boolean } = {}
 
     const addAddressToUpdate = (addr: string) => {

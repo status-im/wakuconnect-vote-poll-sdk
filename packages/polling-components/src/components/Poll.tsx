@@ -8,7 +8,7 @@ import styled from 'styled-components'
 import { RadioGroup, SmallButton } from '@status-waku-voting/react-components'
 import { PollResults } from './PollResults'
 import { useEthers } from '@usedapp/core'
-
+import { Modal } from '@status-waku-voting/react-components'
 type PollProps = {
   poll: DetailedTimedPoll
   wakuPolling: WakuPolling | undefined
@@ -21,6 +21,7 @@ export function Poll({ poll, wakuPolling, signer }: PollProps) {
   const [tokenAmount, setTokenAmount] = useState(0)
   const [address, setAddress] = useState('')
   const [userInVoters, setUserInVoters] = useState(-1)
+  const [showNotEnoughTokens, setShowNotEnoughTokens] = useState(false)
 
   useEffect(() => {
     if (signer) {
@@ -63,14 +64,17 @@ export function Poll({ poll, wakuPolling, signer }: PollProps) {
       {userInVoters < 0 && (
         <SmallButton
           disabled={!signer || !account}
-          onClick={() => {
+          onClick={async () => {
             if (wakuPolling && signer) {
-              wakuPolling.sendTimedPollVote(
+              const result = await wakuPolling.sendTimedPollVote(
                 signer,
                 poll.poll.id,
                 selectedAnswer ?? 0,
                 poll.poll.pollType === PollType.WEIGHTED ? BigNumber.from(tokenAmount) : undefined
               )
+              if (result === 1) {
+                setShowNotEnoughTokens(true)
+              }
             }
           }}
         >
@@ -78,9 +82,19 @@ export function Poll({ poll, wakuPolling, signer }: PollProps) {
           Vote
         </SmallButton>
       )}
+      {showNotEnoughTokens && (
+        <Modal heading={''} setShowModal={setShowNotEnoughTokens}>
+          <ModalTextWrapper>You don't have enough tokens to vote</ModalTextWrapper>
+        </Modal>
+      )}
     </PollWrapper>
   )
 }
+
+const ModalTextWrapper = styled.div`
+  text-align: center;
+  margin: 32px 0;
+`
 
 const VotingWrapper = styled.div`
   margin-top: 40px;
