@@ -1174,6 +1174,11 @@
   resolved "https://registry.yarnpkg.com/@types/html-minifier-terser/-/html-minifier-terser-5.1.2.tgz#693b316ad323ea97eed6b38ed1a3cc02b1672b57"
   integrity sha512-h4lTMgMJctJybDp8CQrxTUiiYmedihHWkjnF/8Pxseu2S6Nlfcy8kwboQ8yejh456rP2yWoEVm1sS/FVsfM48w==
 
+"@types/humanize-duration@^3.25.1":
+  version "3.25.1"
+  resolved "https://registry.yarnpkg.com/@types/humanize-duration/-/humanize-duration-3.25.1.tgz#b6140d5fc00ff3917b3f521784abef4bc0387ccc"
+  integrity sha512-WZU/4bb+lvzyDmZzjJtp++9mfKy6B3lH6gGISgkcz6SU8hMILKRM0vi08TxIsb0dQB4Gzo68MWLmctu6xqUi9g==
+
 "@types/istanbul-lib-coverage@*", "@types/istanbul-lib-coverage@^2.0.0":
   version "2.0.3"
   resolved "https://registry.yarnpkg.com/@types/istanbul-lib-coverage/-/istanbul-lib-coverage-2.0.3.tgz#4ba8ddb720221f432e443bd5f9117fd22cfd4762"
@@ -1270,6 +1275,13 @@
   version "15.7.4"
   resolved "https://registry.yarnpkg.com/@types/prop-types/-/prop-types-15.7.4.tgz#fcf7205c25dff795ee79af1e30da2c9790808f11"
   integrity sha512-rZ5drC/jWjrArrS8BR6SIr4cWpW09RNTYt9AMZo3Jwwif+iacXAqgVjm0B0Bv/S1jhDXKHqRVNCbACkJ89RAnQ==
+
+"@types/react-countup@^4.3.1":
+  version "4.3.1"
+  resolved "https://registry.yarnpkg.com/@types/react-countup/-/react-countup-4.3.1.tgz#5bba8e11c18549c92f9a6efe07e406c92c970f89"
+  integrity sha512-8KwOdVVKhMOdtXJoOg3YXZwWxnFnZtPojNs/DZRlhHTpOYIb1If+9+rVPnwnXDhNhphj5diUCds9E26VtVK8IA==
+  dependencies:
+    react-countup "*"
 
 "@types/react-dom@>=16.9.0", "@types/react-dom@^17.0.9":
   version "17.0.9"
@@ -3658,6 +3670,11 @@ cosmiconfig@^6.0.0:
     parse-json "^5.0.0"
     path-type "^4.0.0"
     yaml "^1.7.2"
+
+countup.js@^2.0.8:
+  version "2.0.8"
+  resolved "https://registry.yarnpkg.com/countup.js/-/countup.js-2.0.8.tgz#eca0c31c9db3f7769cba494d9315cd52dbaaf1b9"
+  integrity sha512-pW3xwwD+hB+xmtI16xFcuLS0D5hSQqPQWkZOdgpKQyzxCquDNo2VCFPkRw12vmvdpnicXVTcjmYiakG6biwINg==
 
 create-ecdh@^4.0.0:
   version "4.0.4"
@@ -6293,6 +6310,11 @@ human-signals@^2.1.0:
   version "2.1.0"
   resolved "https://registry.yarnpkg.com/human-signals/-/human-signals-2.1.0.tgz#dc91fcba42e4d06e4abaed33b3e7a3c02f514ea0"
   integrity sha512-B4FFZ6q/T2jhhksgkbEW3HBvWIfDW85snkQgawt07S7J5QXTk6BkNV+0yAeZrM5QpMAdYlocGoljn0sJ/WQkFw==
+
+humanize-duration@^3.27.0:
+  version "3.27.0"
+  resolved "https://registry.yarnpkg.com/humanize-duration/-/humanize-duration-3.27.0.tgz#3f781b7cf8022ad587f76b9839b60bc2b29636b2"
+  integrity sha512-qLo/08cNc3Tb0uD7jK0jAcU5cnqCM0n568918E7R2XhMr/+7F37p4EY062W/stg7tmzvknNn9b/1+UhVRzsYrQ==
 
 iconv-lite@0.4.24, iconv-lite@^0.4.24:
   version "0.4.24"
@@ -9844,6 +9866,13 @@ rc@^1.2.8:
     ini "~1.3.0"
     minimist "^1.2.0"
     strip-json-comments "~2.0.1"
+
+react-countup@*, react-countup@^5.2.0:
+  version "5.2.0"
+  resolved "https://registry.yarnpkg.com/react-countup/-/react-countup-5.2.0.tgz#58be5d97acebf767d5c61df5c3a3417b95c45a16"
+  integrity sha512-R6+FIrW8ypwoAe0Q0CZ16OhrgAntnnnch7HrnRAy9miXFKk8jQzVADjNtGSoNUuJeq/ZFiiXCGJCJIAmRJ5fLg==
+  dependencies:
+    countup.js "^2.0.8"
 
 react-dom@^17.0.2:
   version "17.0.2"

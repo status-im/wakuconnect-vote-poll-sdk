@@ -7,7 +7,9 @@
   "license": "MIT",
   "watch": {
     "build": {
-      "patterns": ["src"],
+      "patterns": [
+        "src"
+      ],
       "extensions": "ts,tsx",
       "runOnChangeOnly": false
     }
@@ -30,17 +32,21 @@
     "lint:prettier": "yarn prettier './{src,test}/**/*.{ts,tsx}'"
   },
   "dependencies": {
+    "@status-waku-voting/core": "^0.1.0",
     "@status-waku-voting/proposal-hooks": "^0.1.0",
     "@status-waku-voting/react-components": "^0.1.0",
-    "@status-waku-voting/core": "^0.1.0",
     "ethers": "^5.4.4",
+    "humanize-duration": "^3.27.0",
     "react": "^17.0.2",
+    "react-countup": "^5.2.0",
     "styled-components": "^5.3.0"
   },
   "devDependencies": {
     "@types/chai": "^4.2.21",
+    "@types/humanize-duration": "^3.25.1",
     "@types/mocha": "^9.0.0",
     "@types/react": "^17.0.16",
+    "@types/react-countup": "^4.3.1",
     "@types/styled-components": "^5.1.12",
     "@typescript-eslint/eslint-plugin": "^4.29.0",
     "@typescript-eslint/parser": "^4.29.0",
