@@ -4,6 +4,7 @@ import { VotingContract, ERC20Mock } from '../abi'
 import { utils, Wallet, Contract } from 'ethers'
 import { signTypedMessage, TypedMessage } from 'eth-sig-util'
 import { BigNumber } from '@ethersproject/bignumber'
+import { JsonRpcProvider } from '@ethersproject/providers'
 
 use(solidity)
 
@@ -46,12 +47,6 @@ const getSignedMessages = async (
 ): Promise<{ messages: any[]; signedMessages: any[] }> => {
   const votes = [
     {
-      voter: alice,
-      vote: 1,
-      tokenAmount: BigNumber.from(100),
-      sessionID: 0,
-    },
-    {
       voter: firstAddress,
       vote: 0,
       tokenAmount: BigNumber.from(100),
@@ -86,12 +81,11 @@ const getSignedMessages = async (
   return { messages, signedMessages }
 }
 
-async function fixture([alice, firstAddress, secondAddress]: any[], provider: any) {
+async function fixture([alice, firstAddress, secondAddress]: any[], provider: JsonRpcProvider) {
   const erc20 = await deployContract(alice, ERC20Mock, ['MSNT', 'Mock SNT', alice.address, 100000])
   await erc20.transfer(firstAddress.address, 10000)
   await erc20.transfer(secondAddress.address, 10000)
-  const contract = await deployContract(alice, VotingContract, [erc20.address])
-  await provider.send('evm_mine', [Math.floor(Date.now() / 1000)])
+  const contract = await deployContract(alice, VotingContract, [erc20.address, 1000])
   return { contract, alice, firstAddress, secondAddress, provider }
 }
 
@@ -147,10 +141,41 @@ describe('Contract', () => {
       await contract.initializeVotingRoom('T2', '', BigNumber.from(200))
       await expect(contract.votingRooms(1)).to.be.reverted
     })
+
+    it('getOngoingVotingRooms', async () => {
+      const { contract, provider } = await loadFixture(fixture)
+
+      await expect((await contract.getOngoingVotingRooms()).length).to.eq(0)
+      await contract.initializeVotingRoom('test1', 'short desc', BigNumber.from(100))
+
+      let rooms
+      rooms = await contract.getOngoingVotingRooms()
+      await expect(rooms.length).to.eq(1)
+      await expect(rooms[0][2]).to.eq('test1')
+      await provider.send('evm_increaseTime', [500])
+      await provider.send('evm_mine', [])
+
+      await contract.initializeVotingRoom('test2', 'short desc', BigNumber.from(100))
+      rooms = await contract.getOngoingVotingRooms()
+      await expect(rooms.length).to.eq(2)
+      await expect(rooms[0][2]).to.eq('test2')
+      await expect(rooms[1][2]).to.eq('test1')
+      await provider.send('evm_increaseTime', [600])
+      await provider.send('evm_mine', [])
+
+      rooms = await contract.getOngoingVotingRooms()
+
+      await expect(rooms.length).to.eq(1)
+      await expect(rooms[0][2]).to.eq('test2')
+      await provider.send('evm_increaseTime', [600])
+      await provider.send('evm_mine', [])
+      rooms = await contract.getOngoingVotingRooms()
+      await expect(rooms.length).to.eq(0)
+    })
   })
   describe('helpers', () => {
     it('get voting rooms', async () => {
-      const { contract, firstAddress, secondAddress, provider } = await loadFixture(fixture)
+      const { contract } = await loadFixture(fixture)
       await contract.initializeVotingRoom('T1', 't1', BigNumber.from(100))
 
       await contract.initializeVotingRoom('T2', 't2', BigNumber.from(200))
@@ -177,7 +202,7 @@ describe('Contract', () => {
       await contract.initializeVotingRoom('0xabA1eF51ef4aE360a9e8C9aD2d787330B602eb24', '', BigNumber.from(100))
 
       expect(await contract.listRoomVoters(0)).to.deep.eq([alice.address])
-      await contract.castVotes(signedMessages.slice(2))
+      await contract.castVotes(signedMessages.slice(1))
 
       expect(await contract.listRoomVoters(0)).to.deep.eq([alice.address, secondAddress.address])
     })
@@ -196,9 +221,7 @@ describe('Contract', () => {
       )
       const signedMessage = [...msg, sig.r, sig._vs]
 
-      await expect(await contract.castVotes([signedMessage]))
-        .to.emit(contract, 'NotEnoughToken')
-        .withArgs(0, firstAddress.address)
+      await expect(contract.castVotes([signedMessage])).to.be.revertedWith('voter doesnt have enough tokens')
 
       const votingRoom = await contract.votingRooms(0)
       expect(votingRoom[2]).to.eq('test')
@@ -225,7 +248,7 @@ describe('Contract', () => {
       const { signedMessages } = await getSignedMessages(alice, firstAddress, secondAddress)
       await contract.initializeVotingRoom('test', '', BigNumber.from(100))
       await contract.castVotes(signedMessages)
-      await contract.castVotes(signedMessages)
+      await expect(contract.castVotes(signedMessages)).to.be.revertedWith('voter already voted')
 
       const votingRoom = await contract.votingRooms(0)
       expect(votingRoom[2]).to.eq('test')
@@ -243,23 +266,22 @@ describe('Contract', () => {
     it('none existent room', async () => {
       const { contract, alice, firstAddress, secondAddress } = await loadFixture(fixture)
       const { signedMessages } = await getSignedMessages(alice, firstAddress, secondAddress)
-      await expect(contract.castVotes(signedMessages)).to.be.reverted
+      await expect(contract.castVotes(signedMessages)).to.be.revertedWith('vote not found')
     })
 
     it('old room', async () => {
       const { contract, alice, firstAddress, secondAddress, provider } = await loadFixture(fixture)
       const { signedMessages } = await getSignedMessages(alice, firstAddress, secondAddress)
       await contract.initializeVotingRoom('test', '', BigNumber.from(100))
-      await provider.send('evm_mine', [Math.floor(Date.now() / 1000 + 2000)])
-      await expect(contract.castVotes(signedMessages)).to.be.reverted
+      await provider.send('evm_increaseTime', [10000])
+      await expect(contract.castVotes(signedMessages)).to.be.revertedWith('vote closed')
     })
 
     it('wrong signature', async () => {
-      const { contract, alice, firstAddress, secondAddress, provider } = await loadFixture(fixture)
+      const { contract, alice, firstAddress, secondAddress } = await loadFixture(fixture)
       const { messages } = await getSignedMessages(alice, firstAddress, secondAddress)
 
       await contract.initializeVotingRoom('test', '', BigNumber.from(100))
-      await provider.send('evm_mine', [Math.floor(Date.now() / 1000 + 2000)])
 
       const signedMessages = await Promise.all(
         messages.map(async (msg) => {
@@ -275,7 +297,7 @@ describe('Contract', () => {
         })
       )
 
-      await expect(contract.castVotes(signedMessages)).to.be.reverted
+      await expect(contract.castVotes(signedMessages)).to.be.revertedWith('vote has wrong signature')
     })
   })
 })

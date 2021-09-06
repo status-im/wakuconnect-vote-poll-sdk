@@ -24,9 +24,10 @@ Main types used for voting are:
 
     #### Fields
     ```solidity
-    //block at which room was created
+    // block at which room was created
     uint256 startBlock; 
-    //timestamp after which new votes won't be accepted
+    // timestamp in seconds after which new votes won't be accepted
+    // when casting votes endAt is compared to block.timestamp
     uint256 endAt; 
     // question of a proposal which voting room describes
     string question;
@@ -36,7 +37,7 @@ Main types used for voting are:
     uint256 totalVotesFor;
     // amount of summed votes against
     uint256 totalVotesAgainst;
-    //list of addresses that already voted
+    // list of addresses that already voted
     address[] voters;
     ```
 
@@ -67,10 +68,9 @@ Main types used for voting are:
 - `token`
     Variable that holds address of token used for vote verification. It is assigned at contract creation.
 
-- `VOTING_LENGTH`
-    Constant describing length of voting room in seconds
-    TODO:
-        - maybe set voting length per voting room ?
+- `votingLength`
+    Variable describing length of voting room in seconds
+    Voting length it is assigned at contract creation.
 
 - `EIP712DOMAIN_TYPEHASH`
     Constant holding type hash of EIP712 domain as per EIP712 specification
@@ -126,20 +126,24 @@ For more information about EIP-712 go to [docs](https://eips.ethereum.org/EIPS/e
 ### Functions
 
 - `constructor(IERC20 _address)`
-    assigns `_address` to `token` and generates `DOMAIN_SEPARATOR`
+    Assigns `_address` to `token` and generates `DOMAIN_SEPARATOR`
 
 - `getVotingRooms()`
-    returns votingRooms
+    Returns votingRooms
+
+- `getOngoingVotingRooms()`
+    Returns votingRooms in which `room.endAt > block.timestamp` which means the rooms are still accepting votes.
+    Since `votingLength` is set at contract creation and never changed, `room.endAt` is never decreasing with increasing index of votingRoom. Therefore it is enough to check from votingRooms.length up to first element which `endAt < block.timestamp`
 
 - `listRoomVoters(uint256 roomId)`
-    returns a list of voters for a given voting room. Reverts if roomId doesn't exist.
+    Returns a list of voters for a given voting room. Reverts if roomId doesn't exist.
 
 - `initializeVotingRoom(string calldata question,string calldata description,uint256 voteAmount)`
     Creates a new voting room with vote for set to voteAmount.
     First checks if voter has enough tokens to set vote for.
     Then creates a new voting room.
     `startBlock` is set as current block number.
-    `endAt` is set a current block timestamp plus.`VOTING_LENGTH`.
+    `endAt` is set a current block timestamp plus.`votingLength`.
     `question` is set as argument `question`.
     `description` is set as argument `description`.
     `totalVotesFor` is set as argument `voteAmount`.
@@ -178,9 +182,3 @@ For more information about EIP-712 go to [docs](https://eips.ethereum.org/EIPS/e
     Then it is checked that `vote.voter` didn't vote in this vote room before if he did function goes to another voter (IDEA: emit alreadyVoted ?).
 
     Last check is whether `vote.voter` has enough tokens to vote. If he does not `NotEnoughToken` is emitted and function goes to another voter. If he does voting room is updated with `updateRoomVotes` and `VoteCast` is emitted.
-
-    TODO:
-    - not emit on Not enough tokens ?
-    - emit on wrong signature ?
-    - if instead of require for voting room not found ?
-    - if instead of require for vote closed ?
