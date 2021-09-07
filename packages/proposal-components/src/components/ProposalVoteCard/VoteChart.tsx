@@ -66,7 +66,13 @@ export function VoteChart({
             alignItems: mobileVersion ? 'flex-start' : 'center',
           }}
         >
-          <VoteIcon src={voteWinner === 1 ? crossWinnerIcon : crossIcon} width={voteWinner === 1 ? '18px' : '14px'} />
+          <VoteIcon
+            src={voteWinner === 1 ? crossWinnerIcon : crossIcon}
+            width={voteWinner === 1 ? '18px' : '14px'}
+            style={{
+              marginLeft: mobileVersion ? '10px' : '0',
+            }}
+          />
           <span>
             {' '}
             {isAnimation && proposingAmount && selectedVote && selectedVote === 0 ? (
@@ -77,14 +83,20 @@ export function VoteChart({
             <span style={{ fontWeight: 'normal' }}>ABC</span>
           </span>
         </VoteBox>
-        <TimeLeft className={selectedVote ? '' : 'notModal'}>{formatTimeLeft(timeLeft)}</TimeLeft>
+        {!voteWinner && <TimeLeft className={selectedVote ? '' : 'notModal'}>{formatTimeLeft(timeLeft)}</TimeLeft>}
         <VoteBox
           style={{
             filter: voteWinner && voteWinner === 1 ? 'grayscale(1)' : 'none',
-            alignItems: mobileVersion ? 'flex-start' : 'center',
+            alignItems: mobileVersion ? 'flex-end' : 'center',
           }}
         >
-          <VoteIcon src={voteWinner === 2 ? checkWinnerIcon : checkIcon} width={voteWinner === 2 ? '24px' : '18px'} />
+          <VoteIcon
+            src={voteWinner === 2 ? checkWinnerIcon : checkIcon}
+            width={voteWinner === 2 ? '24px' : '18px'}
+            style={{
+              marginRight: mobileVersion ? '10px' : '0',
+            }}
+          />
           <span>
             {' '}
             {isAnimation && proposingAmount && selectedVote && selectedVote === 1 ? (
@@ -115,6 +127,10 @@ const Votes = styled.div`
   margin-bottom: 32px;
   width: 100%;
   position: relative;
+
+  @media (max-width: 768px) {
+    margin-bottom: 24px;
+  }
 
   @media (max-width: 600px) {
     margin-bottom: 0;
@@ -170,11 +186,11 @@ const TimeLeft = styled.div`
 
   &.notModal {
     @media (max-width: 768px) {
-      top: -16px;
+      top: -27px;
     }
 
     @media (max-width: 600px) {
-      top: unset;
+      display: none;
     }
   }
 `
@@ -203,9 +219,9 @@ const VoteGraphBarWrap = styled.div`
     @media (max-width: 768px) {
       position: absolute;
       width: 65%;
-      top: 50%;
+      top: 4px;
       left: 50%;
-      transform: translate(-50%, -50%);
+      transform: translateX(-50%);
     }
 
     @media (max-width: 600px) {

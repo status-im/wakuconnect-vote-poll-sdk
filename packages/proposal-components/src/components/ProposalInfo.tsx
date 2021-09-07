@@ -13,7 +13,9 @@ export function ProposalInfo({ heading, text, address }: ProposalInfoProps) {
     <Card>
       <CardHeading>{heading}</CardHeading>
       <CardText>{text}</CardText>
-      <ViewLink address={address} />
+      <CardViewLink>
+        <ViewLink address={address} />
+      </CardViewLink>
     </Card>
   )
 }
@@ -21,6 +23,7 @@ export function ProposalInfo({ heading, text, address }: ProposalInfoProps) {
 export const Card = styled.div`
   display: flex;
   flex-direction: column;
+  justify-content: space-between;
   align-items: center;
   width: 50%;
   padding: 24px;
@@ -34,21 +37,41 @@ export const Card = styled.div`
     box-shadow: none;
     padding-bottom: 0;
   }
+
   @media (max-width: 600px) {
     padding: 0;
   }
 `
 
 const CardHeading = styled.div`
-  height: 56px;
   font-weight: bold;
   font-size: 22px;
   line-height: 24px;
   margin-bottom: 8px;
+  align-self: flex-start;
+
+  @media (max-width: 600px) {
+    font-size: 17px;
+  }
 `
 
 const CardText = styled.div`
   font-size: 13px;
   line-height: 18px;
   margin-bottom: 16px;
+
+  @media (max-width: 600px) {
+    height: 56px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+  }
+`
+
+const CardViewLink = styled.div`
+  @media (max-width: 768px) {
+    display: none;
+  }
 `
