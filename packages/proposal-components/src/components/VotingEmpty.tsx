@@ -1,6 +1,5 @@
-import React, { useEffect, useState } from 'react'
+import React, { useState } from 'react'
 import { useEthers } from '@usedapp/core'
-
 import styled from 'styled-components'
 import { CreateButton, Modal, Networks, Theme } from '@status-waku-voting/react-components'
 import { ProposeModal } from './ProposeModal'

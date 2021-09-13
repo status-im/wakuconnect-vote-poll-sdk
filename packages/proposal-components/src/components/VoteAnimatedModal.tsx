@@ -22,7 +22,8 @@ export function VoteAnimatedModal({
 }: VoteAnimatedModalProps) {
   return (
     <VoteConfirm>
-      <ConfirmText>Your vote for this proposal has been cast!</ConfirmText>
+      <ConfirmText>Your vote {selectedVote === 0 ? 'against' : 'for'} this proposal has been cast!</ConfirmText>
+
       <VoteChart
         votesFor={votesFor}
         votesAgainst={votesAgainst}

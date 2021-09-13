@@ -8,20 +8,20 @@ export interface VoteProposingProps {
   availableAmount: number
   setProposingAmount: (show: number) => void
   proposingAmount: number
-  disabled?: boolean
 }
 
 export function VotePropose({ availableAmount, proposingAmount, setProposingAmount }: VoteProposingProps) {
-  const [displayAmount, setDisplayAmount] = useState(addCommas(proposingAmount) + ' SNT')
-
+  const [displayAmount, setDisplayAmount] = useState(addCommas(proposingAmount) + ' ABC')
+  const disabled = availableAmount === 0
   let step = 10 ** (Math.floor(Math.log10(availableAmount)) - 2)
+
   if (availableAmount < 100) {
     step = 1
   }
 
   const setAvailableAmount = () => {
     setProposingAmount(availableAmount)
-    setDisplayAmount(addCommas(availableAmount) + ' SNT')
+    setDisplayAmount(addCommas(availableAmount) + ' ABC')
   }
 
   const sliderChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -29,7 +29,7 @@ export function VotePropose({ availableAmount, proposingAmount, setProposingAmou
       setAvailableAmount()
     } else {
       setProposingAmount(Number(e.target.value))
-      setDisplayAmount(addCommas(Number(e.target.value)) + ' SNT')
+      setDisplayAmount(addCommas(Number(e.target.value)) + ' ABC')
     }
   }
 
@@ -39,7 +39,7 @@ export function VotePropose({ availableAmount, proposingAmount, setProposingAmou
     if (proposingAmount > availableAmount) {
       setAvailableAmount()
     } else {
-      setDisplayAmount(addCommas(proposingAmount) + ' SNT')
+      setDisplayAmount(addCommas(proposingAmount) + ' ABC')
     }
   }
 
@@ -67,7 +67,9 @@ export function VotePropose({ availableAmount, proposingAmount, setProposingAmou
           value={proposingAmount}
           onChange={sliderChange}
           style={{
-            background: `linear-gradient(90deg, #0F3595 0% ${progress},  #EDF1FF ${progress} 100%)`,
+            background: disabled
+              ? '#EDF1FF'
+              : `linear-gradient(90deg, #0F3595 0% ${progress},  #EDF1FF ${progress} 100%)`,
           }}
         />
       </VoteProposingRangeWrap>

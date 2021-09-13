@@ -50,7 +50,7 @@ export function VoteChart({
 
   let balanceWidth = graphWidth
 
-  if (proposingAmount && selectedVote) {
+  if (proposingAmount) {
     balanceWidth =
       selectedVote === 0
         ? (100 * (votesAgainst + proposingAmount)) / (voteSum + proposingAmount)

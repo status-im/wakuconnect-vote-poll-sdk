@@ -1,7 +1,7 @@
 import React from 'react'
 import styled from 'styled-components'
 import { VoteChart } from './ProposalVoteCard/VoteChart'
-import { VoteBtnAgainst, VoteBtnFor } from './Buttons'
+import { DisabledButton, VoteBtnAgainst, VoteBtnFor } from './Buttons'
 import { VotePropose } from './VotePropose'
 
 export interface VoteModalProps {
@@ -28,6 +28,7 @@ export function VoteModal({
   setProposingAmount,
 }: VoteModalProps) {
   const disabled = proposingAmount === 0
+  const funds = availableAmount > 0
 
   return (
     <Column>
@@ -45,15 +46,18 @@ export function VoteModal({
         proposingAmount={proposingAmount}
       />
 
-      {selectedVote === 0 ? (
-        <ModalVoteBtnAgainst disabled={disabled} onClick={() => setShowConfirmModal(true)}>
-          Vote Against
-        </ModalVoteBtnAgainst>
-      ) : (
-        <ModalVoteBtnFor disabled={disabled} onClick={() => setShowConfirmModal(true)}>
-          Vote For
-        </ModalVoteBtnFor>
-      )}
+      {!funds && <DisabledButton>Not enought ABC to vote</DisabledButton>}
+
+      {funds &&
+        (selectedVote === 0 ? (
+          <ModalVoteBtnAgainst disabled={disabled} onClick={() => setShowConfirmModal(true)}>
+            Vote Against
+          </ModalVoteBtnAgainst>
+        ) : (
+          <ModalVoteBtnFor disabled={disabled} onClick={() => setShowConfirmModal(true)}>
+            Vote For
+          </ModalVoteBtnFor>
+        ))}
     </Column>
   )
 }

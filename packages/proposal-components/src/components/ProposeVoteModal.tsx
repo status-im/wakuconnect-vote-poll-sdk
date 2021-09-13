@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import styled from 'styled-components'
 import { ProposingBtn } from './Buttons'
-import { Card, CardHeading, CardText } from './ProposalInfo'
+import { CardHeading, CardText } from './ProposalInfo'
 import { ProposingData } from './ProposeModal'
 import { VotePropose } from './VotePropose'
 

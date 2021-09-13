@@ -110,3 +110,11 @@ export const ProposingBtn = styled(Btn)`
     filter: grayscale(1);
   }
 `
+
+export const DisabledButton = styled(Btn)`
+  width: 100%;
+  background-color: #f3f3f3;
+  color: #676868;
+  font-size: 15px;
+  margin-top: 32px;
+`
