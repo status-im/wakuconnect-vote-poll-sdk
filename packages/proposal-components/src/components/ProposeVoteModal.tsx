@@ -1,11 +1,15 @@
+import { WakuVoting } from '@status-waku-voting/core'
+import { useEthers } from '@usedapp/core'
 import React, { useState } from 'react'
 import styled from 'styled-components'
 import { ProposingBtn } from './Buttons'
 import { CardHeading, CardText } from './ProposalInfo'
 import { ProposingData } from './ProposeModal'
 import { VotePropose } from './VotePropose'
+import { BigNumber } from 'ethers'
 
 interface ProposeVoteModalProps {
+  wakuVoting: WakuVoting
   availableAmount: number
   title: string
   text: string
@@ -15,6 +19,7 @@ interface ProposeVoteModalProps {
 }
 
 export function ProposeVoteModal({
+  wakuVoting,
   availableAmount,
   title,
   text,
@@ -22,6 +27,7 @@ export function ProposeVoteModal({
   setTitle,
   setText,
 }: ProposeVoteModalProps) {
+  const { library } = useEthers()
   const [proposingAmount, setProposingAmount] = useState(0)
   return (
     <ProposingData>
@@ -38,7 +44,10 @@ export function ProposeVoteModal({
 
       <ProposingBtn
         onClick={() => {
-          setShowModal(false), setTitle(''), setText('')
+          if (library) wakuVoting.createVote(library.getSigner(), title, text, BigNumber.from(proposingAmount))
+          setShowModal(false)
+          setTitle('')
+          setText('')
         }}
       >
         Create proposal

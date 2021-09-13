@@ -1,4 +1,4 @@
 import { WakuPolling } from './classes/WakuPolling'
+import { WakuMessaging } from './classes/WakuMessaging'
 import { WakuVoting } from './classes/WakuVoting'
-
-export { WakuVoting, WakuPolling }
+export { WakuMessaging, WakuPolling, WakuVoting }

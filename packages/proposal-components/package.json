@@ -35,6 +35,7 @@
     "@status-waku-voting/core": "^0.1.0",
     "@status-waku-voting/proposal-hooks": "^0.1.0",
     "@status-waku-voting/react-components": "^0.1.0",
+    "@usedapp/core": "^0.4.7",
     "ethers": "^5.4.4",
     "humanize-duration": "^3.27.0",
     "react": "^17.0.2",

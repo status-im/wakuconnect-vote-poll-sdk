@@ -1,5 +1,5 @@
 import React from 'react'
-import { useTest } from '@status-waku-voting/proposal-hooks'
+import { useWakuProposal } from '@status-waku-voting/proposal-hooks'
 import { Proposal } from '@status-waku-voting/proposal-components'
 import { TopBar, GlobalStyle } from '@status-waku-voting/react-components'
 import votingIcon from './assets/images/voting.svg'
@@ -26,6 +26,8 @@ const config = {
 
 function Proposals() {
   const { account, library, activateBrowserWallet, deactivate } = useEthers()
+  const waku = useWakuProposal()
+
   return (
     <Wrapper>
       <TopBar
@@ -36,7 +38,7 @@ function Proposals() {
         account={account}
         deactivate={deactivate}
       />
-      <Proposal />
+      {waku && <Proposal wakuVoting={waku} />}
     </Wrapper>
   )
 }

@@ -23,6 +23,15 @@ declare module 'protons' {
         signature: Uint8Array
     }
 
+    export type Vote = {
+        voter: Uint8Array
+        timestamp:number
+        answer: number
+        roomId: Uint8Array
+        tokenAmount: Uint8Array
+        signature: Uint8Array
+    }
+
     function protons(init: string): {
         PollInit: {
             encode: (pollInit: PollInit) => Uint8Array,
@@ -31,6 +40,10 @@ declare module 'protons' {
         TimedPollVote:{
             encode: (timedPollVote: TimedPollVote) => Uint8Array,
             decode: (payload: Uint8Array | undefined) => TimedPollVote
+        }
+        Vote:{
+            encode: (vote: Vote) => Uint8Array,
+            decode: (payload: Uint8Array | undefined) => Vote
         }
     }
     export = protons

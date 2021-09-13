@@ -1,83 +1,102 @@
-import { Waku } from 'js-waku'
-import { WakuMessage } from 'js-waku'
+import { VotingContract } from '@status-waku-voting/contracts/abi'
+import { WakuMessaging } from './WakuMessaging'
+import { Contract, Wallet, BigNumber } from 'ethers'
+import { Waku, WakuMessage } from 'js-waku'
+import { Provider } from '@ethersproject/abstract-provider'
 import { createWaku } from '../utils/createWaku'
-import { Provider } from '@ethersproject/providers'
+import { JsonRpcSigner } from '@ethersproject/providers'
+import { VoteMsg } from '../models/VoteMsg'
 
-type WakuMessageStore = {
-  topic: string
-  hashMap: { [id: string]: boolean }
-  arr: any[]
-  updateFunction: (msg: WakuMessage[]) => void
-}
+const ABI = [
+  'function aggregate(tuple(address target, bytes callData)[] calls) view returns (uint256 blockNumber, bytes[] returnData)',
+]
 
-type WakuMessageStores = {
-  [messageType: string]: WakuMessageStore
-}
+export class WakuVoting extends WakuMessaging {
+  private multicall: Contract
+  private votingContract: Contract
 
-export class WakuVoting {
-  protected appName: string
-  protected waku: Waku
-  public tokenAddress: string
-  protected provider: Provider
-  protected chainId = 0
-  protected wakuMessages: WakuMessageStores = {}
-  protected observers: { callback: (msg: WakuMessage) => void; topics: string[] }[] = []
-  protected constructor(appName: string, tokenAddress: string, waku: Waku, provider: Provider, chainId: number) {
-    this.appName = appName
-    this.tokenAddress = tokenAddress
-    this.waku = waku
-    this.provider = provider
-    this.chainId = chainId
+  constructor(
+    appName: string,
+    votingContract: Contract,
+    token: string,
+    waku: Waku,
+    provider: Provider,
+    chainId: number,
+    multicallAddress: string
+  ) {
+    super(appName, token, waku, provider, chainId)
+    this.votingContract = votingContract
+    this.multicall = new Contract(multicallAddress, ABI, this.provider)
+    this.wakuMessages['vote'] = {
+      topic: `/${this.appName}/waku-voting/votes/proto/`,
+      hashMap: {},
+      arr: [],
+      updateFunction: (msg: WakuMessage[]) =>
+        this.decodeMsgAndSetArray(
+          msg,
+          (payload, timestamp, chainId) => VoteMsg.decode(payload, timestamp, chainId, this.votingContract.address),
+          this.wakuMessages['vote']
+        ),
+    }
   }
 
-  public cleanUp() {
-    this.observers.forEach((observer) => this.waku.relay.deleteObserver(observer.callback, observer.topics))
-    this.wakuMessages = {}
-  }
-
-  protected async setObserver() {
-    await Promise.all(
-      Object.values(this.wakuMessages).map(async (msgObj) => {
-        const storeMessages = await this.waku?.store.queryHistory([msgObj.topic])
-        if (storeMessages) {
-          msgObj.updateFunction(storeMessages)
-        }
-        this.waku.relay.addObserver((msg) => msgObj.updateFunction([msg]), [msgObj.topic])
-        this.observers.push({ callback: (msg) => msgObj.updateFunction([msg]), topics: [msgObj.topic] })
-      })
+  public static async create(
+    appName: string,
+    contractAddress: string,
+    provider: Provider,
+    multicall: string,
+    waku?: Waku
+  ) {
+    const network = await provider.getNetwork()
+    const votingContract = new Contract(contractAddress, VotingContract.abi, provider)
+    const tokenAddress = await votingContract.token()
+    return new WakuVoting(
+      appName,
+      votingContract,
+      tokenAddress,
+      await createWaku(waku),
+      provider,
+      network.chainId,
+      multicall
     )
   }
 
-  protected decodeMsgAndSetArray<T extends { id: string; timestamp: number }>(
-    messages: WakuMessage[],
-    decode: (payload: Uint8Array | undefined, timestamp: Date | undefined, chainId: number) => T | undefined,
-    msgObj: WakuMessageStore,
-    filterFunction?: (e: T) => boolean
+  public async createVote(
+    signer: JsonRpcSigner | Wallet,
+    question: string,
+    descripiton: string,
+    tokenAmount: BigNumber
   ) {
-    messages
-      .map((msg) => decode(msg.payload, msg.timestamp, this.chainId))
-      .sort((a, b) => ((a?.timestamp ?? new Date(0)) > (b?.timestamp ?? new Date(0)) ? 1 : -1))
-      .forEach((e) => {
-        if (e) {
-          if (filterFunction ? filterFunction(e) : true && !msgObj.hashMap?.[e.id]) {
-            msgObj.arr.unshift(e)
-            msgObj.hashMap[e.id] = true
-          }
-        }
-      })
+    this.votingContract = await this.votingContract.connect(signer)
+    await this.votingContract.initializeVotingRoom(question, descripiton, tokenAmount)
   }
 
-  protected async sendWakuMessage<T extends { encode: () => Uint8Array | undefined; timestamp: number }>(
-    msgObj: WakuMessageStore,
-    decodedMsg: T | undefined
-  ) {
-    const payload = decodedMsg?.encode()
-    if (payload && decodedMsg) {
-      const wakuMessage = await WakuMessage.fromBytes(payload, msgObj.topic, {
-        timestamp: new Date(decodedMsg.timestamp),
-      })
-      await this.waku?.relay.send(wakuMessage)
-      msgObj.updateFunction([wakuMessage])
+  private lastPolls: any[] = []
+  private lastGetPollsBlockNumber = 0
+
+  public async getVotes() {
+    const blockNumber = await this.provider.getBlockNumber()
+    if (blockNumber != this.lastGetPollsBlockNumber) {
+      this.lastGetPollsBlockNumber = blockNumber
+      this.lastPolls = await this.votingContract.getVotingRooms()
     }
+    return this.lastPolls
+  }
+
+  public async sendVote(
+    signer: JsonRpcSigner | Wallet,
+    roomId: number,
+    selectedAnswer: number,
+    tokenAmount: BigNumber
+  ) {
+    const vote = await VoteMsg._createWithSignFunction(
+      signer,
+      roomId,
+      selectedAnswer,
+      this.chainId,
+      tokenAmount,
+      this.votingContract.address
+    )
+    await this.sendWakuMessage(this.wakuMessages['vote'], vote)
   }
 }

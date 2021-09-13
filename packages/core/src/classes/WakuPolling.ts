@@ -7,7 +7,7 @@ import { WakuMessage } from 'js-waku'
 import { TimedPollVoteMsg } from '../models/TimedPollVoteMsg'
 import { DetailedTimedPoll } from '../models/DetailedTimedPoll'
 import { createWaku } from '../utils/createWaku'
-import { WakuVoting } from './WakuVoting'
+import { WakuMessaging } from './WakuMessaging'
 import { Provider } from '@ethersproject/providers'
 import { Contract } from '@ethersproject/contracts'
 import { Interface } from '@ethersproject/abi'
@@ -23,7 +23,7 @@ export enum MESSEGAGE_SENDING_RESULT {
   pollNotFound = 3,
 }
 
-export class WakuPolling extends WakuVoting {
+export class WakuPolling extends WakuMessaging {
   protected multicall: string
 
   protected constructor(

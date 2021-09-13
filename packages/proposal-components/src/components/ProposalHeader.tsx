@@ -5,13 +5,16 @@ import { Modal, Networks, CreateButton } from '@status-waku-voting/react-compone
 import { Theme } from '@status-waku-voting/react-components/dist/esm/src/style/themes'
 import { ProposeModal } from './ProposeModal'
 import { ProposeVoteModal } from './ProposeVoteModal'
+import { WakuVoting } from '@status-waku-voting/core'
+import { BigNumber } from 'ethers'
 
 type ProposalHeaderProps = {
   theme: Theme
+  wakuVoting: WakuVoting
 }
 
-export function ProposalHeader({ theme }: ProposalHeaderProps) {
-  const { activateBrowserWallet, account } = useEthers()
+export function ProposalHeader({ theme, wakuVoting }: ProposalHeaderProps) {
+  const { activateBrowserWallet, account, library } = useEthers()
   const [selectConnect, setSelectConnect] = useState(false)
   const [showProposeModal, setShowProposeModal] = useState(false)
   const [showProposeVoteModal, setShowProposeVoteModal] = useState(false)
@@ -46,6 +49,7 @@ export function ProposalHeader({ theme }: ProposalHeaderProps) {
       {showProposeVoteModal && (
         <Modal heading="Create proposal" theme={theme} setShowModal={setShowProposeVoteModal}>
           <ProposeVoteModal
+            wakuVoting={wakuVoting}
             title={title}
             text={text}
             availableAmount={6524354}
@@ -57,7 +61,12 @@ export function ProposalHeader({ theme }: ProposalHeaderProps) {
       )}
 
       {account ? (
-        <CreateButton theme={theme} onClick={() => setShowProposeModal(true)}>
+        <CreateButton
+          theme={theme}
+          onClick={() => {
+            setShowProposeModal(true)
+          }}
+        >
           Create proposal
         </CreateButton>
       ) : (

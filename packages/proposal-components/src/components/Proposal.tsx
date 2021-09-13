@@ -3,16 +3,18 @@ import styled from 'styled-components'
 import { ProposalHeader } from './ProposalHeader'
 import { blueTheme } from '@status-waku-voting/react-components/dist/esm/src/style/themes'
 import { ProposalList } from './ProposalList'
-import { VotingEmpty } from './VotingEmpty'
 import { NotificationItem } from './NotificationItem'
+import { WakuVoting } from '@status-waku-voting/core'
 
-export function Proposal() {
+type ProposalProps = {
+  wakuVoting: WakuVoting
+}
+
+export function Proposal({ wakuVoting }: ProposalProps) {
   return (
     <ProposalWrapper>
-      <VotingEmpty theme={blueTheme} />
-      <ProposalHeader theme={blueTheme} />
-      <ProposalList theme={blueTheme} />
-      {/* <VotingEmpty theme={blueTheme} /> */}
+      <ProposalHeader theme={blueTheme} wakuVoting={wakuVoting} />
+      <ProposalList theme={blueTheme} wakuVoting={wakuVoting} />
       <NotificationItem text={'Proposal you finalized will be settled after 10 confirmations.'} address={'#'} />
     </ProposalWrapper>
   )

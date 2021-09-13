@@ -1,3 +1,3 @@
-import { useTest } from './hooks/useTest'
+import { useWakuProposal } from './hooks/useWakuProposal'
 
-export { useTest }
+export { useWakuProposal }

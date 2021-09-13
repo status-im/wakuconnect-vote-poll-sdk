@@ -4,12 +4,14 @@ import styled from 'styled-components'
 import { CreateButton, Modal, Networks, Theme } from '@status-waku-voting/react-components'
 import { ProposeModal } from './ProposeModal'
 import { ProposeVoteModal } from './ProposeVoteModal'
+import { WakuVoting } from '@status-waku-voting/core'
 
 type VotingEmptyProps = {
   theme: Theme
+  wakuVoting: WakuVoting
 }
 
-export function VotingEmpty({ theme }: VotingEmptyProps) {
+export function VotingEmpty({ wakuVoting, theme }: VotingEmptyProps) {
   const { account, activateBrowserWallet } = useEthers()
   const [selectConnect, setSelectConnect] = useState(false)
   const [showProposeModal, setShowProposeModal] = useState(false)
@@ -46,6 +48,7 @@ export function VotingEmpty({ theme }: VotingEmptyProps) {
       {showProposeVoteModal && (
         <Modal heading="Create proposal" theme={theme} setShowModal={setShowProposeVoteModal}>
           <ProposeVoteModal
+            wakuVoting={wakuVoting}
             title={title}
             text={text}
             availableAmount={6524354}

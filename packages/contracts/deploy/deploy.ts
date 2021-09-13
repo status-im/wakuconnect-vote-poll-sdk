@@ -12,7 +12,7 @@ const deploy = async () => {
         const provider = ethers.getDefaultProvider(process.env.ETHEREUM_PROVIDER)
         const wallet = new ethers.Wallet(privateKey, provider)
 
-        const votingContract = await deployContract(wallet, VotingContract,[process.env.ETHEREUM_TOKEN_ADDRESS])
+        const votingContract = await deployContract(wallet, VotingContract,[process.env.ETHEREUM_TOKEN_ADDRESS,1000])
         console.log(`Voting contract deployed with address: ${votingContract.address}`)
 
     }
