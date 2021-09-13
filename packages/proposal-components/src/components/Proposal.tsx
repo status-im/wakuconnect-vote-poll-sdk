@@ -4,6 +4,7 @@ import { ProposalHeader } from './ProposalHeader'
 import { blueTheme } from '@status-waku-voting/react-components/dist/esm/src/style/themes'
 import { ProposalList } from './ProposalList'
 import { VotingEmpty } from './VotingEmpty'
+import { NotificationItem } from './NotificationItem'
 
 export function Proposal() {
   return (
@@ -12,6 +13,7 @@ export function Proposal() {
       <ProposalHeader theme={blueTheme} />
       <ProposalList theme={blueTheme} />
       {/* <VotingEmpty theme={blueTheme} /> */}
+      <NotificationItem text={'Proposal you finalized will be settled after 10 confirmations.'} address={'#'} />
     </ProposalWrapper>
   )
 }

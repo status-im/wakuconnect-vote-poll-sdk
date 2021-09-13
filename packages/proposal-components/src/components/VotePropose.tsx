@@ -13,6 +13,7 @@ export interface VoteProposingProps {
 export function VotePropose({ availableAmount, proposingAmount, setProposingAmount }: VoteProposingProps) {
   const [displayAmount, setDisplayAmount] = useState(addCommas(proposingAmount) + ' ABC')
   const disabled = availableAmount === 0
+
   let step = 10 ** (Math.floor(Math.log10(availableAmount)) - 2)
 
   if (availableAmount < 100) {

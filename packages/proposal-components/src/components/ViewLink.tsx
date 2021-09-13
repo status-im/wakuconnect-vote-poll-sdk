@@ -38,3 +38,15 @@ export const Link = styled.a`
     background-size: contain;
   }
 `
+interface NotificationLinkProps {
+  address: string
+}
+
+export function NotificationLink({ address }: NotificationLinkProps) {
+  return <LinkNotification href={address}>View on Etherscan</LinkNotification>
+}
+
+const LinkNotification = styled(Link)`
+  margin-right: 32px;
+  font-size: 12px;
+`

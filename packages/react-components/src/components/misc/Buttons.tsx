@@ -166,4 +166,5 @@ export const CloseButton = styled.button<CloseProps>`
   background-image: url(${({ theme }) => (theme === orangeTheme ? closeButton : blueCloseButton)});
   background-color: transparent;
   border: none;
+  flex-shrink: 0;
 `
