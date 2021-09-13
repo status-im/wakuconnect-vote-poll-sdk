@@ -38,7 +38,7 @@ export function ProposalHeader({ theme }: ProposalHeaderProps) {
         </CreateButton>
       )}
       {selectConnect && (
-        <Modal heading="Connect" setShowModal={setSelectConnect}>
+        <Modal heading="Connect" setShowModal={setSelectConnect} theme={theme}>
           <Networks />
         </Modal>
       )}

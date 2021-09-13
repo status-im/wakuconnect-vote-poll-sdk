@@ -1,8 +1,12 @@
 import React from 'react'
 import styled from 'styled-components'
+import { Theme } from '@status-waku-voting/react-components'
 import { ProposalCard } from './ProposalCard'
 
-export function ProposalList() {
+type ProposalListProps = {
+  theme: Theme
+}
+export function ProposalList({ theme }: ProposalListProps) {
   return (
     <List>
       <ProposalCard
@@ -13,6 +17,7 @@ export function ProposalList() {
         address={'#'}
         vote={2345678}
         voteWinner={2}
+        theme={theme}
       />
       <ProposalCard
         heading={'Short proposal title'}
@@ -20,6 +25,7 @@ export function ProposalList() {
           'This is a shorter description of the proposal. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Pellentesque interdum rutrum sodales.'
         }
         address={'#'}
+        theme={theme}
       />
     </List>
   )

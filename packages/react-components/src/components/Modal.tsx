@@ -1,14 +1,16 @@
 import React, { ReactNode, useEffect } from 'react'
 import styled from 'styled-components'
-import closeButton from '../assets/svg/close.svg'
+import { Theme } from '../style/themes'
+import { CloseButton } from './misc/Buttons'
 
 type ModalProps = {
   heading: string
   children: ReactNode
+  theme: Theme
   setShowModal: (val: boolean) => void
 }
 
-export function Modal({ heading, children, setShowModal }: ModalProps) {
+export function Modal({ heading, children, theme, setShowModal }: ModalProps) {
   const body = document.getElementById('root')
 
   useEffect(() => {
@@ -25,7 +27,7 @@ export function Modal({ heading, children, setShowModal }: ModalProps) {
       <PopUpWindow onClick={(e) => e.stopPropagation()}>
         <PopUpHeader>
           <PopUpHeading>{heading}</PopUpHeading>
-          <CloseButton onClick={() => setShowModal(false)} />
+          <CloseButton theme={theme} onClick={() => setShowModal(false)} />
         </PopUpHeader>
         <PopUpContetnt>{children}</PopUpContetnt>
       </PopUpWindow>
@@ -84,11 +86,4 @@ const PopUpHeading = styled.p`
 `
 const PopUpContetnt = styled.div`
   width: 100%;
-`
-const CloseButton = styled.button`
-  width: 24px;
-  height: 24px;
-  background-image: url(${closeButton});
-  background-color: transparent;
-  border: none;
 `

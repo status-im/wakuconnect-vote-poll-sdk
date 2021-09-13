@@ -1,9 +1,11 @@
 import React from 'react'
 import styled from 'styled-components'
+import { Theme } from '@status-waku-voting/react-components'
 import { ProposalInfo } from './ProposalInfo'
 import { ProposalVote } from './ProposalVoteCard/ProposalVote'
 
 interface ProposalCardProps {
+  theme: Theme
   heading: string
   text: string
   address: string
@@ -12,11 +14,11 @@ interface ProposalCardProps {
   hideModalFunction?: (val: boolean) => void
 }
 
-export function ProposalCard({ heading, text, address, vote, voteWinner }: ProposalCardProps) {
+export function ProposalCard({ heading, text, address, vote, voteWinner, theme }: ProposalCardProps) {
   return (
     <Card>
       <ProposalInfo heading={heading} text={text} address={address} />
-      <ProposalVote vote={vote} voteWinner={voteWinner} address={address} />
+      <ProposalVote vote={vote} voteWinner={voteWinner} address={address} heading={heading} theme={theme} />
     </Card>
   )
 }

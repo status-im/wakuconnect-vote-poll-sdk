@@ -1,5 +1,7 @@
 import styled, { css } from 'styled-components'
-import { Theme } from '../../style/themes'
+import { orangeTheme, Theme } from '../../style/themes'
+import closeButton from '../../assets/svg/close.svg'
+import blueCloseButton from '../../assets/svg/blueClose.svg'
 
 export const Button = styled.button`
   height: 44px;
@@ -153,4 +155,15 @@ export const ButtonDisconnect = styled.button<DisconnectProps>`
     background: #f4b77e;
     color: ${({ theme }) => theme.activeTextColor};
   }
+`
+interface CloseProps {
+  theme: Theme
+}
+
+export const CloseButton = styled.button<CloseProps>`
+  width: 24px;
+  height: 24px;
+  background-image: url(${({ theme }) => (theme === orangeTheme ? closeButton : blueCloseButton)});
+  background-color: transparent;
+  border: none;
 `

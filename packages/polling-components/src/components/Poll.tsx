@@ -5,17 +5,19 @@ import React, { useEffect, useState } from 'react'
 import { JsonRpcSigner } from '@ethersproject/providers'
 import { PollType } from '@status-waku-voting/core/dist/esm/src/types/PollType'
 import styled from 'styled-components'
-import { RadioGroup, SmallButton } from '@status-waku-voting/react-components'
+import { RadioGroup, SmallButton, Theme } from '@status-waku-voting/react-components'
 import { PollResults } from './PollResults'
 import { useEthers } from '@usedapp/core'
 import { Modal } from '@status-waku-voting/react-components'
+
 type PollProps = {
+  theme: Theme
   poll: DetailedTimedPoll
   wakuPolling: WakuPolling | undefined
   signer: Wallet | JsonRpcSigner | undefined
 }
 
-export function Poll({ poll, wakuPolling, signer }: PollProps) {
+export function Poll({ poll, wakuPolling, theme, signer }: PollProps) {
   const { account } = useEthers()
   const [selectedAnswer, setSelectedAnswer] = useState<number | undefined>(undefined)
   const [tokenAmount, setTokenAmount] = useState(0)
@@ -83,7 +85,7 @@ export function Poll({ poll, wakuPolling, signer }: PollProps) {
         </SmallButton>
       )}
       {showNotEnoughTokens && (
-        <Modal heading={''} setShowModal={setShowNotEnoughTokens}>
+        <Modal heading={''} setShowModal={setShowNotEnoughTokens} theme={theme}>
           <ModalTextWrapper>You don't have enough tokens to vote</ModalTextWrapper>
         </Modal>
       )}

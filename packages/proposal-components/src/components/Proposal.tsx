@@ -8,7 +8,7 @@ export function Proposal() {
   return (
     <ProposalWrapper>
       <ProposalHeader theme={blueTheme} />
-      <ProposalList />
+      <ProposalList theme={blueTheme} />
     </ProposalWrapper>
   )
 }

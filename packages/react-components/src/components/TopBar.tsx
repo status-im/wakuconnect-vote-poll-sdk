@@ -59,7 +59,7 @@ export function TopBar({ logo, title, theme, activate, deactivate, account }: To
       </ContentWrapper>
 
       {selectConnect && (
-        <Modal heading="Connect" setShowModal={setSelectConnect}>
+        <Modal heading="Connect" theme={theme} setShowModal={setSelectConnect}>
           <Networks />
         </Modal>
       )}

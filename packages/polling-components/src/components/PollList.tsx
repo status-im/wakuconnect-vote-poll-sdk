@@ -5,13 +5,15 @@ import React, { useEffect, useState } from 'react'
 import { Poll } from './Poll'
 import { JsonRpcSigner } from '@ethersproject/providers'
 import styled from 'styled-components'
+import { Theme } from '@status-waku-voting/react-components'
 
 type PollListProps = {
+  theme: Theme
   wakuPolling: WakuPolling | undefined
   signer: Wallet | JsonRpcSigner | undefined
 }
 
-export function PollList({ wakuPolling, signer }: PollListProps) {
+export function PollList({ wakuPolling, signer, theme }: PollListProps) {
   const [polls, setPolls] = useState<DetailedTimedPoll[]>([])
   const [dividedPolls, setDividedPolls] = useState<DetailedTimedPoll[][]>([[], [], []])
   useEffect(() => {
@@ -43,7 +45,7 @@ export function PollList({ wakuPolling, signer }: PollListProps) {
         return (
           <ColumnWrapper key={idx}>
             {pollArray.map((poll) => {
-              return <Poll key={poll.poll.id} poll={poll} wakuPolling={wakuPolling} signer={signer} />
+              return <Poll key={poll.poll.id} poll={poll} wakuPolling={wakuPolling} signer={signer} theme={theme} />
             })}
           </ColumnWrapper>
         )

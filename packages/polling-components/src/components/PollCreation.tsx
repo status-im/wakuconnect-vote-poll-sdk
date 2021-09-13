@@ -4,7 +4,7 @@ import { JsonRpcSigner } from '@ethersproject/providers'
 import styled from 'styled-components'
 import { PollType } from '@status-waku-voting/core/dist/esm/src/types/PollType'
 import { WakuPolling } from '@status-waku-voting/core'
-import { Input, addIcon, SmallButton, Modal } from '@status-waku-voting/react-components'
+import { Input, addIcon, SmallButton, Modal, Theme } from '@status-waku-voting/react-components'
 
 function getLocaleIsoTime(dateTime: Date) {
   const MS_PER_MINUTE = 60000
@@ -35,12 +35,13 @@ function ConfirmScreen({ children, setShowModal }: ConfirmScreenProps) {
 }
 
 type PollCreationProps = {
+  theme: Theme
   signer: JsonRpcSigner | Wallet
   wakuPolling: WakuPolling | undefined
   setShowPollCreation: (val: boolean) => void
 }
 
-export function PollCreation({ signer, wakuPolling, setShowPollCreation }: PollCreationProps) {
+export function PollCreation({ signer, wakuPolling, theme, setShowPollCreation }: PollCreationProps) {
   const [answers, setAnswers] = useState<string[]>(['', ''])
   const [question, setQuestion] = useState('')
   const [showCreateConfirmation, setShowCreateConfirmation] = useState(false)
@@ -49,7 +50,7 @@ export function PollCreation({ signer, wakuPolling, setShowPollCreation }: PollC
   const [endTimePicker, setEndTimePicker] = useState(new Date(new Date().getTime() + 10000000))
 
   return (
-    <Modal heading="Create a poll" setShowModal={setShowPollCreation}>
+    <Modal heading="Create a poll" setShowModal={setShowPollCreation} theme={theme}>
       <NewPollBox>
         {!showCreateConfirmation && !showNotEnoughTokens && (
           <PollForm>
