@@ -3,6 +3,8 @@ import styled from 'styled-components'
 import { useEthers } from '@usedapp/core'
 import { Modal, Networks, CreateButton } from '@status-waku-voting/react-components'
 import { Theme } from '@status-waku-voting/react-components/dist/esm/src/style/themes'
+import { ProposeModal } from './ProposeModal'
+import { ProposeVoteModal } from './ProposeVoteModal'
 
 type ProposalHeaderProps = {
   theme: Theme
@@ -10,8 +12,16 @@ type ProposalHeaderProps = {
 
 export function ProposalHeader({ theme }: ProposalHeaderProps) {
   const { activateBrowserWallet, account } = useEthers()
-  const [showProposeCreation, setShowProposeCreation] = useState(false)
   const [selectConnect, setSelectConnect] = useState(false)
+  const [showProposeModal, setShowProposeModal] = useState(false)
+  const [showProposeVoteModal, setShowProposeVoteModal] = useState(false)
+  const [title, setTitle] = useState('')
+  const [text, setText] = useState('')
+
+  const setNext = (val: boolean) => {
+    setShowProposeVoteModal(val)
+    setShowProposeModal(false)
+  }
 
   return (
     <Wrapper>
@@ -21,8 +31,33 @@ export function ProposalHeader({ theme }: ProposalHeaderProps) {
           Take part in a decentralised governance by voting on proposals provided by community or creating your own.
         </HeaderText>
       </Header>
+      {showProposeModal && (
+        <Modal heading="Create proposal" theme={theme} setShowModal={setShowProposeModal}>
+          <ProposeModal
+            title={title}
+            text={text}
+            setText={setText}
+            setTitle={setTitle}
+            availableAmount={6524354}
+            setShowProposeVoteModal={setNext}
+          />
+        </Modal>
+      )}
+      {showProposeVoteModal && (
+        <Modal heading="Create proposal" theme={theme} setShowModal={setShowProposeVoteModal}>
+          <ProposeVoteModal
+            title={title}
+            text={text}
+            availableAmount={6524354}
+            setShowModal={setShowProposeVoteModal}
+            setText={setText}
+            setTitle={setTitle}
+          />
+        </Modal>
+      )}
+
       {account ? (
-        <CreateButton theme={theme} onClick={() => setShowProposeCreation(true)}>
+        <CreateButton theme={theme} onClick={() => setShowProposeModal(true)}>
           Create proposal
         </CreateButton>
       ) : (

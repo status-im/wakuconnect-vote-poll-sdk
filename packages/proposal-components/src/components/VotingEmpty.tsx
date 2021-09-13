@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react'
 import { useEthers } from '@usedapp/core'
 
 import styled from 'styled-components'
-import { CreateButton, Modal, Theme } from '@status-waku-voting/react-components'
+import { CreateButton, Modal, Networks, Theme } from '@status-waku-voting/react-components'
 import { ProposeModal } from './ProposeModal'
 import { ProposeVoteModal } from './ProposeVoteModal'
 
@@ -15,7 +15,6 @@ export function VotingEmpty({ theme }: VotingEmptyProps) {
   const [selectConnect, setSelectConnect] = useState(false)
   const [showProposeModal, setShowProposeModal] = useState(false)
   const [showProposeVoteModal, setShowProposeVoteModal] = useState(false)
-  const [mobileVersion, setMobileVersion] = useState(false)
   const [title, setTitle] = useState('')
   const [text, setText] = useState('')
 
@@ -23,19 +22,6 @@ export function VotingEmpty({ theme }: VotingEmptyProps) {
     setShowProposeVoteModal(val)
     setShowProposeModal(false)
   }
-
-  useEffect(() => {
-    const handleResize = () => {
-      if (window.innerWidth < 600) {
-        setMobileVersion(true)
-      } else {
-        setMobileVersion(false)
-      }
-    }
-    handleResize()
-    window.addEventListener('resize', handleResize)
-    return () => window.removeEventListener('resize', handleResize)
-  }, [])
 
   return (
     <VotingEmptyWrap>
@@ -53,7 +39,7 @@ export function VotingEmpty({ theme }: VotingEmptyProps) {
             text={text}
             setText={setText}
             setTitle={setTitle}
-            availableAmount={6524}
+            availableAmount={6524354}
             setShowProposeVoteModal={setNext}
           />
         </Modal>
@@ -63,7 +49,7 @@ export function VotingEmpty({ theme }: VotingEmptyProps) {
           <ProposeVoteModal
             title={title}
             text={text}
-            availableAmount={6524}
+            availableAmount={6524354}
             setShowModal={setShowProposeVoteModal}
             setText={setText}
             setTitle={setTitle}
@@ -71,44 +57,41 @@ export function VotingEmpty({ theme }: VotingEmptyProps) {
         </Modal>
       )}
 
-      {!mobileVersion && (
-        <div>
-          {account ? (
-            <CreateButton theme={theme} onClick={() => setShowProposeModal(true)}>
-              Create proposal
-            </CreateButton>
-          ) : (
-            <CreateButton
-              theme={theme}
-              onClick={() => {
-                if ((window as any).ethereum) {
-                  activateBrowserWallet()
-                } else setSelectConnect(true)
-              }}
-            >
-              Connect to vote
-            </CreateButton>
-          )}
-        </div>
+      {account ? (
+        <CreateButton theme={theme} onClick={() => setShowProposeModal(true)}>
+          Create proposal
+        </CreateButton>
+      ) : (
+        <CreateButton
+          theme={theme}
+          onClick={() => {
+            if ((window as any).ethereum) {
+              activateBrowserWallet()
+            } else setSelectConnect(true)
+          }}
+        >
+          Connect to vote
+        </CreateButton>
+      )}
+
+      {selectConnect && (
+        <Modal heading="Connect" setShowModal={setSelectConnect} theme={theme}>
+          <Networks />
+        </Modal>
       )}
     </VotingEmptyWrap>
   )
 }
 
 const VotingEmptyWrap = styled.div`
-  position: absolute;
-  top: 96px;
-  left: 50%;
-  transform: translateX(-50%);
-  padding: 0 32px;
+  width: 100%;
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  width: 100%;
-  height: calc(100vh - 96px);
-  background: #fffff;
-  z-index: 99;
+  background: #fff;
+  margin-top: 20vh;
+  padding: 0 32px;
 
   @media (max-width: 600px) {
     height: 250px;
@@ -134,12 +117,9 @@ const EmptyHeading = styled.h1`
   text-align: center;
 
   @media (max-width: 600px) {
-    font-size: 22px;
-    line-height: 22px;
-    padding: 0 16px;
-  }
-  @media (max-width: 375px) {
-    font-size: 20px;
+    font-size: 17px;
+    line-height: 24px;
+    margin-bottom: 16px;
   }
 `
 
@@ -151,13 +131,8 @@ const EmptyText = styled.p`
   margin-bottom: 24px;
 
   @media (max-width: 600px) {
-    font-size: 13px;
-    line-height: 18px;
-    margin: 0;
-    padding: 0 16px;
-  }
-
-  @media (max-width: 340px) {
-    font-size: 12px;
+    font-size: 15px;
+    line-height: 22px;
+    margin-bottom: 20px;
   }
 `
