@@ -89,3 +89,24 @@ export const FinalBtn = styled(Btn)`
     margin-top: 32px;
   }
 `
+
+export const ProposingBtn = styled(Btn)`
+  width: 100%;
+  background-color: #5d7be2;
+  color: #ffffff;
+  font-weight: bold;
+  font-size: 15px;
+  line-height: 24px;
+
+  &:not(:disabled):hover {
+    background: #0f3595;
+  }
+  &:not(:disabled):active {
+    background: #7e98f4;
+  }
+
+  &:disabled {
+    background: #888888;
+    filter: grayscale(1);
+  }
+`

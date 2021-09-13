@@ -43,7 +43,7 @@ export const Card = styled.div`
   }
 `
 
-const CardHeading = styled.div`
+export const CardHeading = styled.div`
   font-weight: bold;
   font-size: 22px;
   line-height: 24px;
@@ -55,7 +55,7 @@ const CardHeading = styled.div`
   }
 `
 
-const CardText = styled.div`
+export const CardText = styled.div`
   font-size: 13px;
   line-height: 18px;
   margin-bottom: 16px;
