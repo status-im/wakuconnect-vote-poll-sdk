@@ -1,4 +1,5 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
+import { useHistory } from 'react-router'
 import { useEthers } from '@usedapp/core'
 import styled from 'styled-components'
 import { CreateButton, Modal, Networks, Theme } from '@status-waku-voting/react-components'
@@ -16,13 +17,28 @@ export function VotingEmpty({ wakuVoting, theme }: VotingEmptyProps) {
   const [selectConnect, setSelectConnect] = useState(false)
   const [showProposeModal, setShowProposeModal] = useState(false)
   const [showProposeVoteModal, setShowProposeVoteModal] = useState(false)
+  const [mobileVersion, setMobileVersion] = useState(false)
   const [title, setTitle] = useState('')
   const [text, setText] = useState('')
+  const history = useHistory()
 
   const setNext = (val: boolean) => {
     setShowProposeVoteModal(val)
     setShowProposeModal(false)
   }
+
+  useEffect(() => {
+    const handleResize = () => {
+      if (window.innerWidth < 600) {
+        setMobileVersion(true)
+      } else {
+        setMobileVersion(false)
+      }
+    }
+    handleResize()
+    window.addEventListener('resize', handleResize)
+    return () => window.removeEventListener('resize', handleResize)
+  }, [])
 
   return (
     <VotingEmptyWrap>
@@ -60,9 +76,14 @@ export function VotingEmpty({ wakuVoting, theme }: VotingEmptyProps) {
       )}
 
       {account ? (
-        <CreateButton theme={theme} onClick={() => setShowProposeModal(true)}>
+        <EmptyCreateButton
+          theme={theme}
+          onClick={() => {
+            mobileVersion ? history.push(`/creation`) : setShowProposeModal(true)
+          }}
+        >
           Create proposal
-        </CreateButton>
+        </EmptyCreateButton>
       ) : (
         <CreateButton
           theme={theme}
@@ -136,5 +157,11 @@ const EmptyText = styled.p`
     font-size: 15px;
     line-height: 22px;
     margin-bottom: 20px;
+  }
+`
+
+const EmptyCreateButton = styled(CreateButton)`
+  @media (max-width: 425px) {
+    position: static;
   }
 `

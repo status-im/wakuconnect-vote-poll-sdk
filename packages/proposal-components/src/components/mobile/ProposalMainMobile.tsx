@@ -1,19 +1,20 @@
 import React from 'react'
-import styled from 'styled-components'
-import { ProposalHeader } from './ProposalHeader'
 import { blueTheme } from '@status-waku-voting/react-components/dist/esm/src/style/themes'
-import { ProposalList } from './ProposalList'
-import { NotificationItem } from './NotificationItem'
+import { ProposalList } from '../ProposalList'
+import { VotingEmpty } from '../VotingEmpty'
+import { NotificationItem } from '../NotificationItem'
+import { ProposalHeaderMobile } from './ProposalHeaderMobile'
+import styled from 'styled-components'
 import { WakuVoting } from '@status-waku-voting/core'
 
-type ProposalProps = {
+type ProposalMainMobileProps = {
   wakuVoting: WakuVoting
 }
 
-export function Proposal({ wakuVoting }: ProposalProps) {
+export function ProposalMainMobile({ wakuVoting }: ProposalMainMobileProps) {
   return (
     <ProposalWrapper>
-      <ProposalHeader theme={blueTheme} wakuVoting={wakuVoting} />
+      <ProposalHeaderMobile theme={blueTheme} />
       <ProposalList theme={blueTheme} wakuVoting={wakuVoting} />
       {/* <VotingEmpty theme={blueTheme} /> */}
       <NotificationItem text={'Proposal you finalized will be settled after 10 confirmations.'} address={'#'} />
@@ -27,7 +28,11 @@ const ProposalWrapper = styled.div`
   align-items: center;
   max-width: 1000px;
   margin: 0 auto;
-  padding: 150px 32px 50px;
   width: 100%;
   min-height: 100vh;
+  padding: 132px 16px 32px;
+
+  @media (max-width: 425px) {
+    padding: 64px 16px 84px;
+  }
 `

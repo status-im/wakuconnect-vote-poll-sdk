@@ -105,19 +105,19 @@ export const ProposingInfo = styled.div`
   }
 `
 
-const InfoText = styled.div`
+export const InfoText = styled.div`
   font-size: 12px;
   line-height: 16px;
   letter-spacing: 0.1px;
 `
 
-const ProposingInput = styled(TextArea)`
+export const ProposingInput = styled(TextArea)`
   height: 68px;
 `
-const ProposingTextInput = styled(ProposingInput)`
+export const ProposingTextInput = styled(ProposingInput)`
   height: 222px;
 `
-const Label = styled.label`
+export const Label = styled.label`
   width: 100%;
   font-size: 15px;
   line-height: 22px;

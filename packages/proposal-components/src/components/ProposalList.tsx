@@ -22,7 +22,7 @@ export function ProposalList({ theme, wakuVoting }: ProposalListProps) {
   return (
     <List>
       {votes.map((vote, idx) => {
-        return <ProposalCard heading={vote[2]} text={vote[3]} address={'#'} theme={theme} key={idx} />
+        return <ProposalCard heading={vote[2]} text={vote[3]} address={'#'} theme={theme} key={idx} id={idx} />
       })}
       {votes && votes?.length === 0 && <VotingEmpty wakuVoting={wakuVoting} theme={theme} />}
     </List>

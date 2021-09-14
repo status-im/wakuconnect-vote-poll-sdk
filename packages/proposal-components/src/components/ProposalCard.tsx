@@ -1,10 +1,12 @@
 import React from 'react'
+import { useHistory } from 'react-router'
 import styled from 'styled-components'
 import { Theme } from '@status-waku-voting/react-components'
 import { ProposalInfo } from './ProposalInfo'
 import { ProposalVote } from './ProposalVoteCard/ProposalVote'
 
 interface ProposalCardProps {
+  id: number
   theme: Theme
   heading: string
   text: string
@@ -14,9 +16,11 @@ interface ProposalCardProps {
   hideModalFunction?: (val: boolean) => void
 }
 
-export function ProposalCard({ heading, text, address, vote, voteWinner, theme }: ProposalCardProps) {
+export function ProposalCard({ id, heading, text, address, vote, voteWinner, theme }: ProposalCardProps) {
+  const history = useHistory()
+
   return (
-    <Card>
+    <Card onClick={() => history.push(`/votingRoom/${id.toString}`)}>
       <ProposalInfo heading={heading} text={text} address={address} />
       <ProposalVote vote={vote} voteWinner={voteWinner} address={address} heading={heading} theme={theme} />
     </Card>

@@ -1,30 +1,19 @@
 import React, { useState } from 'react'
+import { useHistory } from 'react-router'
 import styled from 'styled-components'
 import { useEthers } from '@usedapp/core'
 import { Modal, Networks, CreateButton } from '@status-waku-voting/react-components'
 import { Theme } from '@status-waku-voting/react-components/dist/esm/src/style/themes'
-import { ProposeModal } from './ProposeModal'
-import { ProposeVoteModal } from './ProposeVoteModal'
-import { WakuVoting } from '@status-waku-voting/core'
-import { BigNumber } from 'ethers'
+import { Wrapper } from '../ProposalHeader'
 
-type ProposalHeaderProps = {
+type ProposalHeaderMobileProps = {
   theme: Theme
-  wakuVoting: WakuVoting
 }
 
-export function ProposalHeader({ theme, wakuVoting }: ProposalHeaderProps) {
-  const { activateBrowserWallet, account, library } = useEthers()
+export function ProposalHeaderMobile({ theme }: ProposalHeaderMobileProps) {
+  const { activateBrowserWallet, account } = useEthers()
   const [selectConnect, setSelectConnect] = useState(false)
-  const [showProposeModal, setShowProposeModal] = useState(false)
-  const [showProposeVoteModal, setShowProposeVoteModal] = useState(false)
-  const [title, setTitle] = useState('')
-  const [text, setText] = useState('')
-
-  const setNext = (val: boolean) => {
-    setShowProposeVoteModal(val)
-    setShowProposeModal(false)
-  }
+  const history = useHistory()
 
   return (
     <Wrapper>
@@ -34,39 +23,8 @@ export function ProposalHeader({ theme, wakuVoting }: ProposalHeaderProps) {
           Take part in a decentralised governance by voting on proposals provided by community or creating your own.
         </HeaderText>
       </Header>
-      {showProposeModal && (
-        <Modal heading="Create proposal" theme={theme} setShowModal={setShowProposeModal}>
-          <ProposeModal
-            title={title}
-            text={text}
-            setText={setText}
-            setTitle={setTitle}
-            availableAmount={6524354}
-            setShowProposeVoteModal={setNext}
-          />
-        </Modal>
-      )}
-      {showProposeVoteModal && (
-        <Modal heading="Create proposal" theme={theme} setShowModal={setShowProposeVoteModal}>
-          <ProposeVoteModal
-            wakuVoting={wakuVoting}
-            title={title}
-            text={text}
-            availableAmount={6524354}
-            setShowModal={setShowProposeVoteModal}
-            setText={setText}
-            setTitle={setTitle}
-          />
-        </Modal>
-      )}
-
       {account ? (
-        <CreateButton
-          theme={theme}
-          onClick={() => {
-            setShowProposeModal(true)
-          }}
-        >
+        <CreateButton theme={theme} onClick={() => history.push(`/creation`)}>
           Create proposal
         </CreateButton>
       ) : (
@@ -90,11 +48,6 @@ export function ProposalHeader({ theme, wakuVoting }: ProposalHeaderProps) {
   )
 }
 
-export const Wrapper = styled.div`
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-`
 const Header = styled.div`
   display: flex;
   flex-direction: column;
