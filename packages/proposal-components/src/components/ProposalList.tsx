@@ -1,30 +1,20 @@
-import React, { useEffect, useState } from 'react'
+import React from 'react'
 import styled from 'styled-components'
 import { Theme } from '@status-waku-voting/react-components'
 import { ProposalCard } from './ProposalCard'
 import { WakuVoting } from '@status-waku-voting/core'
-import { VotingEmpty } from './VotingEmpty'
 
 type ProposalListProps = {
   theme: Theme
   wakuVoting: WakuVoting
+  votes: any[]
 }
-export function ProposalList({ theme, wakuVoting }: ProposalListProps) {
-  const [votes, setVotes] = useState<any[]>([])
-
-  useEffect(() => {
-    const interval = setInterval(async () => {
-      setVotes(await wakuVoting.getVotes())
-    }, 10000)
-    return () => clearInterval(interval)
-  }, [])
-
+export function ProposalList({ theme, wakuVoting, votes }: ProposalListProps) {
   return (
     <List>
       {votes.map((vote, idx) => {
         return <ProposalCard heading={vote[2]} text={vote[3]} address={'#'} theme={theme} key={idx} id={idx} />
       })}
-      {votes && votes?.length === 0 && <VotingEmpty wakuVoting={wakuVoting} theme={theme} />}
     </List>
   )
 }

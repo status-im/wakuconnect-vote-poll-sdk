@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import { blueTheme } from '@status-waku-voting/react-components/dist/esm/src/style/themes'
 import { ProposalList } from '../ProposalList'
 import { VotingEmpty } from '../VotingEmpty'
@@ -6,17 +6,32 @@ import { NotificationItem } from '../NotificationItem'
 import { ProposalHeaderMobile } from './ProposalHeaderMobile'
 import styled from 'styled-components'
 import { WakuVoting } from '@status-waku-voting/core'
+import { ProposalVotesWrapper } from '../Proposal'
 
 type ProposalMainMobileProps = {
   wakuVoting: WakuVoting
 }
 
 export function ProposalMainMobile({ wakuVoting }: ProposalMainMobileProps) {
+  const [votes, setVotes] = useState<any[]>([])
+
+  useEffect(() => {
+    const interval = setInterval(async () => {
+      setVotes(await wakuVoting.getVotes())
+    }, 10000)
+    return () => clearInterval(interval)
+  }, [])
+
   return (
     <ProposalWrapper>
-      <ProposalHeaderMobile theme={blueTheme} />
-      <ProposalList theme={blueTheme} wakuVoting={wakuVoting} />
-      {/* <VotingEmpty theme={blueTheme} /> */}
+      {votes && votes?.length === 0 ? (
+        <VotingEmpty wakuVoting={wakuVoting} theme={blueTheme} />
+      ) : (
+        <ProposalVotesWrapper>
+          <ProposalHeaderMobile theme={blueTheme} />
+          <ProposalList theme={blueTheme} wakuVoting={wakuVoting} votes={votes} />
+        </ProposalVotesWrapper>
+      )}
       <NotificationItem text={'Proposal you finalized will be settled after 10 confirmations.'} address={'#'} />
     </ProposalWrapper>
   )

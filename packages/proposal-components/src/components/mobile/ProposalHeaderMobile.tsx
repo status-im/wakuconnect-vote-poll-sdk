@@ -60,6 +60,7 @@ const Header = styled.div`
     padding: 12px 16px 0;
     width: 100%;
     background: #f8faff;
+    z-index: 10;
   }
 `
 
