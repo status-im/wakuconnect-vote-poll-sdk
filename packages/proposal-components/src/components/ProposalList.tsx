@@ -33,7 +33,7 @@ const List = styled.div`
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  align-items: center;
+  width: 100%;
 
   @media (max-width: 425px) {
     padding-top: 118px;
