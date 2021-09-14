@@ -59,7 +59,6 @@ const getSignedMessages = async (
       sessionID: 0,
     },
   ]
-  const types = ['address', 'uint256', 'uint256']
   const messages = votes.map((vote) => {
     return [vote.voter.address, BigNumber.from(vote.sessionID).mul(2).add(vote.vote), vote.tokenAmount] as [
       string,
@@ -86,11 +85,12 @@ async function fixture([alice, firstAddress, secondAddress, noTokensAddress]: an
   await erc20.transfer(firstAddress.address, 10000)
   await erc20.transfer(secondAddress.address, 10000)
   const contract = await deployContract(alice, VotingContract, [erc20.address, 1000])
-  return { contract, alice, firstAddress, secondAddress, provider, noTokensAddress }
+  const secondContract = await deployContract(alice, VotingContract, [erc20.address, 1000])
+  return { contract, secondContract, alice, firstAddress, secondAddress, provider, noTokensAddress }
 }
 
 before(async function () {
-  this.timeout(10000)
+  this.timeout(20000)
   const { contract } = await loadFixture(fixture)
   typedData.domain.chainId = 1
   typedData.domain.verifyingContract = contract.address
@@ -314,6 +314,35 @@ describe('Contract', () => {
       )
 
       await expect(contract.castVotes(signedMessages)).to.be.revertedWith('vote has wrong signature')
+    })
+
+    it("vote can't be reused", async () => {
+      const createMessage = (voter: any, domainSeparator: any) => {
+        const correctMessageParams = [voter.address, BigNumber.from(0).mul(2).add(0), BigNumber.from(10)]
+        const correctMessageData: TypedMessage<MessageTypes> = {
+          ...domainSeparator,
+          message: {
+            roomIdAndType: correctMessageParams[1].toHexString(),
+            tokenAmount: correctMessageParams[2].toHexString(),
+            voter: correctMessageParams[0],
+          },
+        }
+
+        const correctSig = utils.splitSignature(
+          signTypedMessage(Buffer.from(utils.arrayify(voter.privateKey)), { data: correctMessageData }, 'V3')
+        )
+
+        return [...correctMessageParams, correctSig.r, correctSig._vs]
+      }
+
+      const { contract, secondContract, firstAddress } = await loadFixture(fixture)
+
+      await contract.initializeVotingRoom('test', '', BigNumber.from(100))
+      await secondContract.initializeVotingRoom('test', '', BigNumber.from(100))
+
+      const correctAddress = createMessage(firstAddress, typedData)
+      await expect(contract.castVotes([correctAddress])).not.to.be.reverted
+      await expect(secondContract.castVotes([correctAddress])).to.be.revertedWith('vote has wrong signature')
     })
   })
 })
