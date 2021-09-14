@@ -3,6 +3,8 @@ import styled from 'styled-components'
 import { Theme } from '@status-waku-voting/react-components'
 import { ProposalCard } from './ProposalCard'
 import { WakuVoting } from '@status-waku-voting/core'
+import { VotingEmpty } from './VotingEmpty'
+import { VotingRoom } from '@status-waku-voting/core/dist/esm/src/types/PollType'
 
 type ProposalListProps = {
   theme: Theme
@@ -12,8 +14,17 @@ type ProposalListProps = {
 export function ProposalList({ theme, wakuVoting, votes }: ProposalListProps) {
   return (
     <List>
-      {votes.map((vote, idx) => {
-        return <ProposalCard heading={vote[2]} text={vote[3]} address={'#'} theme={theme} key={idx} id={idx} />
+      {votes.map((vote) => {
+        return (
+          <ProposalCard
+            heading={vote.question}
+            text={vote.description}
+            address={'#'}
+            theme={theme}
+            key={vote.id}
+            id={vote.id}
+          />
+        )
       })}
     </List>
   )

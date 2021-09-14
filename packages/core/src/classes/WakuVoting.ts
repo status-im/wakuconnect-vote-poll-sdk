@@ -6,13 +6,13 @@ import { Provider } from '@ethersproject/abstract-provider'
 import { createWaku } from '../utils/createWaku'
 import { JsonRpcSigner } from '@ethersproject/providers'
 import { VoteMsg } from '../models/VoteMsg'
+import { VotingRoom } from '../types/PollType'
 
 const ABI = [
   'function aggregate(tuple(address target, bytes callData)[] calls) view returns (uint256 blockNumber, bytes[] returnData)',
 ]
 
 export class WakuVoting extends WakuMessaging {
-  private multicall: Contract
   private votingContract: Contract
 
   constructor(
@@ -24,13 +24,13 @@ export class WakuVoting extends WakuMessaging {
     chainId: number,
     multicallAddress: string
   ) {
-    super(appName, token, waku, provider, chainId)
+    super(appName, token, waku, provider, chainId, multicallAddress)
     this.votingContract = votingContract
-    this.multicall = new Contract(multicallAddress, ABI, this.provider)
     this.wakuMessages['vote'] = {
       topic: `/${this.appName}/waku-voting/votes/proto/`,
       hashMap: {},
       arr: [],
+      tokenCheckArray: ['voter'],
       updateFunction: (msg: WakuMessage[]) =>
         this.decodeMsgAndSetArray(
           msg,
@@ -71,14 +71,26 @@ export class WakuVoting extends WakuMessaging {
     await this.votingContract.initializeVotingRoom(question, descripiton, tokenAmount)
   }
 
-  private lastPolls: any[] = []
+  private lastPolls: VotingRoom[] = []
   private lastGetPollsBlockNumber = 0
 
-  public async getVotes() {
+  public async getVotingRooms() {
     const blockNumber = await this.provider.getBlockNumber()
     if (blockNumber != this.lastGetPollsBlockNumber) {
       this.lastGetPollsBlockNumber = blockNumber
-      this.lastPolls = await this.votingContract.getVotingRooms()
+      const polls = await this.votingContract.getVotingRooms()
+      this.lastPolls = polls.map((poll: any, idx: number): VotingRoom => {
+        return {
+          startBlock: poll[0],
+          endAt: poll[1],
+          question: poll[2],
+          description: poll[3],
+          totalVotesFor: poll[4],
+          totalVotesAgainst: poll[5],
+          voters: poll[6],
+          id: idx,
+        }
+      })
     }
     return this.lastPolls
   }

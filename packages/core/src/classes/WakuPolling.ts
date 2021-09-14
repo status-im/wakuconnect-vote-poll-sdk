@@ -9,12 +9,6 @@ import { DetailedTimedPoll } from '../models/DetailedTimedPoll'
 import { createWaku } from '../utils/createWaku'
 import { WakuMessaging } from './WakuMessaging'
 import { Provider } from '@ethersproject/providers'
-import { Contract } from '@ethersproject/contracts'
-import { Interface } from '@ethersproject/abi'
-import { ERC20 } from '../abi'
-const ABI = [
-  'function aggregate(tuple(address target, bytes callData)[] calls) view returns (uint256 blockNumber, bytes[] returnData)',
-]
 
 export enum MESSEGAGE_SENDING_RESULT {
   ok = 0,
@@ -24,8 +18,6 @@ export enum MESSEGAGE_SENDING_RESULT {
 }
 
 export class WakuPolling extends WakuMessaging {
-  protected multicall: string
-
   protected constructor(
     appName: string,
     tokenAddress: string,
@@ -34,11 +26,11 @@ export class WakuPolling extends WakuMessaging {
     chainId: number,
     multicall: string
   ) {
-    super(appName, tokenAddress, waku, provider, chainId)
-    this.multicall = multicall
+    super(appName, tokenAddress, waku, provider, chainId, multicall)
     this.wakuMessages['pollInit'] = {
       topic: `/${this.appName}/waku-polling/timed-polls-init/proto/`,
       hashMap: {},
+      tokenCheckArray: ['owner'],
       arr: [],
       updateFunction: (msg: WakuMessage[]) =>
         this.decodeMsgAndSetArray(
@@ -51,6 +43,7 @@ export class WakuPolling extends WakuMessaging {
     this.wakuMessages['pollVote'] = {
       topic: `/${this.appName}/waku-polling/votes/proto/`,
       hashMap: {},
+      tokenCheckArray: ['voter'],
       arr: [],
       updateFunction: (msg: WakuMessage[]) =>
         this.decodeMsgAndSetArray(msg, TimedPollVoteMsg.decode, this.wakuMessages['pollVote']),
@@ -122,54 +115,6 @@ export class WakuPolling extends WakuMessaging {
       }
     } else {
       return MESSEGAGE_SENDING_RESULT.pollNotFound
-    }
-  }
-
-  protected addressesBalances: { [address: string]: BigNumber } = {}
-  protected lastBlockBalances = 0
-
-  protected async updateBalances(newAddress?: string) {
-    const addresses: string[] = [
-      ...this.wakuMessages['pollInit'].arr.map((msg) => msg.owner),
-      ...this.wakuMessages['pollVote'].arr.map((msg) => msg.voter),
-    ]
-
-    if (newAddress) addresses.push(newAddress)
-    const addressesToUpdate: { [addr: string]: boolean } = {}
-
-    const addAddressToUpdate = (addr: string) => {
-      if (!addressesToUpdate[addr]) {
-        addressesToUpdate[addr] = true
-      }
-    }
-
-    const currentBlock = await this.provider.getBlockNumber()
-    if (this.lastBlockBalances != currentBlock) {
-      Object.keys(this.addressesBalances).forEach(addAddressToUpdate)
-      addresses.forEach(addAddressToUpdate)
-    } else {
-      addresses.forEach((address) => {
-        if (!this.addressesBalances[address]) {
-          addAddressToUpdate(address)
-        }
-      })
-    }
-
-    const addressesToUpdateArray = Object.keys(addressesToUpdate)
-    if (addressesToUpdateArray.length > 0) {
-      const erc20 = new Interface(ERC20.abi)
-      const contract = new Contract(this.multicall, ABI, this.provider)
-      const callData = addressesToUpdateArray.map((addr) => {
-        return [this.tokenAddress, erc20.encodeFunctionData('balanceOf', [addr])]
-      })
-      const result = (await contract.aggregate(callData))[1].map((data: any) =>
-        erc20.decodeFunctionResult('balanceOf', data)
-      )
-
-      result.forEach((e: any, idx: number) => {
-        this.addressesBalances[addressesToUpdateArray[idx]] = e[0]
-      })
-      this.lastBlockBalances = currentBlock
     }
   }
 

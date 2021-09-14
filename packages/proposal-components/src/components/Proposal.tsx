@@ -16,7 +16,7 @@ export function Proposal({ wakuVoting }: ProposalProps) {
 
   useEffect(() => {
     const interval = setInterval(async () => {
-      setVotes(await wakuVoting.getVotes())
+      setVotes(await wakuVoting.getVotingRooms())
     }, 10000)
     return () => clearInterval(interval)
   }, [])
