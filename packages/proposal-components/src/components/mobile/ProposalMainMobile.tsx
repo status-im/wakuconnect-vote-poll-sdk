@@ -11,9 +11,10 @@ import { VotingRoom } from '@status-waku-voting/core/dist/esm/src/types/PollType
 
 type ProposalMainMobileProps = {
   wakuVoting: WakuVoting
+  availableAmount: number
 }
 
-export function ProposalMainMobile({ wakuVoting }: ProposalMainMobileProps) {
+export function ProposalMainMobile({ wakuVoting, availableAmount }: ProposalMainMobileProps) {
   const [votes, setVotes] = useState<VotingRoom[]>([])
 
   useEffect(() => {
@@ -26,11 +27,11 @@ export function ProposalMainMobile({ wakuVoting }: ProposalMainMobileProps) {
   return (
     <ProposalWrapper>
       {votes && votes?.length === 0 ? (
-        <VotingEmpty wakuVoting={wakuVoting} theme={blueTheme} />
+        <VotingEmpty wakuVoting={wakuVoting} theme={blueTheme} availableAmount={availableAmount} />
       ) : (
         <ProposalVotesWrapper>
           <ProposalHeaderMobile theme={blueTheme} />
-          <ProposalList theme={blueTheme} wakuVoting={wakuVoting} votes={votes} />
+          <ProposalList theme={blueTheme} wakuVoting={wakuVoting} votes={votes} availableAmount={availableAmount} />
         </ProposalVotesWrapper>
       )}
       <NotificationItem text={'Proposal you finalized will be settled after 10 confirmations.'} address={'#'} />

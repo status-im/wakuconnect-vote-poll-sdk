@@ -36,7 +36,7 @@ export function ProposalVoteMobile({ wakuVoting, availableAmount }: ProposalVote
       </VoteChartWrap>
       {!voteWinner && (
         <VotePropose
-          availableAmount={65245346}
+          availableAmount={availableAmount}
           setProposingAmount={setProposingAmount}
           proposingAmount={proposingAmount}
         />

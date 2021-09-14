@@ -3,6 +3,7 @@ import styled from 'styled-components'
 import { ProposingBtn } from './Buttons'
 import { TextArea } from './Input'
 import { blueTheme } from '@status-waku-voting/react-components/dist/esm/src/style/themes'
+import { BigNumber } from 'ethers'
 
 interface ProposeModalProps {
   availableAmount: number

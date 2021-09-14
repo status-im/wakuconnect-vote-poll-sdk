@@ -40,7 +40,12 @@ function Proposals() {
         account={account}
         deactivate={deactivate}
       />
-      {waku && (mobileVersion ? <ProposalMobile wakuVoting={waku} /> : <Proposal wakuVoting={waku} />)}
+      {waku &&
+        (mobileVersion ? (
+          <ProposalMobile wakuVoting={waku} account={account} />
+        ) : (
+          <Proposal wakuVoting={waku} account={account} />
+        ))}
     </Wrapper>
   )
 }

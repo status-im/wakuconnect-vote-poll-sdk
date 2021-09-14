@@ -13,10 +13,11 @@ import { VotingRoom } from '@status-waku-voting/core/dist/esm/src/types/PollType
 interface ProposalVoteProps {
   theme: Theme
   votingRoom: VotingRoom
+  availableAmount: number
   hideModalFunction?: (val: boolean) => void
 }
 
-export function ProposalVote({ votingRoom, theme, hideModalFunction }: ProposalVoteProps) {
+export function ProposalVote({ votingRoom, theme, availableAmount, hideModalFunction }: ProposalVoteProps) {
   const { account } = useEthers()
   const [showVoteModal, setShowVoteModal] = useState(false)
   const [showConfirmModal, setShowConfirmModal] = useState(false)
@@ -41,7 +42,7 @@ export function ProposalVote({ votingRoom, theme, hideModalFunction }: ProposalV
         <Modal heading={votingRoom.question} setShowModal={setShowVoteModal} theme={theme}>
           <VoteModal
             votingRoom={votingRoom}
-            availableAmount={65245346}
+            availableAmount={availableAmount}
             selectedVote={selectedVoted}
             proposingAmount={proposingAmount}
             setShowConfirmModal={setNext}

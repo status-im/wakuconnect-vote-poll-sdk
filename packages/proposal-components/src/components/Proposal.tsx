@@ -7,13 +7,16 @@ import { NotificationItem } from './NotificationItem'
 import { WakuVoting } from '@status-waku-voting/core'
 import { VotingEmpty } from './VotingEmpty'
 import { VotingRoom } from '@status-waku-voting/core/dist/esm/src/types/PollType'
+import { useTokenBalance } from '@status-waku-voting/react-components'
 
 type ProposalProps = {
   wakuVoting: WakuVoting
+  account: string | null | undefined
 }
 
-export function Proposal({ wakuVoting }: ProposalProps) {
+export function Proposal({ wakuVoting, account }: ProposalProps) {
   const [votes, setVotes] = useState<VotingRoom[]>([])
+  const tokenBalance = useTokenBalance(account, wakuVoting)
 
   useEffect(() => {
     const interval = setInterval(async () => {
@@ -26,11 +29,11 @@ export function Proposal({ wakuVoting }: ProposalProps) {
   return (
     <ProposalWrapper>
       {votes && votes?.length === 0 ? (
-        <VotingEmpty wakuVoting={wakuVoting} theme={blueTheme} />
+        <VotingEmpty wakuVoting={wakuVoting} theme={blueTheme} availableAmount={tokenBalance} />
       ) : (
         <ProposalVotesWrapper>
-          <ProposalHeader theme={blueTheme} wakuVoting={wakuVoting} />
-          <ProposalList theme={blueTheme} wakuVoting={wakuVoting} votes={votes} />
+          <ProposalHeader theme={blueTheme} wakuVoting={wakuVoting} availableAmount={tokenBalance} />
+          <ProposalList theme={blueTheme} wakuVoting={wakuVoting} votes={votes} availableAmount={tokenBalance} />
         </ProposalVotesWrapper>
       )}
 

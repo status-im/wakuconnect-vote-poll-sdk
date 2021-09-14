@@ -75,7 +75,7 @@ export function ProposeMobile({ availableAmount }: ProposeVoteModalProps) {
 
           <VoteProposeWrap>
             <VotePropose
-              availableAmount={65245555}
+              availableAmount={availableAmount}
               setProposingAmount={setProposingAmount}
               proposingAmount={proposingAmount}
             />

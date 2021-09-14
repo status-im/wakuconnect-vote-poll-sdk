@@ -10,14 +10,23 @@ type ProposalListProps = {
   theme: Theme
   wakuVoting: WakuVoting
   votes: VotingRoom[]
+  availableAmount: number
 }
-export function ProposalList({ theme, wakuVoting, votes }: ProposalListProps) {
+export function ProposalList({ theme, wakuVoting, votes, availableAmount }: ProposalListProps) {
   const ref = useRef<HTMLHeadingElement>(null)
   const mobileVersion = useMobileVersion(ref, 600)
   return (
     <List ref={ref}>
       {votes.map((votingRoom) => {
-        return <ProposalCard votingRoom={votingRoom} theme={theme} key={votingRoom.id} mobileVersion={mobileVersion} />
+        return (
+          <ProposalCard
+            votingRoom={votingRoom}
+            theme={theme}
+            key={votingRoom.id}
+            mobileVersion={mobileVersion}
+            availableAmount={availableAmount}
+          />
+        )
       })}
     </List>
   )

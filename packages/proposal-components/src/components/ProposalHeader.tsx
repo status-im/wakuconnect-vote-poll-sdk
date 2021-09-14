@@ -11,9 +11,10 @@ import { BigNumber } from 'ethers'
 type ProposalHeaderProps = {
   theme: Theme
   wakuVoting: WakuVoting
+  availableAmount: number
 }
 
-export function ProposalHeader({ theme, wakuVoting }: ProposalHeaderProps) {
+export function ProposalHeader({ theme, wakuVoting, availableAmount }: ProposalHeaderProps) {
   const { activateBrowserWallet, account, library } = useEthers()
   const [selectConnect, setSelectConnect] = useState(false)
   const [showProposeModal, setShowProposeModal] = useState(false)
@@ -41,7 +42,7 @@ export function ProposalHeader({ theme, wakuVoting }: ProposalHeaderProps) {
             text={text}
             setText={setText}
             setTitle={setTitle}
-            availableAmount={6524354}
+            availableAmount={availableAmount}
             setShowProposeVoteModal={setNext}
           />
         </Modal>
@@ -52,7 +53,7 @@ export function ProposalHeader({ theme, wakuVoting }: ProposalHeaderProps) {
             wakuVoting={wakuVoting}
             title={title}
             text={text}
-            availableAmount={6524354}
+            availableAmount={availableAmount}
             setShowModal={setShowProposeVoteModal}
             setText={setText}
             setTitle={setTitle}

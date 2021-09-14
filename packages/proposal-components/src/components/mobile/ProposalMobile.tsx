@@ -6,23 +6,28 @@ import { ProposalVoteMobile } from './ProposalVoteMobile'
 import { ProposeMobile } from './ProposeMobile'
 import { ProposalMainMobile } from './ProposalMainMobile'
 import { WakuVoting } from '@status-waku-voting/core'
+import { useTokenBalance } from '@status-waku-voting/react-components'
 
 type ProposalMobileProps = {
   wakuVoting: WakuVoting
+  account: string | null | undefined
 }
 
-export function ProposalMobile({ wakuVoting }: ProposalMobileProps) {
+export function ProposalMobile({ wakuVoting, account }: ProposalMobileProps) {
+  const tokenBalance = useTokenBalance(account, wakuVoting)
   return (
     <BrowserRouter>
       <ProposalWrapper>
         <Switch>
           <Route exact path="/" render={() => <Redirect to="/proposal" />} />
           <Route exact path="/votingRoom/:id">
-            <ProposalVoteMobile wakuVoting={wakuVoting} availableAmount={123} />
+            <ProposalVoteMobile wakuVoting={wakuVoting} availableAmount={tokenBalance} />
           </Route>
-          <Route exact path="/creation" component={ProposeMobile} />
+          <Route exact path="/creation">
+            <ProposeMobile availableAmount={tokenBalance} />
+          </Route>
           <Route exact path="/proposal">
-            <ProposalMainMobile wakuVoting={wakuVoting} />
+            <ProposalMainMobile wakuVoting={wakuVoting} availableAmount={tokenBalance} />
           </Route>
         </Switch>
       </ProposalWrapper>

@@ -10,9 +10,10 @@ import { WakuVoting } from '@status-waku-voting/core'
 type VotingEmptyProps = {
   theme: Theme
   wakuVoting: WakuVoting
+  availableAmount: number
 }
 
-export function VotingEmpty({ wakuVoting, theme }: VotingEmptyProps) {
+export function VotingEmpty({ wakuVoting, theme, availableAmount }: VotingEmptyProps) {
   const { account, activateBrowserWallet } = useEthers()
   const [selectConnect, setSelectConnect] = useState(false)
   const [showProposeModal, setShowProposeModal] = useState(false)
@@ -45,7 +46,7 @@ export function VotingEmpty({ wakuVoting, theme }: VotingEmptyProps) {
             text={text}
             setText={setText}
             setTitle={setTitle}
-            availableAmount={6524354}
+            availableAmount={availableAmount}
             setShowProposeVoteModal={setNext}
           />
         </Modal>
@@ -56,7 +57,7 @@ export function VotingEmpty({ wakuVoting, theme }: VotingEmptyProps) {
             wakuVoting={wakuVoting}
             title={title}
             text={text}
-            availableAmount={6524354}
+            availableAmount={availableAmount}
             setShowModal={setShowProposeVoteModal}
             setText={setText}
             setTitle={setTitle}

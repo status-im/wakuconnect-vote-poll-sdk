@@ -25,12 +25,13 @@ type WakuMessageStores = {
 export class WakuMessaging {
   protected appName: string
   protected waku: Waku | undefined
-  public tokenAddress: string
+  protected token: Contract
   protected provider: Provider
   protected chainId = 0
   protected wakuMessages: WakuMessageStores = {}
   protected observers: { callback: (msg: WakuMessage) => void; topics: string[] }[] = []
   protected multicall: Contract
+  public tokenDecimals: number | undefined
 
   protected constructor(
     appName: string,
@@ -41,10 +42,10 @@ export class WakuMessaging {
     waku?: Waku
   ) {
     this.appName = appName
-    this.tokenAddress = tokenAddress
     this.waku = waku
     this.provider = provider
     this.chainId = chainId
+    this.token = new Contract(tokenAddress, ERC20, this.provider)
     this.multicall = new Contract(multicall, ABI, this.provider)
   }
 
@@ -54,6 +55,8 @@ export class WakuMessaging {
   }
 
   protected async setObserver() {
+    this.tokenDecimals = await this.token.decimals()
+
     this.waku = await createWaku(this.waku)
     await Promise.all(
       Object.values(this.wakuMessages).map(async (msgObj) => {
@@ -100,7 +103,7 @@ export class WakuMessaging {
     }
   }
 
-  protected addressesBalances: { [address: string]: BigNumber } = {}
+  protected addressesBalances: { [address: string]: BigNumber | undefined } = {}
   protected lastBlockBalances = 0
 
   protected async updateBalances(newAddress?: string) {
@@ -136,18 +139,27 @@ export class WakuMessaging {
 
     const addressesToUpdateArray = Object.keys(addressesToUpdate)
     if (addressesToUpdateArray.length > 0) {
-      const erc20 = new Interface(ERC20.abi)
+      const erc20 = this.token.interface
       const callData = addressesToUpdateArray.map((addr) => {
-        return [this.tokenAddress, erc20.encodeFunctionData('balanceOf', [addr])]
+        return [this.token.address, erc20.encodeFunctionData('balanceOf', [addr])]
       })
-      const result = (await this.multicall.aggregate(callData))[1].map((data: any) =>
-        erc20.decodeFunctionResult('balanceOf', data)
-      )
+      const result = (await this.multicall.aggregate(callData))[1].map((data: any) => {
+        try {
+          return erc20.decodeFunctionResult('balanceOf', data)
+        } catch {
+          return undefined
+        }
+      })
 
       result.forEach((e: any, idx: number) => {
-        this.addressesBalances[addressesToUpdateArray[idx]] = e[0]
+        this.addressesBalances[addressesToUpdateArray[idx]] = e ? e[0] : undefined
       })
       this.lastBlockBalances = currentBlock
     }
+  }
+
+  public async getTokenBalance(address: string) {
+    await this.updateBalances(address)
+    return this.addressesBalances[address] ?? undefined
   }
 }
