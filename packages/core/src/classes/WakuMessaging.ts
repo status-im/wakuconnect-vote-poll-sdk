@@ -5,6 +5,7 @@ import { Provider } from '@ethersproject/providers'
 import { Contract } from '@ethersproject/contracts'
 import { Interface } from '@ethersproject/abi'
 import { ERC20 } from '../abi'
+import { createWaku } from '../utils/createWaku'
 const ABI = [
   'function aggregate(tuple(address target, bytes callData)[] calls) view returns (uint256 blockNumber, bytes[] returnData)',
 ]
@@ -23,7 +24,7 @@ type WakuMessageStores = {
 
 export class WakuMessaging {
   protected appName: string
-  protected waku: Waku
+  protected waku: Waku | undefined
   public tokenAddress: string
   protected provider: Provider
   protected chainId = 0
@@ -34,10 +35,10 @@ export class WakuMessaging {
   protected constructor(
     appName: string,
     tokenAddress: string,
-    waku: Waku,
     provider: Provider,
     chainId: number,
-    multicall: string
+    multicall: string,
+    waku?: Waku
   ) {
     this.appName = appName
     this.tokenAddress = tokenAddress
@@ -48,18 +49,19 @@ export class WakuMessaging {
   }
 
   public cleanUp() {
-    this.observers.forEach((observer) => this.waku.relay.deleteObserver(observer.callback, observer.topics))
+    this.observers.forEach((observer) => this?.waku?.relay.deleteObserver(observer.callback, observer.topics))
     this.wakuMessages = {}
   }
 
   protected async setObserver() {
+    this.waku = await createWaku(this.waku)
     await Promise.all(
       Object.values(this.wakuMessages).map(async (msgObj) => {
         const storeMessages = await this.waku?.store.queryHistory([msgObj.topic])
         if (storeMessages) {
           msgObj.updateFunction(storeMessages)
         }
-        this.waku.relay.addObserver((msg) => msgObj.updateFunction([msg]), [msgObj.topic])
+        this?.waku?.relay.addObserver((msg) => msgObj.updateFunction([msg]), [msgObj.topic])
         this.observers.push({ callback: (msg) => msgObj.updateFunction([msg]), topics: [msgObj.topic] })
       })
     )

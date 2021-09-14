@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useCallback, useMemo } from 'react'
 import { useState } from 'react'
 import styled from 'styled-components'
 import { addCommas } from '../helpers/addCommas'
@@ -11,36 +11,26 @@ export interface VoteProposingProps {
 }
 
 export function VotePropose({ availableAmount, proposingAmount, setProposingAmount }: VoteProposingProps) {
-  const [displayAmount, setDisplayAmount] = useState(addCommas(proposingAmount) + ' ABC')
-  const disabled = availableAmount === 0
-
-  let step = 10 ** (Math.floor(Math.log10(availableAmount)) - 2)
-
-  if (availableAmount < 100) {
-    step = 1
-  }
-
-  const setAvailableAmount = () => {
-    setProposingAmount(availableAmount)
-    setDisplayAmount(addCommas(availableAmount) + ' ABC')
-  }
+  const [inputFocused, setInputFocused] = useState(false)
+  const disabled = useMemo(() => availableAmount === 0, [availableAmount])
+  const step = useMemo(
+    () => (availableAmount < 100 ? 1 : 10 ** (Math.floor(Math.log10(availableAmount)) - 2)),
+    [availableAmount]
+  )
+  const progress = useMemo(() => (proposingAmount / availableAmount) * 100 + '%', [proposingAmount, availableAmount])
 
   const sliderChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (Number(e.target.value) == step * Math.floor(availableAmount / step)) {
-      setAvailableAmount()
+      setProposingAmount(availableAmount)
     } else {
       setProposingAmount(Number(e.target.value))
-      setDisplayAmount(addCommas(Number(e.target.value)) + ' ABC')
     }
   }
 
-  const progress = (proposingAmount / availableAmount) * 100 + '%'
-
   const onInputAmountBlur = () => {
+    setInputFocused(false)
     if (proposingAmount > availableAmount) {
-      setAvailableAmount()
-    } else {
-      setDisplayAmount(addCommas(proposingAmount) + ' ABC')
+      setProposingAmount(availableAmount)
     }
   }
 
@@ -51,13 +41,12 @@ export function VotePropose({ availableAmount, proposingAmount, setProposingAmou
         <span>Available {addCommas(availableAmount)} ABC</span>
       </VoteProposingInfo>
       <VoteProposingAmount
-        value={displayAmount}
+        value={inputFocused ? proposingAmount.toString() : addCommas(proposingAmount) + ' ABC'}
         onInput={(e) => {
           setProposingAmount(Number(e.currentTarget.value))
-          setDisplayAmount(e.currentTarget.value)
         }}
         onBlur={onInputAmountBlur}
-        onFocus={() => setDisplayAmount(proposingAmount.toString())}
+        onFocus={() => setInputFocused(true)}
       />
       <VoteProposingRangeWrap>
         <VoteProposingRange

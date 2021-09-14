@@ -21,12 +21,12 @@ export class WakuPolling extends WakuMessaging {
   protected constructor(
     appName: string,
     tokenAddress: string,
-    waku: Waku,
     provider: Provider,
     chainId: number,
-    multicall: string
+    multicall: string,
+    waku?: Waku
   ) {
-    super(appName, tokenAddress, waku, provider, chainId, multicall)
+    super(appName, tokenAddress, provider, chainId, multicall, waku)
     this.wakuMessages['pollInit'] = {
       topic: `/${this.appName}/waku-polling/timed-polls-init/proto/`,
       hashMap: {},
@@ -59,14 +59,7 @@ export class WakuPolling extends WakuMessaging {
     waku?: Waku
   ) {
     const network = await provider.getNetwork()
-    const wakuPolling = new WakuPolling(
-      appName,
-      tokenAddress,
-      await createWaku(waku),
-      provider,
-      network.chainId,
-      multicall
-    )
+    const wakuPolling = new WakuPolling(appName, tokenAddress, provider, network.chainId, multicall, waku)
     return wakuPolling
   }
 

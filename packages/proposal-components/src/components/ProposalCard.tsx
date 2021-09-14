@@ -11,16 +11,26 @@ interface ProposalCardProps {
   heading: string
   text: string
   address: string
+  mobileVersion?: boolean
   vote?: number
   voteWinner?: number
   hideModalFunction?: (val: boolean) => void
 }
 
-export function ProposalCard({ id, heading, text, address, vote, voteWinner, theme }: ProposalCardProps) {
+export function ProposalCard({
+  id,
+  heading,
+  text,
+  address,
+  vote,
+  voteWinner,
+  theme,
+  mobileVersion,
+}: ProposalCardProps) {
   const history = useHistory()
 
   return (
-    <Card onClick={() => history.push(`/votingRoom/${id.toString}`)}>
+    <Card onClick={() => mobileVersion && history.push(`/votingRoom/${id.toString}`)}>
       <ProposalInfo heading={heading} text={text} address={address} />
       <ProposalVote vote={vote} voteWinner={voteWinner} address={address} heading={heading} theme={theme} />
     </Card>

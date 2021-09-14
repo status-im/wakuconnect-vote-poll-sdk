@@ -19,12 +19,12 @@ export class WakuVoting extends WakuMessaging {
     appName: string,
     votingContract: Contract,
     token: string,
-    waku: Waku,
     provider: Provider,
     chainId: number,
-    multicallAddress: string
+    multicallAddress: string,
+    waku?: Waku
   ) {
-    super(appName, token, waku, provider, chainId, multicallAddress)
+    super(appName, token, provider, chainId, multicallAddress, waku)
     this.votingContract = votingContract
     this.wakuMessages['vote'] = {
       topic: `/${this.appName}/waku-voting/votes/proto/`,
@@ -38,6 +38,7 @@ export class WakuVoting extends WakuMessaging {
           this.wakuMessages['vote']
         ),
     }
+    this.setObserver()
   }
 
   public static async create(
@@ -50,15 +51,7 @@ export class WakuVoting extends WakuMessaging {
     const network = await provider.getNetwork()
     const votingContract = new Contract(contractAddress, VotingContract.abi, provider)
     const tokenAddress = await votingContract.token()
-    return new WakuVoting(
-      appName,
-      votingContract,
-      tokenAddress,
-      await createWaku(waku),
-      provider,
-      network.chainId,
-      multicall
-    )
+    return new WakuVoting(appName, votingContract, tokenAddress, provider, network.chainId, multicall, waku)
   }
 
   public async createVote(
