@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useMemo, useState } from 'react'
 import { useParams } from 'react-router'
 import styled from 'styled-components'
 import { useEthers } from '@usedapp/core'
@@ -8,48 +8,31 @@ import { VoteChart } from '../ProposalVoteCard/VoteChart'
 import { ProposalInfo } from '../ProposalInfo'
 import { VotePropose } from '../VotePropose'
 import { VotesBtns } from '../ProposalVoteCard/ProposalVote'
-
+import { useVotingRoom } from '@status-waku-voting/proposal-hooks'
+import { WakuVoting } from '@status-waku-voting/core'
 interface ProposalVoteMobileProps {
-  vote?: number
-  voteWinner?: number
-  votesFor: number
-  votesAgainst: number
-  timeLeft: number
+  wakuVoting: WakuVoting
   availableAmount: number
-  heading: string
-  text: string
-  address: string
 }
 
-export function ProposalVoteMobile({
-  votesFor,
-  votesAgainst,
-  timeLeft,
-  vote,
-  voteWinner,
-  address,
-  heading,
-  text,
-  availableAmount,
-}: ProposalVoteMobileProps) {
+export function ProposalVoteMobile({ wakuVoting, availableAmount }: ProposalVoteMobileProps) {
   const { id } = useParams<{ id: string }>()
   const { account } = useEthers()
   const [proposingAmount, setProposingAmount] = useState(0)
   const [selectedVoted, setSelectedVoted] = useState(0)
-  const [mobileVersion, setMobileVersion] = useState(true)
+  const votingRoom = useVotingRoom(Number(id), wakuVoting)
+
+  const voteWinner = useMemo(() => votingRoom?.voteWinner, [votingRoom?.voteWinner])
+
+  if (!votingRoom) {
+    return <>Loading</>
+  }
 
   return (
     <Card>
-      <ProposalInfo
-        heading={'This is a very long, explainative and sophisticated title for a proposal.'}
-        text={
-          'This is a longer description of the proposal. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Pellentesque interdum rutrum sodales. Nullam mattis fermentum libero, non volutpat. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Pellentesque interdum rutrum sodales. Nullam mattis fermentum libero. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Pellentesque interdum rutrum sodales. Nullam mattis fermentum libero.'
-        }
-        address={'#'}
-        mobileMode={mobileVersion}
-      />
+      <ProposalInfo votingRoom={votingRoom} mobileMode={true} />
       <VoteChartWrap>
-        <VoteChart votesFor={1865567} votesAgainst={1740235} timeLeft={4855555577} selectedVote={selectedVoted} />
+        <VoteChart votingRoom={votingRoom} selectedVote={selectedVoted} />
       </VoteChartWrap>
       {!voteWinner && (
         <VotePropose
@@ -86,7 +69,7 @@ export function ProposalVoteMobile({
 
       <CardVoteBottom>
         {' '}
-        <VoteSubmitButton votes={2345678} disabled={!account} />
+        <VoteSubmitButton votes={15} disabled={!account} />
       </CardVoteBottom>
     </Card>
   )

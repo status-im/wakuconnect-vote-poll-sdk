@@ -73,6 +73,7 @@ export class WakuVoting extends WakuMessaging {
       this.lastGetPollsBlockNumber = blockNumber
       const polls = await this.votingContract.getVotingRooms()
       this.lastPolls = polls.map((poll: any, idx: number): VotingRoom => {
+        const timeLeft = poll[1].toNumber() - Date.now() / 1000
         return {
           startBlock: poll[0],
           endAt: poll[1],
@@ -82,10 +83,16 @@ export class WakuVoting extends WakuMessaging {
           totalVotesAgainst: poll[5],
           voters: poll[6],
           id: idx,
+          timeLeft,
+          voteWinner: timeLeft <= 0 ? (poll[5].gt(poll[4]) ? 1 : 2) : undefined,
         }
       })
     }
     return this.lastPolls
+  }
+
+  public async getVotingRoom(id: number) {
+    return (await this.getVotingRooms())[id]
   }
 
   public async sendVote(

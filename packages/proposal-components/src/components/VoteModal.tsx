@@ -3,24 +3,19 @@ import styled from 'styled-components'
 import { VoteChart } from './ProposalVoteCard/VoteChart'
 import { DisabledButton, VoteBtnAgainst, VoteBtnFor } from './Buttons'
 import { VotePropose } from './VotePropose'
+import { VotingRoom } from '@status-waku-voting/core/dist/esm/src/types/PollType'
 
 export interface VoteModalProps {
-  votesFor: number
-  votesAgainst: number
-  timeLeft: number
-  voteWinner?: number
-  selectedVote: number
+  votingRoom: VotingRoom
   availableAmount: number
+  selectedVote: number
   proposingAmount: number
   setShowConfirmModal: (show: boolean) => void
   setProposingAmount: (val: number) => void
 }
 
 export function VoteModal({
-  votesFor,
-  votesAgainst,
-  timeLeft,
-  voteWinner,
+  votingRoom,
   selectedVote,
   availableAmount,
   proposingAmount,
@@ -32,14 +27,7 @@ export function VoteModal({
 
   return (
     <Column>
-      <VoteChart
-        votesFor={votesFor}
-        votesAgainst={votesAgainst}
-        timeLeft={timeLeft}
-        voteWinner={voteWinner}
-        proposingAmount={proposingAmount}
-        selectedVote={selectedVote}
-      />
+      <VoteChart votingRoom={votingRoom} proposingAmount={proposingAmount} selectedVote={selectedVote} />
       <VotePropose
         availableAmount={availableAmount}
         setProposingAmount={setProposingAmount}

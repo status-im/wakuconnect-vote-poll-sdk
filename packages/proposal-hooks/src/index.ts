@@ -1,3 +1,3 @@
 import { useWakuProposal } from './hooks/useWakuProposal'
-
-export { useWakuProposal }
+import { useVotingRoom } from './hooks/useVotingRoom'
+export { useWakuProposal, useVotingRoom }

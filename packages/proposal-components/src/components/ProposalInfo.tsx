@@ -1,21 +1,20 @@
+import { VotingRoom } from '@status-waku-voting/core/dist/esm/src/types/PollType'
 import React from 'react'
 import styled from 'styled-components'
 import { ViewLink } from './ViewLink'
 
 type ProposalInfoProps = {
-  heading: string
-  text: string
-  address: string
+  votingRoom: VotingRoom
   mobileMode?: boolean
 }
 
-export function ProposalInfo({ heading, text, address, mobileMode }: ProposalInfoProps) {
+export function ProposalInfo({ votingRoom, mobileMode }: ProposalInfoProps) {
   return (
     <Card>
-      <CardHeading>{heading}</CardHeading>
-      <CardText className={mobileMode ? 'mobile' : ''}>{text}</CardText>
+      <CardHeading>{votingRoom.question}</CardHeading>
+      <CardText className={mobileMode ? 'mobile' : ''}>{votingRoom.description}</CardText>
       <CardViewLink className={mobileMode ? 'mobile' : ''}>
-        <ViewLink address={address} />
+        <ViewLink address={'#'} />
       </CardViewLink>
     </Card>
   )

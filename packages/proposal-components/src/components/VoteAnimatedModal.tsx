@@ -1,32 +1,22 @@
+import { VotingRoom } from '@status-waku-voting/core/dist/esm/src/types/PollType'
 import React from 'react'
 import styled from 'styled-components'
 import { FinalBtn } from './Buttons'
 import { VoteChart } from './ProposalVoteCard/VoteChart'
 
 interface VoteAnimatedModalProps {
-  votesFor: number
-  votesAgainst: number
-  timeLeft: number
+  votingRoom: VotingRoom
   proposingAmount: number
   selectedVote: number
   setShowModal: (val: boolean) => void
 }
 
-export function VoteAnimatedModal({
-  votesFor,
-  votesAgainst,
-  timeLeft,
-  selectedVote,
-  proposingAmount,
-  setShowModal,
-}: VoteAnimatedModalProps) {
+export function VoteAnimatedModal({ votingRoom, selectedVote, proposingAmount, setShowModal }: VoteAnimatedModalProps) {
   return (
     <VoteConfirm>
       <ConfirmText>Your vote {selectedVote === 0 ? 'against' : 'for'} this proposal has been cast!</ConfirmText>
       <VoteChart
-        votesFor={votesFor}
-        votesAgainst={votesAgainst}
-        timeLeft={timeLeft}
+        votingRoom={votingRoom}
         proposingAmount={proposingAmount}
         selectedVote={selectedVote}
         isAnimation={true}

@@ -17,7 +17,9 @@ export function ProposalMobile({ wakuVoting }: ProposalMobileProps) {
       <ProposalWrapper>
         <Switch>
           <Route exact path="/" render={() => <Redirect to="/proposal" />} />
-          <Route exact path="/votingRoom/:id" component={ProposalVoteMobile} />
+          <Route exact path="/votingRoom/:id">
+            <ProposalVoteMobile wakuVoting={wakuVoting} availableAmount={123} />
+          </Route>
           <Route exact path="/creation" component={ProposeMobile} />
           <Route exact path="/proposal">
             <ProposalMainMobile wakuVoting={wakuVoting} />

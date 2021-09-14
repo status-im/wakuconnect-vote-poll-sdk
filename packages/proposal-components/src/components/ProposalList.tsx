@@ -16,18 +16,8 @@ export function ProposalList({ theme, wakuVoting, votes }: ProposalListProps) {
   const mobileVersion = useMobileVersion(ref, 600)
   return (
     <List ref={ref}>
-      {votes.map((vote) => {
-        return (
-          <ProposalCard
-            heading={vote.question}
-            text={vote.description}
-            address={'#'}
-            theme={theme}
-            key={vote.id}
-            id={vote.id}
-            mobileVersion={mobileVersion}
-          />
-        )
+      {votes.map((votingRoom) => {
+        return <ProposalCard votingRoom={votingRoom} theme={theme} key={votingRoom.id} mobileVersion={mobileVersion} />
       })}
     </List>
   )

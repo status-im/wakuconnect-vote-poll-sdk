@@ -1,4 +1,4 @@
-import React, { useRef } from 'react'
+import React, { useMemo, useRef } from 'react'
 import CountUp from 'react-countup'
 import styled from 'styled-components'
 import { addCommas } from '../../helpers/addCommas'
@@ -9,43 +9,39 @@ import crossWinnerIcon from '../../assets/svg/crossWinner.svg'
 import checkIcon from '../../assets/svg/check.svg'
 import checkWinnerIcon from '../../assets/svg/checkWinner.svg'
 import { useMobileVersion } from '@status-waku-voting/react-components'
+import { VotingRoom } from '@status-waku-voting/core/dist/esm/src/types/PollType'
 
 export interface VoteChartProps {
-  votesFor: number
-  votesAgainst: number
-  timeLeft: number
-  voteWinner?: number
+  votingRoom: VotingRoom
   proposingAmount?: number
   selectedVote?: number
   isAnimation?: boolean
   tabletMode?: (val: boolean) => void
 }
 
-export function VoteChart({
-  votesFor,
-  votesAgainst,
-  timeLeft,
-  voteWinner,
-  proposingAmount,
-  selectedVote,
-  isAnimation,
-  tabletMode,
-}: VoteChartProps) {
+export function VoteChart({ votingRoom, proposingAmount, selectedVote, isAnimation, tabletMode }: VoteChartProps) {
   const ref = useRef<HTMLHeadingElement>(null)
   const mobileVersion = useMobileVersion(ref, 600)
 
-  const voteSum = votesFor + votesAgainst
-  const graphWidth = (100 * votesAgainst) / voteSum
+  const voteSum = useMemo(
+    () => votingRoom.totalVotesFor.add(votingRoom.totalVotesAgainst),
+    [votingRoom.totalVotesFor.toString(), votingRoom.totalVotesAgainst.toString()]
+  )
+  const graphWidth = useMemo(() => votingRoom.totalVotesAgainst.mul(100).div(voteSum).toNumber(), [voteSum])
 
-  let balanceWidth = graphWidth
+  const balanceWidth = useMemo(() => {
+    if (!proposingAmount) {
+      return graphWidth
+    } else {
+      const divider = voteSum.add(proposingAmount)
+      return selectedVote === 0
+        ? votingRoom.totalVotesAgainst.add(proposingAmount).mul(100).div(divider).toNumber()
+        : votingRoom.totalVotesAgainst.mul(100).div(divider).toNumber()
+    }
+  }, [graphWidth, voteSum, proposingAmount])
 
-  if (proposingAmount) {
-    balanceWidth =
-      selectedVote === 0
-        ? (100 * (votesAgainst + proposingAmount)) / (voteSum + proposingAmount)
-        : (100 * votesAgainst) / (voteSum + proposingAmount)
-  }
-
+  const timeLeft = useMemo(() => votingRoom.timeLeft, [votingRoom.timeLeft])
+  const voteWinner = useMemo(() => votingRoom.voteWinner, [votingRoom.voteWinner])
   return (
     <Votes ref={ref}>
       <VotesChart className={selectedVote || tabletMode ? '' : 'notModal'}>
@@ -65,9 +61,9 @@ export function VoteChart({
           <span>
             {' '}
             {isAnimation && proposingAmount && selectedVote && selectedVote === 0 ? (
-              <CountUp end={votesAgainst + proposingAmount} separator="," />
+              <CountUp end={votingRoom.totalVotesAgainst.toNumber() + proposingAmount} separator="," />
             ) : (
-              addCommas(votesAgainst)
+              addCommas(votingRoom.totalVotesAgainst.toNumber())
             )}{' '}
             <span style={{ fontWeight: 'normal' }}>ABC</span>
           </span>
@@ -89,9 +85,9 @@ export function VoteChart({
           <span>
             {' '}
             {isAnimation && proposingAmount && selectedVote && selectedVote === 1 ? (
-              <CountUp end={votesFor + proposingAmount} separator="," />
+              <CountUp end={votingRoom.totalVotesFor.toNumber() + proposingAmount} separator="," />
             ) : (
-              addCommas(votesFor)
+              addCommas(votingRoom.totalVotesFor.toNumber())
             )}{' '}
             <span style={{ fontWeight: 'normal' }}>ABC</span>
           </span>

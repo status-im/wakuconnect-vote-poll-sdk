@@ -14,4 +14,6 @@ export type VotingRoom = {
   totalVotesAgainst: BigNumber
   voters: string[]
   id: number
+  timeLeft: number
+  voteWinner: number | undefined
 }
