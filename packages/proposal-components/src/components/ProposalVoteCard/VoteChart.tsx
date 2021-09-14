@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useRef } from 'react'
 import CountUp from 'react-countup'
 import styled from 'styled-components'
 import { addCommas } from '../../helpers/addCommas'
@@ -8,6 +8,7 @@ import crossIcon from '../../assets/svg/cross.svg'
 import crossWinnerIcon from '../../assets/svg/crossWinner.svg'
 import checkIcon from '../../assets/svg/check.svg'
 import checkWinnerIcon from '../../assets/svg/checkWinner.svg'
+import { useMobileVersion } from '@status-waku-voting/react-components'
 
 export interface VoteChartProps {
   votesFor: number
@@ -30,20 +31,8 @@ export function VoteChart({
   isAnimation,
   tabletMode,
 }: VoteChartProps) {
-  const [mobileVersion, setMobileVersion] = useState(false)
-
-  useEffect(() => {
-    const handleResize = () => {
-      if (window.innerWidth < 600) {
-        setMobileVersion(true)
-      } else {
-        setMobileVersion(false)
-      }
-    }
-    handleResize()
-    window.addEventListener('resize', handleResize)
-    return () => window.removeEventListener('resize', handleResize)
-  }, [])
+  const ref = useRef<HTMLHeadingElement>(null)
+  const mobileVersion = useMobileVersion(ref, 600)
 
   const voteSum = votesFor + votesAgainst
   const graphWidth = (100 * votesAgainst) / voteSum
@@ -58,7 +47,7 @@ export function VoteChart({
   }
 
   return (
-    <Votes>
+    <Votes ref={ref}>
       <VotesChart className={selectedVote || tabletMode ? '' : 'notModal'}>
         <VoteBox
           style={{

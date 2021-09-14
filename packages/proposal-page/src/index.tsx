@@ -1,7 +1,7 @@
-import React, { useEffect, useState } from 'react'
+import React, { useRef } from 'react'
 import { useWakuProposal } from '@status-waku-voting/proposal-hooks'
 import { Proposal, ProposalMobile } from '@status-waku-voting/proposal-components'
-import { TopBar, GlobalStyle } from '@status-waku-voting/react-components'
+import { TopBar, GlobalStyle, useMobileVersion } from '@status-waku-voting/react-components'
 import votingIcon from './assets/images/voting.svg'
 import styled from 'styled-components'
 import { blueTheme } from '@status-waku-voting/react-components/dist/esm/src/style/themes'
@@ -25,25 +25,13 @@ const config = {
 }
 
 function Proposals() {
-  const { account, library, activateBrowserWallet, deactivate } = useEthers()
+  const { account, activateBrowserWallet, deactivate } = useEthers()
   const waku = useWakuProposal()
-  const [mobileVersion, setMobileVersion] = useState(false)
-
-  useEffect(() => {
-    const handleResize = () => {
-      if (window.innerWidth < 600) {
-        setMobileVersion(true)
-      } else {
-        setMobileVersion(false)
-      }
-    }
-    handleResize()
-    window.addEventListener('resize', handleResize)
-    return () => window.removeEventListener('resize', handleResize)
-  }, [])
+  const ref = useRef<HTMLHeadingElement>(null)
+  const mobileVersion = useMobileVersion(ref, 600)
 
   return (
-    <Wrapper>
+    <Wrapper ref={ref}>
       <TopBar
         logo={votingIcon}
         title={'Proposals Dapp'}

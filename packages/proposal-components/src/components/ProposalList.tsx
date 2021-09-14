@@ -9,7 +9,7 @@ import { VotingRoom } from '@status-waku-voting/core/dist/esm/src/types/PollType
 type ProposalListProps = {
   theme: Theme
   wakuVoting: WakuVoting
-  votes: any[]
+  votes: VotingRoom[]
 }
 export function ProposalList({ theme, wakuVoting, votes }: ProposalListProps) {
   return (

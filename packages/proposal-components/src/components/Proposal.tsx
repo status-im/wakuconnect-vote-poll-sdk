@@ -6,13 +6,14 @@ import { ProposalList } from './ProposalList'
 import { NotificationItem } from './NotificationItem'
 import { WakuVoting } from '@status-waku-voting/core'
 import { VotingEmpty } from './VotingEmpty'
+import { VotingRoom } from '@status-waku-voting/core/dist/esm/src/types/PollType'
 
 type ProposalProps = {
   wakuVoting: WakuVoting
 }
 
 export function Proposal({ wakuVoting }: ProposalProps) {
-  const [votes, setVotes] = useState<any[]>([])
+  const [votes, setVotes] = useState<VotingRoom[]>([])
 
   useEffect(() => {
     const interval = setInterval(async () => {

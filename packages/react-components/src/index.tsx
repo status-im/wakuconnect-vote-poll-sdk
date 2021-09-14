@@ -14,7 +14,11 @@ import dappIcon from './assets/svg/dapp.svg'
 import metamaskIcon from './assets/metamask.png'
 import statusIcon from './assets/svg/status.svg'
 import themes, { Theme } from './style/themes'
+import { useRefSize } from './hooks/useRefSize'
+import { useMobileVersion } from './hooks/useMobileVersion'
 export {
+  useMobileVersion,
+  useRefSize,
   Modal,
   Input,
   Networks,

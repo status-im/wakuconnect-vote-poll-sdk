@@ -7,13 +7,14 @@ import { ProposalHeaderMobile } from './ProposalHeaderMobile'
 import styled from 'styled-components'
 import { WakuVoting } from '@status-waku-voting/core'
 import { ProposalVotesWrapper } from '../Proposal'
+import { VotingRoom } from '@status-waku-voting/core/dist/esm/src/types/PollType'
 
 type ProposalMainMobileProps = {
   wakuVoting: WakuVoting
 }
 
 export function ProposalMainMobile({ wakuVoting }: ProposalMainMobileProps) {
-  const [votes, setVotes] = useState<any[]>([])
+  const [votes, setVotes] = useState<VotingRoom[]>([])
 
   useEffect(() => {
     const interval = setInterval(async () => {

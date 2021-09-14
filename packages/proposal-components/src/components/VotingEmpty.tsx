@@ -1,8 +1,8 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState, useRef } from 'react'
 import { useHistory } from 'react-router'
 import { useEthers } from '@usedapp/core'
 import styled from 'styled-components'
-import { CreateButton, Modal, Networks, Theme } from '@status-waku-voting/react-components'
+import { CreateButton, Modal, Networks, Theme, useMobileVersion } from '@status-waku-voting/react-components'
 import { ProposeModal } from './ProposeModal'
 import { ProposeVoteModal } from './ProposeVoteModal'
 import { WakuVoting } from '@status-waku-voting/core'
@@ -17,31 +17,20 @@ export function VotingEmpty({ wakuVoting, theme }: VotingEmptyProps) {
   const [selectConnect, setSelectConnect] = useState(false)
   const [showProposeModal, setShowProposeModal] = useState(false)
   const [showProposeVoteModal, setShowProposeVoteModal] = useState(false)
-  const [mobileVersion, setMobileVersion] = useState(false)
   const [title, setTitle] = useState('')
   const [text, setText] = useState('')
   const history = useHistory()
+
+  const ref = useRef<HTMLHeadingElement>(null)
+  const mobileVersion = useMobileVersion(ref, 600)
 
   const setNext = (val: boolean) => {
     setShowProposeVoteModal(val)
     setShowProposeModal(false)
   }
 
-  useEffect(() => {
-    const handleResize = () => {
-      if (window.innerWidth < 600) {
-        setMobileVersion(true)
-      } else {
-        setMobileVersion(false)
-      }
-    }
-    handleResize()
-    window.addEventListener('resize', handleResize)
-    return () => window.removeEventListener('resize', handleResize)
-  }, [])
-
   return (
-    <VotingEmptyWrap>
+    <VotingEmptyWrap ref={ref}>
       <EmptyWrap>
         <EmptyHeading>There are no proposals at the moment!</EmptyHeading>
         <EmptyText>
