@@ -79,6 +79,7 @@ contract VotingContract {
         string calldata description,
         uint256 voteAmount
     ) public {
+        require(voteAmount > 0, 'token amount must not be 0');
         require(token.balanceOf(msg.sender) >= voteAmount, 'not enough token');
         VotingRoom memory newVotingRoom;
         newVotingRoom.startBlock = block.number;

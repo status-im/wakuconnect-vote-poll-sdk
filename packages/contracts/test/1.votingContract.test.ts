@@ -81,12 +81,12 @@ const getSignedMessages = async (
   return { messages, signedMessages }
 }
 
-async function fixture([alice, firstAddress, secondAddress]: any[], provider: JsonRpcProvider) {
+async function fixture([alice, firstAddress, secondAddress, noTokensAddress]: any[], provider: JsonRpcProvider) {
   const erc20 = await deployContract(alice, ERC20Mock, ['MSNT', 'Mock SNT', alice.address, 100000])
   await erc20.transfer(firstAddress.address, 10000)
   await erc20.transfer(secondAddress.address, 10000)
   const contract = await deployContract(alice, VotingContract, [erc20.address, 1000])
-  return { contract, alice, firstAddress, secondAddress, provider }
+  return { contract, alice, firstAddress, secondAddress, provider, noTokensAddress }
 }
 
 before(async function () {
@@ -115,6 +115,22 @@ describe('Contract', () => {
         await expect(
           contract.initializeVotingRoom('test', 'short desc', BigNumber.from(10000000000000))
         ).to.be.revertedWith('not enough token')
+      })
+
+      it('no tokens address', async () => {
+        const { contract, noTokensAddress } = await loadFixture(fixture)
+        const noTokensContract = contract.connect(noTokensAddress)
+        await expect(
+          noTokensContract.initializeVotingRoom('test', 'short desc', BigNumber.from(10))
+        ).to.be.revertedWith('not enough token')
+      })
+
+      it("can't start voting with 0 tokens", async () => {
+        const { contract, noTokensAddress } = await loadFixture(fixture)
+        const noTokensContract = contract.connect(noTokensAddress)
+        await expect(noTokensContract.initializeVotingRoom('test', 'short desc', BigNumber.from(0))).to.be.revertedWith(
+          'token amount must not be 0'
+        )
       })
     })
 
