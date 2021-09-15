@@ -4,6 +4,7 @@ import { BigNumber, Wallet } from 'ethers'
 import { JsonRpcSigner } from '@ethersproject/providers'
 import { createSignFunction } from '../utils/createSignFunction'
 import { verifySignature } from '../utils/verifySignature'
+import { WakuMessage } from 'js-waku'
 
 const proto = protons(`
 message Vote {
@@ -121,14 +122,14 @@ export class VoteMsg {
   }
 
   static decode(
-    rawPayload: Uint8Array | undefined,
-    timestamp: Date | undefined,
+    wakuMessage: WakuMessage,
     chainId: number,
     contractAddress: string,
     verifyFunction?: (params: any, address: string) => boolean
   ) {
     try {
-      const payload = proto.Vote.decode(rawPayload)
+      const timestamp = wakuMessage.timestamp
+      const payload = proto.Vote.decode(wakuMessage.payload)
       if (!timestamp || !payload.timestamp || timestamp?.getTime() != payload.timestamp) {
         return undefined
       }

@@ -23,21 +23,22 @@ export class WakuVoting extends WakuMessaging {
     multicallAddress: string,
     waku?: Waku
   ) {
-    super(appName, token, provider, chainId, multicallAddress, waku)
+    super(
+      appName,
+      token,
+      provider,
+      chainId,
+      multicallAddress,
+      [
+        {
+          name: 'vote',
+          tokenCheckArray: ['voter'],
+          decodeFunction: (wakuMessage) => VoteMsg.decode(wakuMessage, chainId, votingContract.address),
+        },
+      ],
+      waku
+    )
     this.votingContract = votingContract
-    this.wakuMessages['vote'] = {
-      topic: `/${this.appName}/waku-voting/votes/proto/`,
-      hashMap: {},
-      arr: [],
-      tokenCheckArray: ['voter'],
-      updateFunction: (msg: WakuMessage[]) =>
-        this.decodeMsgAndSetArray(
-          msg,
-          (payload, timestamp, chainId) => VoteMsg.decode(payload, timestamp, chainId, this.votingContract.address),
-          this.wakuMessages['vote']
-        ),
-    }
-    this.setObserver()
   }
 
   public static async create(

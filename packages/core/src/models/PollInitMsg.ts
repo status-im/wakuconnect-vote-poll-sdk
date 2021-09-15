@@ -4,6 +4,7 @@ import { JsonRpcSigner } from '@ethersproject/providers'
 import protons, { PollInit } from 'protons'
 import { createSignFunction } from '../utils/createSignFunction'
 import { verifySignature } from '../utils/verifySignature'
+import { WakuMessage } from 'js-waku'
 
 const proto = protons(`
 message PollInit {
@@ -173,14 +174,10 @@ export class PollInitMsg {
     }
   }
 
-  static decode(
-    rawPayload: Uint8Array | undefined,
-    timestamp: Date | undefined,
-    chainId: number,
-    verifyFunction?: (params: any, address: string) => boolean
-  ) {
+  static decode(wakuMessage: WakuMessage, chainId: number, verifyFunction?: (params: any, address: string) => boolean) {
     try {
-      const payload = proto.PollInit.decode(rawPayload)
+      const timestamp = wakuMessage.timestamp
+      const payload = proto.PollInit.decode(wakuMessage.payload)
       if (!timestamp || timestamp.getTime() != payload.timestamp) {
         return undefined
       }

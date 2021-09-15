@@ -3,6 +3,7 @@ import { PollInitMsg } from '../../src/models/PollInitMsg'
 import { MockProvider } from 'ethereum-waffle'
 import { PollType } from '../../src/types/PollType'
 import { BigNumber } from 'ethers'
+import { WakuMessage } from 'js-waku'
 
 describe('PollInitMsg', () => {
   const provider = new MockProvider()
@@ -95,13 +96,20 @@ describe('PollInitMsg', () => {
         const payload = data.encode()
         expect(payload).to.not.be.undefined
         if (payload) {
-          expect(PollInitMsg.decode(payload, new Date(data.timestamp), 0, () => true)).to.deep.eq(data)
+          expect(
+            PollInitMsg.decode({ payload, timestamp: new Date(data.timestamp) } as WakuMessage, 0, () => true)
+          ).to.deep.eq(data)
         }
       }
     })
 
     it('random decode', async () => {
-      expect(PollInitMsg.decode(new Uint8Array([12, 12, 3, 32, 31, 212, 31, 32, 23]), new Date(10), 0)).to.be.undefined
+      expect(
+        PollInitMsg.decode(
+          { payload: new Uint8Array([12, 12, 3, 32, 31, 212, 31, 32, 23]), timestamp: new Date(10) } as WakuMessage,
+          0
+        )
+      ).to.be.undefined
     })
 
     it('NON_WEIGHTED init', async () => {
@@ -119,7 +127,9 @@ describe('PollInitMsg', () => {
         const payload = data.encode()
         expect(payload).to.not.be.undefined
         if (payload) {
-          expect(PollInitMsg.decode(payload, new Date(data.timestamp), 0, () => true)).to.deep.eq(data)
+          expect(
+            PollInitMsg.decode({ payload, timestamp: new Date(data.timestamp) } as WakuMessage, 0, () => true)
+          ).to.deep.eq(data)
         }
       }
     })
@@ -139,7 +149,9 @@ describe('PollInitMsg', () => {
 
         expect(payload).to.not.be.undefined
         if (payload) {
-          expect(PollInitMsg.decode(payload, new Date(data.timestamp), 0, () => true)).to.deep.eq({
+          expect(
+            PollInitMsg.decode({ payload, timestamp: new Date(data.timestamp) } as WakuMessage, 0, () => true)
+          ).to.deep.eq({
             ...data,
             minToken: BigNumber.from(1),
           })

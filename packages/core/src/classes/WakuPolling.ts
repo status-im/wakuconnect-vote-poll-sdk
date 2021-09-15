@@ -9,6 +9,7 @@ import { DetailedTimedPoll } from '../models/DetailedTimedPoll'
 import { createWaku } from '../utils/createWaku'
 import { WakuMessaging } from './WakuMessaging'
 import { Web3Provider } from '@ethersproject/providers'
+import { WakuMessagesSetup } from '../types/WakuMessagesSetup'
 
 export enum MESSEGAGE_SENDING_RESULT {
   ok = 0,
@@ -26,29 +27,27 @@ export class WakuPolling extends WakuMessaging {
     multicall: string,
     waku?: Waku
   ) {
-    super(appName, tokenAddress, provider, chainId, multicall, waku)
-    this.wakuMessages['pollInit'] = {
-      topic: `/${this.appName}/waku-polling/timed-polls-init/proto/`,
-      hashMap: {},
-      tokenCheckArray: ['owner'],
-      arr: [],
-      updateFunction: (msg: WakuMessage[]) =>
-        this.decodeMsgAndSetArray(
-          msg,
-          PollInitMsg.decode,
-          this.wakuMessages['pollInit'],
-          (e) => e.endTime > Date.now()
-        ),
-    }
-    this.wakuMessages['pollVote'] = {
-      topic: `/${this.appName}/waku-polling/votes/proto/`,
-      hashMap: {},
-      tokenCheckArray: ['voter'],
-      arr: [],
-      updateFunction: (msg: WakuMessage[]) =>
-        this.decodeMsgAndSetArray(msg, TimedPollVoteMsg.decode, this.wakuMessages['pollVote']),
-    }
-    this.setObserver()
+    super(
+      appName,
+      tokenAddress,
+      provider,
+      chainId,
+      multicall,
+      [
+        {
+          name: 'pollInit',
+          tokenCheckArray: ['owner'],
+          decodeFunction: (wakuMessage) => PollInitMsg.decode(wakuMessage, chainId),
+          filterFunction: (e: PollInitMsg) => e.endTime > Date.now(),
+        },
+        {
+          name: 'pollVote',
+          tokenCheckArray: ['voter'],
+          decodeFunction: (wakuMessage) => TimedPollVoteMsg.decode(wakuMessage, chainId),
+        },
+      ],
+      waku
+    )
   }
 
   public static async create(

@@ -2,6 +2,7 @@ import { expect } from 'chai'
 import { TimedPollVoteMsg } from '../../src/models/TimedPollVoteMsg'
 import { MockProvider } from 'ethereum-waffle'
 import { BigNumber } from 'ethers'
+import { WakuMessage } from 'js-waku'
 
 describe('TimedPollVoteMsg', () => {
   const provider = new MockProvider()
@@ -52,14 +53,24 @@ describe('TimedPollVoteMsg', () => {
 
         expect(payload).to.not.be.undefined
         if (payload) {
-          expect(await TimedPollVoteMsg.decode(payload, new Date(data.timestamp), 0, () => true)).to.deep.eq(data)
+          expect(
+            await TimedPollVoteMsg.decode(
+              { payload, timestamp: new Date(data.timestamp) } as WakuMessage,
+              0,
+              () => true
+            )
+          ).to.deep.eq(data)
         }
       }
     })
 
     it('random decode', async () => {
-      expect(TimedPollVoteMsg.decode(new Uint8Array([12, 12, 3, 32, 31, 212, 31, 32, 23]), new Date(10), 0)).to.be
-        .undefined
+      expect(
+        TimedPollVoteMsg.decode(
+          { payload: new Uint8Array([12, 12, 3, 32, 31, 212, 31, 32, 23]), timestamp: new Date(10) } as WakuMessage,
+          0
+        )
+      ).to.be.undefined
     })
 
     it('data with token', async () => {
@@ -77,7 +88,9 @@ describe('TimedPollVoteMsg', () => {
 
         expect(payload).to.not.be.undefined
         if (payload) {
-          expect(TimedPollVoteMsg.decode(payload, new Date(data.timestamp), 0, () => true)).to.deep.eq({
+          expect(
+            TimedPollVoteMsg.decode({ payload, timestamp: new Date(data.timestamp) } as WakuMessage, 0, () => true)
+          ).to.deep.eq({
             ...data,
             tokenAmount: BigNumber.from(120),
           })

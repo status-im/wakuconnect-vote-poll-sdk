@@ -6,6 +6,7 @@ import { Contract } from '@ethersproject/contracts'
 import { Interface } from '@ethersproject/abi'
 import { ERC20 } from '../abi'
 import { createWaku } from '../utils/createWaku'
+import { WakuMessagesSetup } from '../types/WakuMessagesSetup'
 const ABI = [
   'function aggregate(tuple(address target, bytes callData)[] calls) view returns (uint256 blockNumber, bytes[] returnData)',
 ]
@@ -39,6 +40,7 @@ export class WakuMessaging {
     provider: Web3Provider,
     chainId: number,
     multicall: string,
+    wakuMessagesSetup: WakuMessagesSetup<any>[],
     waku?: Waku
   ) {
     this.appName = appName
@@ -47,6 +49,17 @@ export class WakuMessaging {
     this.chainId = chainId
     this.token = new Contract(tokenAddress, ERC20, this.provider)
     this.multicall = new Contract(multicall, ABI, this.provider)
+
+    wakuMessagesSetup.forEach((setupData) => {
+      this.wakuMessages[setupData.name] = {
+        topic: `/${this.appName}/0.1/${setupData.name}/proto/`,
+        tokenCheckArray: setupData.tokenCheckArray,
+        hashMap: {},
+        arr: [],
+        updateFunction: (msg) => this.decodeMsgAndSetArray(msg, setupData),
+      }
+    })
+    this.setObserver()
   }
 
   public cleanUp() {
@@ -61,9 +74,7 @@ export class WakuMessaging {
     await Promise.all(
       Object.values(this.wakuMessages).map(async (msgObj) => {
         const storeMessages = await this.waku?.store.queryHistory([msgObj.topic])
-        if (storeMessages) {
-          msgObj.updateFunction(storeMessages)
-        }
+        msgObj.updateFunction(storeMessages ?? [])
         this?.waku?.relay.addObserver((msg) => msgObj.updateFunction([msg]), [msgObj.topic])
         this.observers.push({ callback: (msg) => msgObj.updateFunction([msg]), topics: [msgObj.topic] })
       })
@@ -72,18 +83,18 @@ export class WakuMessaging {
 
   protected decodeMsgAndSetArray<T extends { id: string; timestamp: number }>(
     messages: WakuMessage[],
-    decode: (payload: Uint8Array | undefined, timestamp: Date | undefined, chainId: number) => T | undefined,
-    msgObj: WakuMessageStore,
-    filterFunction?: (e: T) => boolean
+    setupData: WakuMessagesSetup<T>
   ) {
+    const { decodeFunction, filterFunction, name } = setupData
+    const { arr, hashMap } = this.wakuMessages[name]
     messages
-      .map((msg) => decode(msg.payload, msg.timestamp, this.chainId))
+      .map(decodeFunction)
       .sort((a, b) => ((a?.timestamp ?? new Date(0)) > (b?.timestamp ?? new Date(0)) ? 1 : -1))
       .forEach((e) => {
         if (e) {
-          if (filterFunction ? filterFunction(e) : true && !msgObj.hashMap?.[e.id]) {
-            msgObj.arr.unshift(e)
-            msgObj.hashMap[e.id] = true
+          if (filterFunction ? filterFunction(e) : true && !hashMap?.[e.id]) {
+            arr.unshift(e)
+            hashMap[e.id] = true
           }
         }
       })

@@ -4,6 +4,7 @@ import protons, { TimedPollVote } from 'protons'
 import { Wallet } from 'ethers'
 import { createSignFunction } from '../utils/createSignFunction'
 import { verifySignature } from '../utils/verifySignature'
+import { WakuMessage } from 'js-waku'
 
 const proto = protons(`
 message TimedPollVote {
@@ -122,14 +123,10 @@ export class TimedPollVoteMsg {
     }
   }
 
-  static decode(
-    rawPayload: Uint8Array | undefined,
-    timestamp: Date | undefined,
-    chainId: number,
-    verifyFunction?: (params: any, address: string) => boolean
-  ) {
+  static decode(wakuMessage: WakuMessage, chainId: number, verifyFunction?: (params: any, address: string) => boolean) {
     try {
-      const payload = proto.TimedPollVote.decode(rawPayload)
+      const timestamp = wakuMessage.timestamp
+      const payload = proto.TimedPollVote.decode(wakuMessage.payload)
       if (!timestamp || !payload.timestamp || timestamp?.getTime() != payload.timestamp) {
         return undefined
       }
