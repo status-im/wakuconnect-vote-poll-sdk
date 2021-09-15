@@ -8,7 +8,7 @@ import { TimedPollVoteMsg } from '../models/TimedPollVoteMsg'
 import { DetailedTimedPoll } from '../models/DetailedTimedPoll'
 import { createWaku } from '../utils/createWaku'
 import { WakuMessaging } from './WakuMessaging'
-import { Provider } from '@ethersproject/providers'
+import { Web3Provider } from '@ethersproject/providers'
 
 export enum MESSEGAGE_SENDING_RESULT {
   ok = 0,
@@ -21,7 +21,7 @@ export class WakuPolling extends WakuMessaging {
   protected constructor(
     appName: string,
     tokenAddress: string,
-    provider: Provider,
+    provider: Web3Provider,
     chainId: number,
     multicall: string,
     waku?: Waku
@@ -54,7 +54,7 @@ export class WakuPolling extends WakuMessaging {
   public static async create(
     appName: string,
     tokenAddress: string,
-    provider: Provider,
+    provider: Web3Provider,
     multicall: string,
     waku?: Waku
   ) {

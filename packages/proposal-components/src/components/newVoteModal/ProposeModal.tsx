@@ -1,7 +1,7 @@
-import React from 'react'
+import React, { useMemo } from 'react'
 import styled from 'styled-components'
-import { ProposingBtn } from './Buttons'
-import { TextArea } from './Input'
+import { ProposingBtn } from '../Buttons'
+import { TextArea } from '../Input'
 import { blueTheme } from '@status-waku-voting/react-components/dist/esm/src/style/themes'
 import { BigNumber } from 'ethers'
 
@@ -22,7 +22,7 @@ export function ProposeModal({
   setTitle,
   setText,
 }: ProposeModalProps) {
-  const insufficientFunds = availableAmount < 10000
+  const insufficientFunds = useMemo(() => availableAmount < 10000, [availableAmount])
 
   return (
     <ProposingData>

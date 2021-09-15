@@ -4,7 +4,14 @@ import styled from 'styled-components'
 import { useHistory } from 'react-router'
 import { ProposingBtn } from '../Buttons'
 import { CardHeading, CardText } from '../ProposalInfo'
-import { InfoText, Label, ProposingData, ProposingInfo, ProposingInput, ProposingTextInput } from '../ProposeModal'
+import {
+  InfoText,
+  Label,
+  ProposingData,
+  ProposingInfo,
+  ProposingInput,
+  ProposingTextInput,
+} from '../newVoteModal/ProposeModal'
 import { VotePropose } from '../VotePropose'
 
 interface ProposeVoteModalProps {

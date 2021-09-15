@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import { useEthers } from '@usedapp/core'
+import { useConfig, useEthers } from '@usedapp/core'
 
 import styled from 'styled-components'
 import { PollList, PollCreation } from '@status-waku-voting/polling-components'
@@ -15,10 +15,16 @@ type WakuPollingProps = {
 }
 
 export function WakuPolling({ appName, signer, theme }: WakuPollingProps) {
-  const { activateBrowserWallet, account } = useEthers()
+  const { activateBrowserWallet, account, library, chainId } = useEthers()
+  const config = useConfig()
   const [showPollCreation, setShowPollCreation] = useState(false)
   const [selectConnect, setSelectConnect] = useState(false)
-  const wakuPolling = useWakuPolling(appName, '0x80ee48b5ba5c3ea556b7ff6d850d2fb2c4bc7412')
+  const wakuPolling = useWakuPolling(
+    appName,
+    '0x80ee48b5ba5c3ea556b7ff6d850d2fb2c4bc7412',
+    library,
+    config?.multicallAddresses?.[chainId ?? 1337]
+  )
   return (
     <Wrapper>
       {showPollCreation && signer && (

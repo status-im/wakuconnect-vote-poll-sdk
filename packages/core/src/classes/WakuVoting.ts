@@ -1,10 +1,9 @@
 import { VotingContract } from '@status-waku-voting/contracts/abi'
 import { WakuMessaging } from './WakuMessaging'
-import { Contract, Wallet, BigNumber } from 'ethers'
+import { Contract, Wallet, BigNumber, ethers } from 'ethers'
 import { Waku, WakuMessage } from 'js-waku'
-import { Provider } from '@ethersproject/abstract-provider'
 import { createWaku } from '../utils/createWaku'
-import { JsonRpcSigner } from '@ethersproject/providers'
+import { JsonRpcSigner, Web3Provider } from '@ethersproject/providers'
 import { VoteMsg } from '../models/VoteMsg'
 import { VotingRoom } from '../types/PollType'
 
@@ -19,7 +18,7 @@ export class WakuVoting extends WakuMessaging {
     appName: string,
     votingContract: Contract,
     token: string,
-    provider: Provider,
+    provider: Web3Provider,
     chainId: number,
     multicallAddress: string,
     waku?: Waku
@@ -44,7 +43,7 @@ export class WakuVoting extends WakuMessaging {
   public static async create(
     appName: string,
     contractAddress: string,
-    provider: Provider,
+    provider: Web3Provider,
     multicall: string,
     waku?: Waku
   ) {
@@ -54,14 +53,12 @@ export class WakuVoting extends WakuMessaging {
     return new WakuVoting(appName, votingContract, tokenAddress, provider, network.chainId, multicall, waku)
   }
 
-  public async createVote(
-    signer: JsonRpcSigner | Wallet,
-    question: string,
-    descripiton: string,
-    tokenAmount: BigNumber
-  ) {
-    this.votingContract = await this.votingContract.connect(signer)
-    await this.votingContract.initializeVotingRoom(question, descripiton, tokenAmount)
+  public async createVote(question: string, descripiton: string, tokenAmount: BigNumber) {
+    if (this.provider) {
+      const signer = this.provider.getSigner()
+      this.votingContract = await this.votingContract.connect(signer)
+      await this.votingContract.initializeVotingRoom(question, descripiton, tokenAmount)
+    }
   }
 
   private lastPolls: VotingRoom[] = []
@@ -95,12 +92,8 @@ export class WakuVoting extends WakuMessaging {
     return (await this.getVotingRooms())[id]
   }
 
-  public async sendVote(
-    signer: JsonRpcSigner | Wallet,
-    roomId: number,
-    selectedAnswer: number,
-    tokenAmount: BigNumber
-  ) {
+  public async sendVote(roomId: number, selectedAnswer: number, tokenAmount: BigNumber) {
+    const signer = this.provider.getSigner()
     const vote = await VoteMsg._createWithSignFunction(
       signer,
       roomId,

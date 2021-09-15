@@ -1,7 +1,7 @@
 import { Waku } from 'js-waku'
 import { WakuMessage } from 'js-waku'
 import { BigNumber } from 'ethers'
-import { Provider } from '@ethersproject/providers'
+import { Web3Provider } from '@ethersproject/providers'
 import { Contract } from '@ethersproject/contracts'
 import { Interface } from '@ethersproject/abi'
 import { ERC20 } from '../abi'
@@ -26,7 +26,7 @@ export class WakuMessaging {
   protected appName: string
   protected waku: Waku | undefined
   protected token: Contract
-  protected provider: Provider
+  protected provider: Web3Provider
   protected chainId = 0
   protected wakuMessages: WakuMessageStores = {}
   protected observers: { callback: (msg: WakuMessage) => void; topics: string[] }[] = []
@@ -36,7 +36,7 @@ export class WakuMessaging {
   protected constructor(
     appName: string,
     tokenAddress: string,
-    provider: Provider,
+    provider: Web3Provider,
     chainId: number,
     multicall: string,
     waku?: Waku

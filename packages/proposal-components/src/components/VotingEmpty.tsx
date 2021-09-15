@@ -3,9 +3,8 @@ import { useHistory } from 'react-router'
 import { useEthers } from '@usedapp/core'
 import styled from 'styled-components'
 import { CreateButton, Modal, Networks, Theme, useMobileVersion } from '@status-waku-voting/react-components'
-import { ProposeModal } from './ProposeModal'
-import { ProposeVoteModal } from './ProposeVoteModal'
 import { WakuVoting } from '@status-waku-voting/core'
+import { NewVoteModal } from './newVoteModal/NewVoteModal'
 
 type VotingEmptyProps = {
   theme: Theme
@@ -16,22 +15,21 @@ type VotingEmptyProps = {
 export function VotingEmpty({ wakuVoting, theme, availableAmount }: VotingEmptyProps) {
   const { account, activateBrowserWallet } = useEthers()
   const [selectConnect, setSelectConnect] = useState(false)
-  const [showProposeModal, setShowProposeModal] = useState(false)
-  const [showProposeVoteModal, setShowProposeVoteModal] = useState(false)
-  const [title, setTitle] = useState('')
-  const [text, setText] = useState('')
+  const [showModal, setShowModal] = useState(false)
   const history = useHistory()
 
   const ref = useRef<HTMLHeadingElement>(null)
   const mobileVersion = useMobileVersion(ref, 600)
 
-  const setNext = (val: boolean) => {
-    setShowProposeVoteModal(val)
-    setShowProposeModal(false)
-  }
-
   return (
     <VotingEmptyWrap ref={ref}>
+      <NewVoteModal
+        theme={theme}
+        availableAmount={availableAmount}
+        setShowModal={setShowModal}
+        showModal={showModal}
+        wakuVoting={wakuVoting}
+      />
       <EmptyWrap>
         <EmptyHeading>There are no proposals at the moment!</EmptyHeading>
         <EmptyText>
@@ -39,37 +37,11 @@ export function VotingEmpty({ wakuVoting, theme, availableAmount }: VotingEmptyP
           likes it!
         </EmptyText>
       </EmptyWrap>
-      {showProposeModal && (
-        <Modal heading="Create proposal" theme={theme} setShowModal={setShowProposeModal}>
-          <ProposeModal
-            title={title}
-            text={text}
-            setText={setText}
-            setTitle={setTitle}
-            availableAmount={availableAmount}
-            setShowProposeVoteModal={setNext}
-          />
-        </Modal>
-      )}
-      {showProposeVoteModal && (
-        <Modal heading="Create proposal" theme={theme} setShowModal={setShowProposeVoteModal}>
-          <ProposeVoteModal
-            wakuVoting={wakuVoting}
-            title={title}
-            text={text}
-            availableAmount={availableAmount}
-            setShowModal={setShowProposeVoteModal}
-            setText={setText}
-            setTitle={setTitle}
-          />
-        </Modal>
-      )}
-
       {account ? (
         <EmptyCreateButton
           theme={theme}
           onClick={() => {
-            mobileVersion ? history.push(`/creation`) : setShowProposeModal(true)
+            mobileVersion ? history.push(`/creation`) : setShowModal(true)
           }}
         >
           Create proposal
