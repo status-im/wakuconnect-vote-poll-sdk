@@ -27,7 +27,6 @@ export function ProposeVoteModal({
   setTitle,
   setText,
 }: ProposeVoteModalProps) {
-  const { library } = useEthers()
   const [proposingAmount, setProposingAmount] = useState(0)
   return (
     <ProposingData>

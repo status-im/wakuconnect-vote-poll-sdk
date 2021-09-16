@@ -4,7 +4,7 @@ import { BrowserRouter } from 'react-router-dom'
 import styled from 'styled-components'
 import { ProposalVoteMobile } from './ProposalVoteMobile'
 import { ProposeMobile } from './ProposeMobile'
-import { ProposalMainMobile } from './ProposalMainMobile'
+import { Proposal } from '../Proposal'
 import { WakuVoting } from '@status-waku-voting/core'
 import { useTokenBalance } from '@status-waku-voting/react-components'
 
@@ -27,7 +27,7 @@ export function ProposalMobile({ wakuVoting, account }: ProposalMobileProps) {
             <ProposeMobile availableAmount={tokenBalance} />
           </Route>
           <Route exact path="/proposal">
-            <ProposalMainMobile wakuVoting={wakuVoting} availableAmount={tokenBalance} />
+            <Proposal wakuVoting={wakuVoting} account={account} />
           </Route>
         </Switch>
       </ProposalWrapper>

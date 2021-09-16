@@ -26,7 +26,7 @@ export function ProposeModal({
 
   return (
     <ProposingData>
-      {insufficientFunds && (
+      {availableAmount < 10000 && (
         <ProposingInfo>
           <span>⚠️</span>
           <InfoText>You need at least 10,000 ABC to create a proposal!</InfoText>

@@ -1,35 +1,17 @@
-import React, { useEffect, useState, useRef } from 'react'
-import { useHistory } from 'react-router'
-import { useEthers } from '@usedapp/core'
+import React from 'react'
 import styled from 'styled-components'
-import { CreateButton, Modal, Networks, Theme, useMobileVersion } from '@status-waku-voting/react-components'
-import { WakuVoting } from '@status-waku-voting/core'
-import { NewVoteModal } from './newVoteModal/NewVoteModal'
+import { CreateButton, Theme } from '@status-waku-voting/react-components'
 
 type VotingEmptyProps = {
   theme: Theme
-  wakuVoting: WakuVoting
-  availableAmount: number
+  account: string | null | undefined
+  onCreateClick: () => void
+  onConnectClick: () => void
 }
 
-export function VotingEmpty({ wakuVoting, theme, availableAmount }: VotingEmptyProps) {
-  const { account, activateBrowserWallet } = useEthers()
-  const [selectConnect, setSelectConnect] = useState(false)
-  const [showModal, setShowModal] = useState(false)
-  const history = useHistory()
-
-  const ref = useRef<HTMLHeadingElement>(null)
-  const mobileVersion = useMobileVersion(ref, 600)
-
+export function VotingEmpty({ theme, account, onCreateClick, onConnectClick }: VotingEmptyProps) {
   return (
-    <VotingEmptyWrap ref={ref}>
-      <NewVoteModal
-        theme={theme}
-        availableAmount={availableAmount}
-        setShowModal={setShowModal}
-        showModal={showModal}
-        wakuVoting={wakuVoting}
-      />
+    <VotingEmptyWrap>
       <EmptyWrap>
         <EmptyHeading>There are no proposals at the moment!</EmptyHeading>
         <EmptyText>
@@ -38,31 +20,13 @@ export function VotingEmpty({ wakuVoting, theme, availableAmount }: VotingEmptyP
         </EmptyText>
       </EmptyWrap>
       {account ? (
-        <EmptyCreateButton
-          theme={theme}
-          onClick={() => {
-            mobileVersion ? history.push(`/creation`) : setShowModal(true)
-          }}
-        >
+        <EmptyCreateButton theme={theme} onClick={onCreateClick}>
           Create proposal
         </EmptyCreateButton>
       ) : (
-        <CreateButton
-          theme={theme}
-          onClick={() => {
-            if ((window as any).ethereum) {
-              activateBrowserWallet()
-            } else setSelectConnect(true)
-          }}
-        >
+        <CreateButton theme={theme} onClick={onConnectClick}>
           Connect to vote
         </CreateButton>
-      )}
-
-      {selectConnect && (
-        <Modal heading="Connect" setShowModal={setSelectConnect} theme={theme}>
-          <Networks />
-        </Modal>
       )}
     </VotingEmptyWrap>
   )

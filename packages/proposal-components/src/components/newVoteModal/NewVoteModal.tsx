@@ -1,6 +1,6 @@
 import { WakuVoting } from '@status-waku-voting/core'
 import { Modal, Theme } from '@status-waku-voting/react-components'
-import React, { useState } from 'react'
+import React, { useCallback, useEffect, useState } from 'react'
 import { ProposeModal } from './ProposeModal'
 import { ProposeVoteModal } from './ProposeVoteModal'
 
@@ -16,6 +16,14 @@ export function NewVoteModal({ theme, showModal, setShowModal, availableAmount, 
   const [screen, setScreen] = useState(1)
   const [title, setTitle] = useState('')
   const [text, setText] = useState('')
+
+  useEffect(() => {
+    if (!showModal) {
+      setScreen(1)
+      setTitle('')
+      setText('')
+    }
+  }, [showModal])
 
   if (!showModal) {
     return null

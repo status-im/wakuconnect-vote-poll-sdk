@@ -3,62 +3,31 @@ import styled from 'styled-components'
 import { useEthers } from '@usedapp/core'
 import { Modal, Networks, CreateButton } from '@status-waku-voting/react-components'
 import { Theme } from '@status-waku-voting/react-components/dist/esm/src/style/themes'
-import { WakuVoting } from '@status-waku-voting/core'
-import { BigNumber } from 'ethers'
-import { NewVoteModal } from './newVoteModal/NewVoteModal'
 
 type ProposalHeaderProps = {
   theme: Theme
-  wakuVoting: WakuVoting
-  availableAmount: number
+  account: string | null | undefined
+  onCreateClick: () => void
+  onConnectClick: () => void
 }
 
-export function ProposalHeader({ theme, wakuVoting, availableAmount }: ProposalHeaderProps) {
-  const { activateBrowserWallet, account, library } = useEthers()
-  const [selectConnect, setSelectConnect] = useState(false)
-  const [showModal, setShowModal] = useState(false)
-
+export function ProposalHeader({ theme, account, onCreateClick, onConnectClick }: ProposalHeaderProps) {
   return (
     <Wrapper>
-      <NewVoteModal
-        theme={theme}
-        availableAmount={availableAmount}
-        setShowModal={setShowModal}
-        showModal={showModal}
-        wakuVoting={wakuVoting}
-      />
       <Header>
         <Heading>Your voice has real power</Heading>
         <HeaderText>
           Take part in a decentralised governance by voting on proposals provided by community or creating your own.
         </HeaderText>
       </Header>
-
       {account ? (
-        <CreateButton
-          theme={theme}
-          onClick={() => {
-            setShowModal(true)
-          }}
-        >
+        <CreateButton theme={theme} onClick={onCreateClick}>
           Create proposal
         </CreateButton>
       ) : (
-        <CreateButton
-          theme={theme}
-          onClick={() => {
-            if ((window as any).ethereum) {
-              activateBrowserWallet()
-            } else setSelectConnect(true)
-          }}
-        >
+        <CreateButton theme={theme} onClick={onConnectClick}>
           Connect to vote
         </CreateButton>
-      )}
-      {selectConnect && (
-        <Modal heading="Connect" setShowModal={setSelectConnect} theme={theme}>
-          <Networks />
-        </Modal>
       )}
     </Wrapper>
   )
@@ -81,6 +50,7 @@ const Header = styled.div`
     padding: 12px 16px 0;
     width: 100%;
     background: #f8faff;
+    z-index: 10;
   }
 `
 
