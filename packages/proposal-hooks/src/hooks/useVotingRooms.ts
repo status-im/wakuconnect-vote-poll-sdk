@@ -15,11 +15,12 @@ export function useVotingRooms(wakuVoting: WakuVoting) {
         hash.current = newHash
       }
     }, 10000)
+    setVotes([])
     wakuVoting.getVotingRooms().then((e) => {
       setVotes(e)
       hash.current = id(e.map((votingRoom) => votingRoom.id.toString()).join(''))
     })
     return () => clearInterval(interval)
-  }, [])
+  }, [wakuVoting])
   return votes
 }
