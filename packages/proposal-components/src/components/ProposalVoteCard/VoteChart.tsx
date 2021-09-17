@@ -46,52 +46,22 @@ export function VoteChart({ votingRoom, proposingAmount, selectedVote, isAnimati
     <Votes ref={ref}>
       <VotesChart className={selectedVote || tabletMode ? '' : 'notModal'}>
         <VoteBox
-          style={{
-            filter: voteWinner && voteWinner === 2 ? 'grayscale(1)' : 'none',
-            alignItems: mobileVersion ? 'flex-start' : 'center',
-          }}
-        >
-          <VoteIcon
-            src={voteWinner === 1 ? crossWinnerIcon : crossIcon}
-            width={voteWinner === 1 ? '18px' : '14px'}
-            style={{
-              marginLeft: mobileVersion ? '10px' : '0',
-            }}
-          />
-          <span>
-            {' '}
-            {isAnimation && proposingAmount && selectedVote && selectedVote === 0 ? (
-              <CountUp end={votingRoom.totalVotesAgainst.toNumber() + proposingAmount} separator="," />
-            ) : (
-              addCommas(votingRoom.totalVotesAgainst.toNumber())
-            )}{' '}
-            <span style={{ fontWeight: 'normal' }}>ABC</span>
-          </span>
-        </VoteBox>
+          voteType={2}
+          mobileVersion={mobileVersion}
+          totalVotes={votingRoom.totalVotesAgainst.toNumber()}
+          won={voteWinner === 2}
+          selected={isAnimation && selectedVote === 0}
+          proposingAmount={proposingAmount}
+        />
         {!voteWinner && <TimeLeft className={selectedVote ? '' : 'notModal'}>{formatTimeLeft(timeLeft)}</TimeLeft>}
         <VoteBox
-          style={{
-            filter: voteWinner && voteWinner === 1 ? 'grayscale(1)' : 'none',
-            alignItems: mobileVersion ? 'flex-end' : 'center',
-          }}
-        >
-          <VoteIcon
-            src={voteWinner === 2 ? checkWinnerIcon : checkIcon}
-            width={voteWinner === 2 ? '24px' : '18px'}
-            style={{
-              marginRight: mobileVersion ? '10px' : '0',
-            }}
-          />
-          <span>
-            {' '}
-            {isAnimation && proposingAmount && selectedVote && selectedVote === 1 ? (
-              <CountUp end={votingRoom.totalVotesFor.toNumber() + proposingAmount} separator="," />
-            ) : (
-              addCommas(votingRoom.totalVotesFor.toNumber())
-            )}{' '}
-            <span style={{ fontWeight: 'normal' }}>ABC</span>
-          </span>
-        </VoteBox>
+          voteType={1}
+          mobileVersion={mobileVersion}
+          totalVotes={votingRoom.totalVotesFor.toNumber()}
+          won={voteWinner === 1}
+          selected={isAnimation && selectedVote === 1}
+          proposingAmount={proposingAmount}
+        />
       </VotesChart>
       <VoteGraphBarWrap className={selectedVote || tabletMode ? '' : 'notModal'}>
         <VoteGraphBar
@@ -103,6 +73,43 @@ export function VoteChart({ votingRoom, proposingAmount, selectedVote, isAnimati
         <TimeLeftMobile className={selectedVote ? '' : 'notModal'}>{formatTimeLeft(timeLeft)}</TimeLeftMobile>
       </VoteGraphBarWrap>
     </Votes>
+  )
+}
+
+type VoteBoxProps = {
+  won: boolean
+  mobileVersion: boolean
+  voteType: number
+  totalVotes: number
+  selected?: boolean
+  proposingAmount?: number
+}
+
+function VoteBox({ won, mobileVersion, voteType, totalVotes, proposingAmount, selected }: VoteBoxProps) {
+  return (
+    <VoteBoxWrapper
+      style={{
+        filter: won ? 'grayscale(1)' : 'none',
+        alignItems: mobileVersion ? (voteType == 1 ? 'flex-start' : 'flex-end') : 'center',
+      }}
+    >
+      <VoteIcon
+        src={voteType === 1 ? (!won ? checkWinnerIcon : checkIcon) : !won ? crossWinnerIcon : crossIcon}
+        width={!won ? '18px' : '14px'}
+        style={{
+          marginLeft: mobileVersion ? '10px' : '0',
+        }}
+      />
+      <span>
+        {' '}
+        {proposingAmount && selected ? (
+          <CountUp end={totalVotes + proposingAmount} separator="," start={totalVotes} duration={2} useEasing={false} />
+        ) : (
+          addCommas(totalVotes)
+        )}{' '}
+        <span style={{ fontWeight: 'normal' }}>ABC</span>
+      </span>
+    </VoteBoxWrapper>
   )
 }
 
@@ -135,7 +142,7 @@ const VotesChart = styled.div`
   }
 `
 
-const VoteBox = styled.div`
+const VoteBoxWrapper = styled.div`
   display: flex;
   flex-direction: column;
   justify-content: space-between;

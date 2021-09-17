@@ -12,7 +12,6 @@ export interface VoteProposingProps {
 
 export function VotePropose({ availableAmount, proposingAmount, setProposingAmount }: VoteProposingProps) {
   const [inputFocused, setInputFocused] = useState(false)
-  const disabled = useMemo(() => availableAmount === 0, [availableAmount])
   const step = useMemo(
     () => (availableAmount < 100 ? 1 : 10 ** (Math.floor(Math.log10(availableAmount)) - 2)),
     [availableAmount]
@@ -57,9 +56,10 @@ export function VotePropose({ availableAmount, proposingAmount, setProposingAmou
           value={proposingAmount}
           onChange={sliderChange}
           style={{
-            background: disabled
-              ? '#EDF1FF'
-              : `linear-gradient(90deg, #0F3595 0% ${progress},  #EDF1FF ${progress} 100%)`,
+            background:
+              availableAmount === 0
+                ? '#EDF1FF'
+                : `linear-gradient(90deg, #0F3595 0% ${progress},  #EDF1FF ${progress} 100%)`,
           }}
         />
       </VoteProposingRangeWrap>
