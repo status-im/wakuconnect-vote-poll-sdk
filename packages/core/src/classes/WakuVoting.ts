@@ -14,7 +14,7 @@ const ABI = [
 
 export class WakuVoting extends WakuMessaging {
   private votingContract: Contract
-
+  public providerName: string
   constructor(
     appName: string,
     votingContract: Contract,
@@ -22,6 +22,7 @@ export class WakuVoting extends WakuMessaging {
     provider: Web3Provider,
     chainId: number,
     multicallAddress: string,
+    providerName: string,
     waku?: Waku
   ) {
     super(
@@ -39,6 +40,7 @@ export class WakuVoting extends WakuMessaging {
       ],
       waku
     )
+    this.providerName = providerName
     this.votingContract = votingContract
   }
 
@@ -52,7 +54,17 @@ export class WakuVoting extends WakuMessaging {
     const network = await provider.getNetwork()
     const votingContract = new Contract(contractAddress, VotingContract.abi, provider)
     const tokenAddress = await votingContract.token()
-    return new WakuVoting(appName, votingContract, tokenAddress, provider, network.chainId, multicall, waku)
+    const providerName = (await provider.getNetwork()).name
+    return new WakuVoting(
+      appName,
+      votingContract,
+      tokenAddress,
+      provider,
+      network.chainId,
+      multicall,
+      providerName,
+      waku
+    )
   }
 
   public async createVote(question: string, descripiton: string, tokenAmount: BigNumber) {
@@ -86,6 +98,16 @@ export class WakuVoting extends WakuMessaging {
           voteWinner: timeLeft <= 0 ? (poll[5].gt(poll[4]) ? 1 : 2) : undefined,
         }
       })
+      await Promise.all(
+        this.lastPolls.map(async (poll) => {
+          if (!poll.transactionHash) {
+            const block = await this.provider.getBlockWithTransactions(poll.startBlock.toNumber())
+            poll.transactionHash = block.transactions.find(
+              (transaction) => transaction.to === this.votingContract.address
+            )?.hash
+          }
+        })
+      )
     }
     return this.lastPolls
   }

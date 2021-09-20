@@ -1,3 +1,4 @@
+import { WakuVoting } from '@status-waku-voting/core'
 import { VotingRoom } from '@status-waku-voting/core/dist/esm/src/types/PollType'
 import React from 'react'
 import styled from 'styled-components'
@@ -5,16 +6,21 @@ import { ViewLink } from './ViewLink'
 
 type ProposalInfoProps = {
   votingRoom: VotingRoom
+  providerName: string
   mobileMode?: boolean
 }
 
-export function ProposalInfo({ votingRoom, mobileMode }: ProposalInfoProps) {
+export function ProposalInfo({ votingRoom, mobileMode, providerName }: ProposalInfoProps) {
   return (
     <Card>
       <CardHeading>{votingRoom.question}</CardHeading>
       <CardText className={mobileMode ? 'mobile' : ''}>{votingRoom.description}</CardText>
       <CardViewLink className={mobileMode ? 'mobile' : ''}>
-        <ViewLink address={'#'} />
+        <ViewLink
+          address={
+            votingRoom.transactionHash ? `https://${providerName}.etherscan.io/tx/${votingRoom.transactionHash}` : '#'
+          }
+        />
       </CardViewLink>
     </Card>
   )

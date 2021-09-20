@@ -21,7 +21,7 @@ export function ProposalCard({ theme, votingRoom, mobileVersion, availableAmount
 
   return (
     <Card onClick={() => mobileVersion && history.push(`/votingRoom/${votingRoom.id.toString()}`)}>
-      <ProposalInfo votingRoom={votingRoom} />
+      <ProposalInfo votingRoom={votingRoom} providerName={wakuVoting.providerName} />
       <ProposalVote votingRoom={votingRoom} theme={theme} availableAmount={availableAmount} wakuVoting={wakuVoting} />
     </Card>
   )

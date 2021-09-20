@@ -16,4 +16,5 @@ export type VotingRoom = {
   id: number
   timeLeft: number
   voteWinner: number | undefined
+  transactionHash?: string
 }

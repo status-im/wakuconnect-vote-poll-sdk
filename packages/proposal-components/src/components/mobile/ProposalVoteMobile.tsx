@@ -30,7 +30,7 @@ export function ProposalVoteMobile({ wakuVoting, availableAmount }: ProposalVote
 
   return (
     <Card>
-      <ProposalInfo votingRoom={votingRoom} mobileMode={true} />
+      <ProposalInfo votingRoom={votingRoom} mobileMode={true} providerName={wakuVoting.providerName} />
       <VoteChartWrap>
         <VoteChart votingRoom={votingRoom} selectedVote={selectedVoted} />
       </VoteChartWrap>
