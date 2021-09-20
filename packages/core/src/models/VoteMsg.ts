@@ -26,7 +26,7 @@ type Message = {
 export function createSignMsgParams(message: Message, chainId: number, verifyingContract: string) {
   const msgParams: any = {
     domain: {
-      name: 'Waku proposal',
+      name: 'Voting Contract',
       version: '1',
       chainId,
       verifyingContract,
@@ -43,9 +43,9 @@ export function createSignMsgParams(message: Message, chainId: number, verifying
         { name: 'verifyingContract', type: 'address' },
       ],
       Vote: [
-        { name: 'roomIdAndType', type: 'string' },
-        { name: 'tokenAmount', type: 'string' },
-        { name: 'voter', type: 'string' },
+        { name: 'roomIdAndType', type: 'uint256' },
+        { name: 'tokenAmount', type: 'uint256' },
+        { name: 'voter', type: 'address' },
       ],
     },
   }

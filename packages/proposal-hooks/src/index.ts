@@ -1,4 +1,5 @@
 import { useWakuProposal } from './hooks/useWakuProposal'
 import { useVotingRoom } from './hooks/useVotingRoom'
 import { useVotingRooms } from './hooks/useVotingRooms'
-export { useWakuProposal, useVotingRoom, useVotingRooms }
+import { useRoomWakuVotes } from './hooks/useRoomWakuVotes'
+export { useWakuProposal, useVotingRoom, useVotingRooms, useRoomWakuVotes }

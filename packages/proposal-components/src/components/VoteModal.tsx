@@ -4,6 +4,8 @@ import { VoteChart } from './ProposalVoteCard/VoteChart'
 import { DisabledButton, VoteBtnAgainst, VoteBtnFor } from './Buttons'
 import { VotePropose } from './VotePropose'
 import { VotingRoom } from '@status-waku-voting/core/dist/esm/src/types/PollType'
+import { WakuVoting } from '@status-waku-voting/core'
+import { BigNumber } from 'ethers'
 
 export interface VoteModalProps {
   votingRoom: VotingRoom
@@ -12,6 +14,7 @@ export interface VoteModalProps {
   proposingAmount: number
   setShowConfirmModal: (show: boolean) => void
   setProposingAmount: (val: number) => void
+  wakuVoting: WakuVoting
 }
 
 export function VoteModal({
@@ -21,6 +24,7 @@ export function VoteModal({
   proposingAmount,
   setShowConfirmModal,
   setProposingAmount,
+  wakuVoting,
 }: VoteModalProps) {
   const disabled = proposingAmount === 0
   const funds = availableAmount > 0
@@ -36,16 +40,17 @@ export function VoteModal({
 
       {!funds && <DisabledButton>Not enought ABC to vote</DisabledButton>}
 
-      {funds &&
-        (selectedVote === 0 ? (
-          <ModalVoteBtnAgainst disabled={disabled} onClick={() => setShowConfirmModal(true)}>
-            Vote Against
-          </ModalVoteBtnAgainst>
-        ) : (
-          <ModalVoteBtnFor disabled={disabled} onClick={() => setShowConfirmModal(true)}>
-            Vote For
-          </ModalVoteBtnFor>
-        ))}
+      {funds && (
+        <ModalVoteBtnAgainst
+          disabled={disabled}
+          onClick={async () => {
+            wakuVoting.sendVote(votingRoom.id, selectedVote, BigNumber.from(proposingAmount))
+            setShowConfirmModal(true)
+          }}
+        >
+          {selectedVote === 0 ? `Vote Against` : `Vote For`}
+        </ModalVoteBtnAgainst>
+      )}
     </Column>
   )
 }

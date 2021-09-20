@@ -1,11 +1,12 @@
 import { VotingContract } from '@status-waku-voting/contracts/abi'
 import { WakuMessaging } from './WakuMessaging'
-import { Contract, Wallet, BigNumber, ethers } from 'ethers'
+import { Contract, Wallet, BigNumber, ethers, utils } from 'ethers'
 import { Waku, WakuMessage } from 'js-waku'
 import { createWaku } from '../utils/createWaku'
 import { JsonRpcSigner, Web3Provider } from '@ethersproject/providers'
 import { VoteMsg } from '../models/VoteMsg'
 import { VotingRoom } from '../types/PollType'
+import { DetailedVotingRoom } from '../models/DetailedVotingRoom'
 
 const ABI = [
   'function aggregate(tuple(address target, bytes callData)[] calls) view returns (uint256 blockNumber, bytes[] returnData)',
@@ -90,7 +91,11 @@ export class WakuVoting extends WakuMessaging {
   }
 
   public async getVotingRoom(id: number) {
-    return (await this.getVotingRooms())[id]
+    try {
+      return (await this.getVotingRooms())[id]
+    } catch {
+      return undefined
+    }
   }
 
   public async sendVote(roomId: number, selectedAnswer: number, tokenAmount: BigNumber) {
@@ -104,5 +109,47 @@ export class WakuVoting extends WakuMessaging {
       this.votingContract.address
     )
     await this.sendWakuMessage(this.wakuMessages['vote'], vote)
+  }
+
+  public async commitVotes(votes: VoteMsg[]) {
+    const signer = this.provider.getSigner()
+    const mappedVotes = votes.map((vote) => {
+      const sig = utils.splitSignature(vote.signature)
+      return [vote.voter, BigNumber.from(vote.roomId).mul(2).add(vote.answer), vote.tokenAmount, sig.r, sig._vs]
+    })
+    this.votingContract = this.votingContract.connect(signer)
+    this.votingContract.castVotes(mappedVotes)
+  }
+
+  public async getRoomWakuVotes(id: number) {
+    await this.updateBalances()
+    const votingRoom = await this.getVotingRoom(id)
+    if (!votingRoom || votingRoom.timeLeft < 0) {
+      return undefined
+    }
+    const votersHashMap: { [voter: string]: boolean } = {}
+    votingRoom.voters.forEach((voter) => (votersHashMap[voter] = true))
+    const newVotingRoom: VotingRoom = { ...votingRoom }
+    const wakuVotes = this.wakuMessages['vote'].arr.filter((vote: VoteMsg) => {
+      if (
+        vote.roomId === id &&
+        this.addressesBalances[vote.voter] &&
+        this.addressesBalances[vote.voter]?.gt(vote.tokenAmount)
+      ) {
+        if (!votersHashMap[vote.voter]) {
+          votersHashMap[vote.voter] = true
+          if (vote.answer === 0) {
+            newVotingRoom.totalVotesAgainst = newVotingRoom.totalVotesAgainst.add(vote.tokenAmount)
+          } else {
+            newVotingRoom.totalVotesFor = newVotingRoom.totalVotesFor.add(vote.tokenAmount)
+          }
+          return true
+        }
+      }
+      return false
+    }) as VoteMsg[]
+
+    const sum = wakuVotes.reduce((prev, curr) => prev.add(curr.tokenAmount), BigNumber.from(0))
+    return { sum, wakuVotes, newVotingRoom }
   }
 }

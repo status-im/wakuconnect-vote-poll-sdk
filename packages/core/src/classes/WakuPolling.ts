@@ -71,7 +71,7 @@ export class WakuPolling extends WakuMessaging {
     endTime?: number
   ) {
     const address = await signer.getAddress()
-    await this.updateBalances(address)
+    await this.updateBalances([address])
     if (this.addressesBalances[address] && this.addressesBalances[address]?.gt(minToken ?? BigNumber.from(0))) {
       const pollInit = await PollInitMsg.create(signer, question, answers, pollType, this.chainId, minToken, endTime)
       if (pollInit) {
@@ -94,7 +94,7 @@ export class WakuPolling extends WakuMessaging {
     const address = await signer.getAddress()
     const poll = this.wakuMessages['pollInit'].arr.find((poll: PollInitMsg): poll is PollInitMsg => poll.id === pollId)
     if (poll) {
-      await this.updateBalances(address)
+      await this.updateBalances([address])
       if (this.addressesBalances[address] && this.addressesBalances[address]?.gt(poll.minToken ?? BigNumber.from(0))) {
         const pollVote = await TimedPollVoteMsg.create(signer, pollId, selectedAnswer, this.chainId, tokenAmount)
         if (pollVote) {

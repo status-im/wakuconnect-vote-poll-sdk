@@ -69,7 +69,7 @@ export function ProposalVoteMobile({ wakuVoting, availableAmount }: ProposalVote
 
       <CardVoteBottom>
         {' '}
-        <VoteSubmitButton votes={15} disabled={!account} />
+        <VoteSubmitButton votes={15} disabled={!account} onClick={() => null} />
       </CardVoteBottom>
     </Card>
   )
@@ -80,6 +80,8 @@ export const Card = styled.div`
   flex-direction: column;
   justify-content: space-between;
   align-items: center;
+  width: 100vw;
+  margin: 0px;
   padding: 88px 16px 32px;
 `
 

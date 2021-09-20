@@ -5,11 +5,17 @@ import { VoteSendingBtn } from '../Buttons'
 interface VoteSubmitButtonProps {
   votes: number
   disabled: boolean
+  onClick: () => void
 }
 
-export function VoteSubmitButton({ votes, disabled }: VoteSubmitButtonProps) {
+export function VoteSubmitButton({ votes, disabled, onClick }: VoteSubmitButtonProps) {
   if (votes > 0) {
-    return <VoteSendingBtn disabled={disabled}> {addCommas(votes)} votes need saving</VoteSendingBtn>
+    return (
+      <VoteSendingBtn onClick={onClick} disabled={disabled}>
+        {' '}
+        {addCommas(votes)} votes need saving
+      </VoteSendingBtn>
+    )
   }
   return null
 }

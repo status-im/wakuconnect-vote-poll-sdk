@@ -5,6 +5,7 @@ import { Theme } from '@status-waku-voting/react-components'
 import { ProposalInfo } from './ProposalInfo'
 import { ProposalVote } from './ProposalVoteCard/ProposalVote'
 import { VotingRoom } from '@status-waku-voting/core/dist/esm/src/types/PollType'
+import { WakuVoting } from '@status-waku-voting/core'
 
 interface ProposalCardProps {
   votingRoom: VotingRoom
@@ -12,15 +13,16 @@ interface ProposalCardProps {
   theme: Theme
   hideModalFunction?: (val: boolean) => void
   availableAmount: number
+  wakuVoting: WakuVoting
 }
 
-export function ProposalCard({ theme, votingRoom, mobileVersion, availableAmount }: ProposalCardProps) {
+export function ProposalCard({ theme, votingRoom, mobileVersion, availableAmount, wakuVoting }: ProposalCardProps) {
   const history = useHistory()
 
   return (
     <Card onClick={() => mobileVersion && history.push(`/votingRoom/${votingRoom.id.toString()}`)}>
       <ProposalInfo votingRoom={votingRoom} />
-      <ProposalVote votingRoom={votingRoom} theme={theme} availableAmount={availableAmount} />
+      <ProposalVote votingRoom={votingRoom} theme={theme} availableAmount={availableAmount} wakuVoting={wakuVoting} />
     </Card>
   )
 }

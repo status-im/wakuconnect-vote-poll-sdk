@@ -87,8 +87,17 @@ export class WakuMessaging {
   ) {
     const { decodeFunction, filterFunction, name } = setupData
     const { arr, hashMap } = this.wakuMessages[name]
-    messages
-      .map(decodeFunction)
+    const decodedMessages = messages.map(decodeFunction).filter((e): e is T => !!e)
+
+    const addressesToUpdate: string[] = []
+    decodedMessages.forEach((message: any) => {
+      setupData.tokenCheckArray.forEach((property) => {
+        addressesToUpdate.push(message?.[property])
+      })
+    })
+    this.updateBalances(addressesToUpdate)
+
+    decodedMessages
       .sort((a, b) => ((a?.timestamp ?? new Date(0)) > (b?.timestamp ?? new Date(0)) ? 1 : -1))
       .forEach((e) => {
         if (e) {
@@ -117,7 +126,7 @@ export class WakuMessaging {
   protected addressesBalances: { [address: string]: BigNumber | undefined } = {}
   protected lastBlockBalances = 0
 
-  protected async updateBalances(newAddress?: string) {
+  protected async updateBalances(newAddresses?: string[]) {
     const addressesToUpdate: { [addr: string]: boolean } = {}
 
     const addAddressToUpdate = (addr: string) => {
@@ -130,22 +139,11 @@ export class WakuMessaging {
 
     if (this.lastBlockBalances != currentBlock) {
       Object.keys(this.addressesBalances).forEach(addAddressToUpdate)
-      if (newAddress) addAddressToUpdate(newAddress)
-      Object.values(this.wakuMessages).forEach((wakuMessage) =>
-        wakuMessage.arr.forEach((msg) => wakuMessage.tokenCheckArray.forEach((field) => addAddressToUpdate(msg[field])))
-      )
+      newAddresses?.forEach(addAddressToUpdate)
     } else {
-      Object.values(this.wakuMessages).forEach((wakuMessage) =>
-        wakuMessage.arr.forEach((msg) =>
-          wakuMessage.tokenCheckArray.forEach((field) => {
-            const address = msg[field]
-            if (!this.addressesBalances[address]) {
-              addAddressToUpdate(address)
-            }
-          })
-        )
-      )
-      if (newAddress && !this.addressesBalances[newAddress]) addAddressToUpdate(newAddress)
+      newAddresses?.forEach((newAddress) => {
+        if (!this.addressesBalances[newAddress]) addAddressToUpdate(newAddress)
+      })
     }
 
     const addressesToUpdateArray = Object.keys(addressesToUpdate)
@@ -170,7 +168,7 @@ export class WakuMessaging {
   }
 
   public async getTokenBalance(address: string) {
-    await this.updateBalances(address)
+    await this.updateBalances([address])
     return this.addressesBalances[address] ?? undefined
   }
 }

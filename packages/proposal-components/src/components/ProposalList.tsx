@@ -25,6 +25,7 @@ export function ProposalList({ theme, wakuVoting, votes, availableAmount }: Prop
             key={votingRoom.id}
             mobileVersion={mobileVersion}
             availableAmount={availableAmount}
+            wakuVoting={wakuVoting}
           />
         )
       })}

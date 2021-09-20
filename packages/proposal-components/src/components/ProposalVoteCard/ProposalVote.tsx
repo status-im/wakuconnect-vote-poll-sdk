@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import styled from 'styled-components'
 import { useEthers } from '@usedapp/core'
 import { FinalBtn, VoteBtnAgainst, VoteBtnFor } from '../Buttons'
@@ -9,15 +9,18 @@ import { Modal, Theme } from '@status-waku-voting/react-components'
 import { VoteModal } from '../VoteModal'
 import { VoteAnimatedModal } from '../VoteAnimatedModal'
 import { VotingRoom } from '@status-waku-voting/core/dist/esm/src/types/PollType'
+import { WakuVoting } from '@status-waku-voting/core'
+import { useRoomWakuVotes } from '@status-waku-voting/proposal-hooks'
 
 interface ProposalVoteProps {
   theme: Theme
   votingRoom: VotingRoom
   availableAmount: number
   hideModalFunction?: (val: boolean) => void
+  wakuVoting: WakuVoting
 }
 
-export function ProposalVote({ votingRoom, theme, availableAmount, hideModalFunction }: ProposalVoteProps) {
+export function ProposalVote({ votingRoom, theme, availableAmount, hideModalFunction, wakuVoting }: ProposalVoteProps) {
   const { account } = useEthers()
   const [showVoteModal, setShowVoteModal] = useState(false)
   const [showConfirmModal, setShowConfirmModal] = useState(false)
@@ -36,24 +39,27 @@ export function ProposalVote({ votingRoom, theme, availableAmount, hideModalFunc
     setShowConfirmModal(val)
   }
 
+  const { votes, sum, modifiedVotingRoom } = useRoomWakuVotes(votingRoom, wakuVoting)
+
   return (
     <Card>
       {showVoteModal && (
         <Modal heading={votingRoom.question} setShowModal={setShowVoteModal} theme={theme}>
           <VoteModal
-            votingRoom={votingRoom}
+            votingRoom={modifiedVotingRoom}
             availableAmount={availableAmount}
             selectedVote={selectedVoted}
             proposingAmount={proposingAmount}
             setShowConfirmModal={setNext}
             setProposingAmount={setProposingAmount}
+            wakuVoting={wakuVoting}
           />{' '}
         </Modal>
       )}
       {showConfirmModal && (
         <Modal heading={votingRoom.question} setShowModal={hideConfirm} theme={theme}>
           <VoteAnimatedModal
-            votingRoom={votingRoom}
+            votingRoom={modifiedVotingRoom}
             selectedVote={selectedVoted}
             setShowModal={hideConfirm}
             proposingAmount={proposingAmount}
@@ -66,7 +72,7 @@ export function ProposalVote({ votingRoom, theme, availableAmount, hideModalFunc
         <CardHeading />
       )}
 
-      <VoteChart votingRoom={votingRoom} selectedVote={selectedVoted} />
+      <VoteChart votingRoom={modifiedVotingRoom} selectedVote={selectedVoted} />
 
       <CardButtons>
         {votingRoom.voteWinner ? (
@@ -100,7 +106,7 @@ export function ProposalVote({ votingRoom, theme, availableAmount, hideModalFunc
           {' '}
           <ViewLink address={'#'} />
         </CardViewLink>
-        <VoteSubmitButton votes={15} disabled={!account} />
+        <VoteSubmitButton votes={sum.toNumber()} disabled={!account} onClick={() => wakuVoting.commitVotes(votes)} />
       </CardVoteBottom>
     </Card>
   )
