@@ -87,7 +87,7 @@ export function Proposal({ wakuVoting, account }: ProposalProps) {
         )}
       </ProposalVotesWrapper>
 
-      <NotificationItem text={'Proposal you finalized will be settled after 10 confirmations.'} address={'#'} />
+      {/* <NotificationItem text={'Proposal you finalized will be settled after 10 confirmations.'} address={'#'} /> */}
     </ProposalWrapper>
   )
 }

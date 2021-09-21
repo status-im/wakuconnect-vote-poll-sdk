@@ -44,7 +44,7 @@ export function ProposalVoteMobile({ wakuVoting, availableAmount }: ProposalVote
 
       <CardButtons>
         {voteWinner ? (
-          <FinalBtn disabled={!account}>Finalize the vote</FinalBtn>
+          <></>
         ) : (
           <VotesBtns>
             <VoteBtnAgainst

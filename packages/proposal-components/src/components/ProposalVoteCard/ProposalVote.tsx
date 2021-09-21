@@ -76,7 +76,7 @@ export function ProposalVote({ votingRoom, theme, availableAmount, hideModalFunc
 
       <CardButtons>
         {votingRoom.voteWinner ? (
-          <FinalBtn disabled={!account}>Finalize the vote</FinalBtn>
+          <></>
         ) : (
           <VotesBtns>
             <VoteBtnAgainst
