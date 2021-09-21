@@ -4,7 +4,7 @@ import { VoteMsg } from '@status-waku-voting/core/dist/esm/src/models/VoteMsg'
 import { utils, BigNumber } from 'ethers'
 import { VotingRoom } from '@status-waku-voting/core/dist/esm/src/types/PollType'
 
-export function useRoomWakuVotes(votingRoom: VotingRoom, wakuVoting: WakuVoting) {
+export function useRoomWakuVotes(votingRoom: VotingRoom | undefined, wakuVoting: WakuVoting) {
   const [votes, setVotes] = useState<VoteMsg[]>([])
   const [sum, setSum] = useState(BigNumber.from(0))
   const [modifiedVotingRoom, setModifiedVotingRoom] = useState(votingRoom)
@@ -12,6 +12,9 @@ export function useRoomWakuVotes(votingRoom: VotingRoom, wakuVoting: WakuVoting)
 
   useEffect(() => {
     const updateVotes = async () => {
+      if (!votingRoom) {
+        return
+      }
       const newVotes = await wakuVoting.getRoomWakuVotes(votingRoom.id)
       if (newVotes) {
         const newHash = utils.id(newVotes.wakuVotes.map((vote) => vote.id).join(''))
@@ -24,9 +27,9 @@ export function useRoomWakuVotes(votingRoom: VotingRoom, wakuVoting: WakuVoting)
       }
     }
     updateVotes()
-    const interval = setInterval(updateVotes, 10000)
+    const interval = setInterval(updateVotes, 1000)
     return () => clearInterval(interval)
-  }, [wakuVoting])
+  }, [wakuVoting, votingRoom])
 
   return { votes, sum, modifiedVotingRoom }
 }

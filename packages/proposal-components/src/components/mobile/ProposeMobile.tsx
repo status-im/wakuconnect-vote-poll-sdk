@@ -13,12 +13,15 @@ import {
   ProposingTextInput,
 } from '../newVoteModal/ProposeModal'
 import { VotePropose } from '../VotePropose'
+import { BigNumber } from 'ethers'
+import { WakuVoting } from '@status-waku-voting/core'
 
 interface ProposeVoteModalProps {
   availableAmount: number
+  wakuVoting: WakuVoting
 }
 
-export function ProposeMobile({ availableAmount }: ProposeVoteModalProps) {
+export function ProposeMobile({ availableAmount, wakuVoting }: ProposeVoteModalProps) {
   const insufficientFunds = availableAmount < 10000
   const [proposingAmount, setProposingAmount] = useState(0)
   const [title, setTitle] = useState('')
@@ -90,7 +93,8 @@ export function ProposeMobile({ availableAmount }: ProposeVoteModalProps) {
 
           <ProposingBtn
             disabled={proposingAmount === 0}
-            onClick={() => {
+            onClick={async () => {
+              await wakuVoting.createVote(title, text, BigNumber.from(proposingAmount))
               history.push(`/proposal`), setTitle(''), setText('')
             }}
           >

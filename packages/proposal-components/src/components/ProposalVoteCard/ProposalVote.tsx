@@ -46,7 +46,7 @@ export function ProposalVote({ votingRoom, theme, availableAmount, hideModalFunc
       {showVoteModal && (
         <Modal heading={votingRoom.question} setShowModal={setShowVoteModal} theme={theme}>
           <VoteModal
-            votingRoom={modifiedVotingRoom}
+            votingRoom={modifiedVotingRoom ?? votingRoom}
             availableAmount={availableAmount}
             selectedVote={selectedVoted}
             proposingAmount={proposingAmount}
@@ -59,7 +59,7 @@ export function ProposalVote({ votingRoom, theme, availableAmount, hideModalFunc
       {showConfirmModal && (
         <Modal heading={votingRoom.question} setShowModal={hideConfirm} theme={theme}>
           <VoteAnimatedModal
-            votingRoom={modifiedVotingRoom}
+            votingRoom={modifiedVotingRoom ?? votingRoom}
             selectedVote={selectedVoted}
             setShowModal={hideConfirm}
             proposingAmount={proposingAmount}
@@ -72,7 +72,7 @@ export function ProposalVote({ votingRoom, theme, availableAmount, hideModalFunc
         <CardHeading />
       )}
 
-      <VoteChart votingRoom={modifiedVotingRoom} selectedVote={selectedVoted} />
+      <VoteChart votingRoom={modifiedVotingRoom ?? votingRoom} selectedVote={selectedVoted} />
 
       <CardButtons>
         {votingRoom.voteWinner ? (

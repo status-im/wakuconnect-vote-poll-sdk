@@ -40,7 +40,7 @@ export function VoteChart({ votingRoom, proposingAmount, selectedVote, isAnimati
     }
   }, [graphWidth, voteSum, proposingAmount])
 
-  const timeLeft = useMemo(() => votingRoom.timeLeft, [votingRoom.timeLeft])
+  const timeLeft = useMemo(() => votingRoom.timeLeft * 1000, [votingRoom.timeLeft])
   const voteWinner = useMemo(() => votingRoom.voteWinner, [votingRoom.voteWinner])
   return (
     <Votes ref={ref}>
@@ -90,7 +90,7 @@ function VoteBox({ won, mobileVersion, voteType, totalVotes, proposingAmount, se
     <VoteBoxWrapper
       style={{
         filter: won ? 'grayscale(1)' : 'none',
-        alignItems: mobileVersion ? (voteType == 1 ? 'flex-start' : 'flex-end') : 'center',
+        alignItems: mobileVersion ? (voteType == 1 ? 'flex-end' : 'flex-start') : 'center',
       }}
     >
       <VoteIcon

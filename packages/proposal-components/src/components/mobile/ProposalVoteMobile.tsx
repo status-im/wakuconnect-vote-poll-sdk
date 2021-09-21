@@ -8,8 +8,9 @@ import { VoteChart } from '../ProposalVoteCard/VoteChart'
 import { ProposalInfo } from '../ProposalInfo'
 import { VotePropose } from '../VotePropose'
 import { VotesBtns } from '../ProposalVoteCard/ProposalVote'
-import { useVotingRoom } from '@status-waku-voting/proposal-hooks'
+import { useRoomWakuVotes, useVotingRoom } from '@status-waku-voting/proposal-hooks'
 import { WakuVoting } from '@status-waku-voting/core'
+import { BigNumber } from 'ethers'
 interface ProposalVoteMobileProps {
   wakuVoting: WakuVoting
   availableAmount: number
@@ -23,6 +24,7 @@ export function ProposalVoteMobile({ wakuVoting, availableAmount }: ProposalVote
   const votingRoom = useVotingRoom(Number(id), wakuVoting)
 
   const voteWinner = useMemo(() => votingRoom?.voteWinner, [votingRoom?.voteWinner])
+  const { votes, sum, modifiedVotingRoom } = useRoomWakuVotes(votingRoom, wakuVoting)
 
   if (!votingRoom) {
     return <>Loading</>
@@ -32,7 +34,7 @@ export function ProposalVoteMobile({ wakuVoting, availableAmount }: ProposalVote
     <Card>
       <ProposalInfo votingRoom={votingRoom} mobileMode={true} providerName={wakuVoting.providerName} />
       <VoteChartWrap>
-        <VoteChart votingRoom={votingRoom} selectedVote={selectedVoted} />
+        <VoteChart votingRoom={modifiedVotingRoom ?? votingRoom} selectedVote={selectedVoted} />
       </VoteChartWrap>
       {!voteWinner && (
         <VotePropose
@@ -51,6 +53,7 @@ export function ProposalVoteMobile({ wakuVoting, availableAmount }: ProposalVote
               disabled={!account}
               onClick={() => {
                 setSelectedVoted(0)
+                wakuVoting.sendVote(votingRoom.id, 0, BigNumber.from(proposingAmount))
               }}
             >
               Vote Against
@@ -59,6 +62,7 @@ export function ProposalVoteMobile({ wakuVoting, availableAmount }: ProposalVote
               disabled={!account}
               onClick={() => {
                 setSelectedVoted(1)
+                wakuVoting.sendVote(votingRoom.id, 1, BigNumber.from(proposingAmount))
               }}
             >
               Vote For
@@ -69,7 +73,7 @@ export function ProposalVoteMobile({ wakuVoting, availableAmount }: ProposalVote
 
       <CardVoteBottom>
         {' '}
-        <VoteSubmitButton votes={15} disabled={!account} onClick={() => null} />
+        <VoteSubmitButton votes={sum.toNumber()} disabled={!account} onClick={() => wakuVoting.commitVotes(votes)} />
       </CardVoteBottom>
     </Card>
   )

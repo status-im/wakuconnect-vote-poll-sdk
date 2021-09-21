@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useCallback } from 'react'
 import styled from 'styled-components'
 import { VoteChart } from './ProposalVoteCard/VoteChart'
 import { DisabledButton, VoteBtnAgainst, VoteBtnFor } from './Buttons'
@@ -28,7 +28,10 @@ export function VoteModal({
 }: VoteModalProps) {
   const disabled = proposingAmount === 0
   const funds = availableAmount > 0
-
+  const onClick = useCallback(async () => {
+    wakuVoting.sendVote(votingRoom.id, selectedVote, BigNumber.from(proposingAmount))
+    setShowConfirmModal(true)
+  }, [votingRoom, selectedVote, proposingAmount, wakuVoting])
   return (
     <Column>
       <VoteChart votingRoom={votingRoom} proposingAmount={proposingAmount} selectedVote={selectedVote} />
@@ -40,16 +43,14 @@ export function VoteModal({
 
       {!funds && <DisabledButton>Not enought ABC to vote</DisabledButton>}
 
-      {funds && (
-        <ModalVoteBtnAgainst
-          disabled={disabled}
-          onClick={async () => {
-            wakuVoting.sendVote(votingRoom.id, selectedVote, BigNumber.from(proposingAmount))
-            setShowConfirmModal(true)
-          }}
-        >
-          {selectedVote === 0 ? `Vote Against` : `Vote For`}
-        </ModalVoteBtnAgainst>
+      {funds && selectedVote === 0 ? (
+        <BtnAgainst disabled={disabled} onClick={onClick}>
+          Vote Against
+        </BtnAgainst>
+      ) : (
+        <BtnFor disabled={disabled} onClick={onClick}>
+          Vote For
+        </BtnFor>
       )}
     </Column>
   )
@@ -63,11 +64,11 @@ const Column = styled.div`
   margin-top: 32px;
 `
 
-const ModalVoteBtnAgainst = styled(VoteBtnAgainst)`
+const BtnAgainst = styled(VoteBtnAgainst)`
   width: 100%;
   margin-top: 32px;
 `
-const ModalVoteBtnFor = styled(VoteBtnFor)`
+const BtnFor = styled(VoteBtnFor)`
   width: 100%;
   margin-top: 32px;
 `

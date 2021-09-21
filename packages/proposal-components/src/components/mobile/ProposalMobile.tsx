@@ -24,7 +24,7 @@ export function ProposalMobile({ wakuVoting, account }: ProposalMobileProps) {
             <ProposalVoteMobile wakuVoting={wakuVoting} availableAmount={tokenBalance} />
           </Route>
           <Route exact path="/creation">
-            <ProposeMobile availableAmount={tokenBalance} />
+            <ProposeMobile availableAmount={tokenBalance} wakuVoting={wakuVoting} />
           </Route>
           <Route exact path="/proposal">
             <Proposal wakuVoting={wakuVoting} account={account} />
