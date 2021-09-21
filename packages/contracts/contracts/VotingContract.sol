@@ -22,6 +22,7 @@ contract VotingContract {
         string description;
         uint256 totalVotesFor;
         uint256 totalVotesAgainst;
+        uint256 id;
         address[] voters;
     }
     mapping(uint256 => mapping(address => bool)) private voted;
@@ -50,6 +51,46 @@ contract VotingContract {
                 address(this)
             )
         );
+    }
+
+    function getVotingRoomLength() public view returns (uint256) {
+        return votingRooms.length;
+    }
+
+    function getLastNVotingRooms(uint256 amount) public view returns (VotingRoom[] memory result) {
+        if (amount == 0) {
+            return new VotingRoom[](0);
+        }
+        uint256 votingRoomsLen = votingRooms.length;
+        uint256 limit;
+        if (amount > votingRoomsLen) {
+            limit = 0;
+        } else {
+            limit = votingRoomsLen - amount;
+        }
+        uint256 i = votingRoomsLen;
+        uint256 j = 0;
+        result = new VotingRoom[](amount);
+        while (i > 0 && i > limit) {
+            result[j++] = votingRooms[--i];
+        }
+        if (j < amount) {
+            assembly {
+                mstore(result, sub(mload(result), sub(amount, j)))
+            }
+        }
+    }
+
+    function getVotingRoomsFrom(uint256 id) public view returns (VotingRoom[] memory result) {
+        if (id + 1 > votingRooms.length) {
+            return new VotingRoom[](0);
+        }
+        result = new VotingRoom[](votingRooms.length - id);
+        uint256 i = id;
+        uint256 j = 0;
+        while (i < votingRooms.length) {
+            result[j++] = votingRooms[i++];
+        }
     }
 
     function getVotingRooms() public view returns (VotingRoom[] memory) {
@@ -87,6 +128,7 @@ contract VotingContract {
         newVotingRoom.question = question;
         newVotingRoom.description = description;
         newVotingRoom.totalVotesFor = voteAmount;
+        newVotingRoom.id = votingRooms.length;
         voted[votingRooms.length][msg.sender] = true;
 
         votingRooms.push(newVotingRoom);

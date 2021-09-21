@@ -30,7 +30,7 @@ function Proposals() {
   const config = useConfig()
   const waku = useWakuProposal(
     'test',
-    '0x5795A64A70cde4073DBa9EEBC5C6b675B15C815a',
+    '0x965a61B9A91400AdA142b591ab0E235024c94E3D',
     library,
     config?.multicallAddresses?.[chainId ?? 1337]
   )

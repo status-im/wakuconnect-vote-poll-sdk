@@ -1,4 +1,5 @@
 import { BigNumber } from 'ethers'
+import { VoteMsg } from '../models/VoteMsg'
 
 export enum PollType {
   WEIGHTED = 0,
@@ -12,6 +13,12 @@ export type VotingRoom = {
   description: string
   totalVotesFor: BigNumber
   totalVotesAgainst: BigNumber
+  wakuTotalVotesFor: BigNumber
+  wakuTotalVotesAgainst: BigNumber
+  wakuVotes?: {
+    sum: BigNumber
+    votes: VoteMsg[]
+  }
   voters: string[]
   id: number
   timeLeft: number

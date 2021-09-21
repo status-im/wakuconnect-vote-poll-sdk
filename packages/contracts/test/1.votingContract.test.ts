@@ -137,17 +137,19 @@ describe('Contract', () => {
     it('gets', async () => {
       const { contract } = await loadFixture(fixture)
       await contract.initializeVotingRoom('T1', 'short desc', BigNumber.from(100))
-
-      expect((await contract.votingRooms(0))[2]).to.eq('T1')
-      expect((await contract.votingRooms(0))[3]).to.eq('short desc')
-      expect((await contract.votingRooms(0))[4]).to.deep.eq(BigNumber.from(100))
-      expect((await contract.votingRooms(0))[5]).to.deep.eq(BigNumber.from(0))
+      const votingRoom0 = await contract.votingRooms(0)
+      expect(votingRoom0[2]).to.eq('T1')
+      expect(votingRoom0[3]).to.eq('short desc')
+      expect(votingRoom0[4]).to.deep.eq(BigNumber.from(100))
+      expect(votingRoom0[5]).to.deep.eq(BigNumber.from(0))
+      expect(votingRoom0[6]).to.deep.eq(BigNumber.from(0))
 
       await contract.initializeVotingRoom('T2', 'long desc', BigNumber.from(200))
       expect((await contract.votingRooms(1))[2]).to.eq('T2')
       expect((await contract.votingRooms(1))[3]).to.eq('long desc')
       expect((await contract.votingRooms(1))[4]).to.deep.eq(BigNumber.from(200))
       expect((await contract.votingRooms(1))[5]).to.deep.eq(BigNumber.from(0))
+      expect((await contract.votingRooms(1))[6]).to.deep.eq(BigNumber.from(1))
     })
 
     it('reverts no room', async () => {
@@ -190,6 +192,130 @@ describe('Contract', () => {
     })
   })
   describe('helpers', () => {
+    describe('getLastNVotingRooms', () => {
+      it('get 0 voting empty', async () => {
+        const { contract } = await loadFixture(fixture)
+        expect((await contract.getLastNVotingRooms(0)).length).to.eq(0)
+      })
+
+      it('get 1 voting empty', async () => {
+        const { contract } = await loadFixture(fixture)
+        expect((await contract.getLastNVotingRooms(1)).length).to.eq(0)
+      })
+
+      it('get 1 voting 1', async () => {
+        const { contract } = await loadFixture(fixture)
+        await contract.initializeVotingRoom('T1', 't1', BigNumber.from(100))
+        expect((await contract.getLastNVotingRooms(1)).length).to.eq(1)
+      })
+
+      it('get 5 voting empty', async () => {
+        const { contract } = await loadFixture(fixture)
+        expect((await contract.getLastNVotingRooms(5)).length).to.eq(0)
+      })
+
+      it('get 5 voting 1', async () => {
+        const { contract } = await loadFixture(fixture)
+        await contract.initializeVotingRoom('T1', 't1', BigNumber.from(100))
+        expect((await contract.getLastNVotingRooms(5)).length).to.eq(1)
+      })
+
+      it('get 5 voting 2', async () => {
+        const { contract } = await loadFixture(fixture)
+        await contract.initializeVotingRoom('T1', 't1', BigNumber.from(100))
+        await contract.initializeVotingRoom('T2', 't2', BigNumber.from(200))
+        expect((await contract.getLastNVotingRooms(5)).length).to.eq(2)
+      })
+
+      it('get 5 voting 4', async () => {
+        const { contract } = await loadFixture(fixture)
+        await contract.initializeVotingRoom('T1', 't1', BigNumber.from(100))
+        await contract.initializeVotingRoom('T2', 't2', BigNumber.from(200))
+        await contract.initializeVotingRoom('T3', 't3', BigNumber.from(200))
+        await contract.initializeVotingRoom('T4', 't4', BigNumber.from(200))
+        expect((await contract.getLastNVotingRooms(5)).length).to.eq(4)
+      })
+
+      it('get 5 voting 5', async () => {
+        const { contract } = await loadFixture(fixture)
+        await contract.initializeVotingRoom('T1', 't1', BigNumber.from(100))
+        await contract.initializeVotingRoom('T2', 't2', BigNumber.from(200))
+        await contract.initializeVotingRoom('T3', 't3', BigNumber.from(200))
+        await contract.initializeVotingRoom('T4', 't4', BigNumber.from(200))
+        await contract.initializeVotingRoom('T5', 't5', BigNumber.from(200))
+        expect((await contract.getLastNVotingRooms(5)).length).to.eq(5)
+      })
+
+      it('get 5 voting 6', async () => {
+        const { contract } = await loadFixture(fixture)
+        await contract.initializeVotingRoom('T1', 't1', BigNumber.from(100))
+        await contract.initializeVotingRoom('T2', 't2', BigNumber.from(200))
+        await contract.initializeVotingRoom('T3', 't3', BigNumber.from(200))
+        await contract.initializeVotingRoom('T4', 't4', BigNumber.from(200))
+        await contract.initializeVotingRoom('T5', 't5', BigNumber.from(200))
+        await contract.initializeVotingRoom('T6', 't6', BigNumber.from(200))
+        await contract.initializeVotingRoom('T7', 't7', BigNumber.from(200))
+        expect((await contract.getLastNVotingRooms(5)).length).to.eq(5)
+      })
+
+      it('get 5 voting 7', async () => {
+        const { contract } = await loadFixture(fixture)
+        await contract.initializeVotingRoom('T1', 't1', BigNumber.from(100))
+        await contract.initializeVotingRoom('T2', 't2', BigNumber.from(200))
+        await contract.initializeVotingRoom('T3', 't3', BigNumber.from(200))
+        await contract.initializeVotingRoom('T4', 't4', BigNumber.from(200))
+        await contract.initializeVotingRoom('T5', 't5', BigNumber.from(200))
+        await contract.initializeVotingRoom('T6', 't6', BigNumber.from(200))
+        await contract.initializeVotingRoom('T7', 't7', BigNumber.from(200))
+        expect((await contract.getLastNVotingRooms(5)).length).to.eq(5)
+      })
+    })
+
+    describe('getVotingRoomsFrom', () => {
+      it('empty', async () => {
+        const { contract } = await loadFixture(fixture)
+        expect((await contract.getVotingRoomsFrom(1)).length).to.eq(0)
+      })
+      it('from 1 votingRooms 1', async () => {
+        const { contract } = await loadFixture(fixture)
+        await contract.initializeVotingRoom('T1', 't1', BigNumber.from(100))
+        expect((await contract.getVotingRoomsFrom(1)).length).to.eq(0)
+      })
+
+      it('from 1 votingRooms 2', async () => {
+        const { contract } = await loadFixture(fixture)
+        await contract.initializeVotingRoom('T1', 't1', BigNumber.from(100))
+        await contract.initializeVotingRoom('T2', 't2', BigNumber.from(200))
+        expect((await contract.getVotingRoomsFrom(1)).length).to.eq(1)
+      })
+
+      it('from 1 votingRooms 3', async () => {
+        const { contract } = await loadFixture(fixture)
+        await contract.initializeVotingRoom('T1', 't1', BigNumber.from(100))
+        await contract.initializeVotingRoom('T2', 't2', BigNumber.from(200))
+        await contract.initializeVotingRoom('T3', 't3', BigNumber.from(200))
+        expect((await contract.getVotingRoomsFrom(1)).length).to.eq(2)
+      })
+
+      it('from 0 votingRooms 0', async () => {
+        const { contract } = await loadFixture(fixture)
+        expect((await contract.getVotingRoomsFrom(0)).length).to.eq(0)
+      })
+
+      it('from 0 votingRooms 1', async () => {
+        const { contract } = await loadFixture(fixture)
+        await contract.initializeVotingRoom('T1', 't1', BigNumber.from(100))
+        expect((await contract.getVotingRoomsFrom(0)).length).to.eq(1)
+      })
+
+      it('from 0 votingRooms 2', async () => {
+        const { contract } = await loadFixture(fixture)
+        await contract.initializeVotingRoom('T1', 't1', BigNumber.from(100))
+        await contract.initializeVotingRoom('T2', 't2', BigNumber.from(100))
+        expect((await contract.getVotingRoomsFrom(0)).length).to.eq(2)
+      })
+    })
+
     it('get voting rooms', async () => {
       const { contract } = await loadFixture(fixture)
       await contract.initializeVotingRoom('T1', 't1', BigNumber.from(100))

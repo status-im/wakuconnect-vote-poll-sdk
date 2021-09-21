@@ -6,9 +6,10 @@ import { ProposalInfo } from './ProposalInfo'
 import { ProposalVote } from './ProposalVoteCard/ProposalVote'
 import { VotingRoom } from '@status-waku-voting/core/dist/esm/src/types/PollType'
 import { WakuVoting } from '@status-waku-voting/core'
+import { useVotingRoom } from '@status-waku-voting/proposal-hooks'
 
 interface ProposalCardProps {
-  votingRoom: VotingRoom
+  votingRoomId: number
   mobileVersion?: boolean
   theme: Theme
   hideModalFunction?: (val: boolean) => void
@@ -20,12 +21,16 @@ interface ProposalCardProps {
 export function ProposalCard({
   account,
   theme,
-  votingRoom,
+  votingRoomId,
   mobileVersion,
   availableAmount,
   wakuVoting,
 }: ProposalCardProps) {
   const history = useHistory()
+  const votingRoom = useVotingRoom(votingRoomId, wakuVoting)
+  if (!votingRoom) {
+    return <></>
+  }
 
   return (
     <Card onClick={() => mobileVersion && history.push(`/votingRoom/${votingRoom.id.toString()}`)}>

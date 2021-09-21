@@ -3,22 +3,21 @@ import { WakuVoting } from '@status-waku-voting/core'
 import { VotingRoom } from '@status-waku-voting/core/dist/esm/src/types/PollType'
 import React, { useEffect, useRef, useState } from 'react'
 
-export function useVotingRooms(wakuVoting: WakuVoting) {
-  const [votes, setVotes] = useState<VotingRoom[]>([])
-  const hash = useRef('')
+export function useVotingRoomsId(wakuVoting: WakuVoting) {
+  const [votes, setVotes] = useState<number[]>([])
+  const votesLength = useRef(0)
   useEffect(() => {
     const interval = setInterval(async () => {
-      const newRooms = await wakuVoting.getVotingRooms()
-      const newHash = id(newRooms.map((votingRoom) => votingRoom.id.toString()).join(''))
-      if (newHash != hash.current) {
+      const newRooms = (await wakuVoting.getVotingRooms()).map((e) => e.id)
+      if (newRooms.length != votesLength.current) {
         setVotes(newRooms)
-        hash.current = newHash
+        votesLength.current = newRooms.length
       }
     }, 10000)
     setVotes([])
     wakuVoting.getVotingRooms().then((e) => {
-      setVotes(e)
-      hash.current = id(e.map((votingRoom) => votingRoom.id.toString()).join(''))
+      setVotes(e.map((vote) => vote.id))
+      votesLength.current = e.length
     })
     return () => clearInterval(interval)
   }, [wakuVoting])

@@ -9,7 +9,7 @@ import { VotingRoom } from '@status-waku-voting/core/dist/esm/src/types/PollType
 type ProposalListProps = {
   theme: Theme
   wakuVoting: WakuVoting
-  votes: VotingRoom[]
+  votes: number[]
   availableAmount: number
   account: string | null | undefined
 }
@@ -22,9 +22,9 @@ export function ProposalList({ theme, wakuVoting, votes, availableAmount, accoun
         return (
           <ProposalCard
             account={account}
-            votingRoom={votingRoom}
+            votingRoomId={votingRoom}
             theme={theme}
-            key={votingRoom.id}
+            key={votingRoom}
             mobileVersion={mobileVersion}
             availableAmount={availableAmount}
             wakuVoting={wakuVoting}

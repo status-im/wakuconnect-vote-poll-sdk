@@ -24,10 +24,10 @@ export function VoteChart({ votingRoom, proposingAmount, selectedVote, isAnimati
   const mobileVersion = useMobileVersion(ref, 600)
 
   const voteSum = useMemo(
-    () => votingRoom.totalVotesFor.add(votingRoom.totalVotesAgainst),
-    [votingRoom.totalVotesFor.toString(), votingRoom.totalVotesAgainst.toString()]
+    () => votingRoom.wakuTotalVotesFor.add(votingRoom.wakuTotalVotesAgainst),
+    [votingRoom.wakuTotalVotesFor.toString(), votingRoom.wakuTotalVotesAgainst.toString()]
   )
-  const graphWidth = useMemo(() => votingRoom.totalVotesAgainst.mul(100).div(voteSum).toNumber(), [voteSum])
+  const graphWidth = useMemo(() => votingRoom.wakuTotalVotesAgainst.mul(100).div(voteSum).toNumber(), [voteSum])
 
   const balanceWidth = useMemo(() => {
     if (!proposingAmount) {
@@ -35,12 +35,11 @@ export function VoteChart({ votingRoom, proposingAmount, selectedVote, isAnimati
     } else {
       const divider = voteSum.add(proposingAmount)
       return selectedVote === 0
-        ? votingRoom.totalVotesAgainst.add(proposingAmount).mul(100).div(divider).toNumber()
-        : votingRoom.totalVotesAgainst.mul(100).div(divider).toNumber()
+        ? votingRoom.wakuTotalVotesAgainst.add(proposingAmount).mul(100).div(divider).toNumber()
+        : votingRoom.wakuTotalVotesAgainst.mul(100).div(divider).toNumber()
     }
   }, [graphWidth, voteSum, proposingAmount])
 
-  const timeLeft = useMemo(() => votingRoom.timeLeft * 1000, [votingRoom.timeLeft])
   const voteWinner = useMemo(() => votingRoom.voteWinner, [votingRoom.voteWinner])
   return (
     <Votes ref={ref}>
@@ -48,16 +47,18 @@ export function VoteChart({ votingRoom, proposingAmount, selectedVote, isAnimati
         <VoteBox
           voteType={2}
           mobileVersion={mobileVersion}
-          totalVotes={votingRoom.totalVotesAgainst.toNumber()}
+          totalVotes={votingRoom.wakuTotalVotesAgainst.toNumber()}
           won={voteWinner === 2}
           selected={isAnimation && selectedVote === 0}
           proposingAmount={proposingAmount}
         />
-        {!voteWinner && <TimeLeft className={selectedVote ? '' : 'notModal'}>{formatTimeLeft(timeLeft)}</TimeLeft>}
+        {!voteWinner && (
+          <TimeLeft className={selectedVote ? '' : 'notModal'}>{formatTimeLeft(votingRoom.timeLeft)}</TimeLeft>
+        )}
         <VoteBox
           voteType={1}
           mobileVersion={mobileVersion}
-          totalVotes={votingRoom.totalVotesFor.toNumber()}
+          totalVotes={votingRoom.wakuTotalVotesFor.toNumber()}
           won={voteWinner === 1}
           selected={isAnimation && selectedVote === 1}
           proposingAmount={proposingAmount}
@@ -70,7 +71,9 @@ export function VoteChart({ votingRoom, proposingAmount, selectedVote, isAnimati
           voteWinner={voteWinner}
           isAnimation={isAnimation}
         />
-        <TimeLeftMobile className={selectedVote ? '' : 'notModal'}>{formatTimeLeft(timeLeft)}</TimeLeftMobile>
+        <TimeLeftMobile className={selectedVote ? '' : 'notModal'}>
+          {formatTimeLeft(votingRoom.timeLeft)}
+        </TimeLeftMobile>
       </VoteGraphBarWrap>
     </Votes>
   )

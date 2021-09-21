@@ -55,7 +55,7 @@ export class WakuVoting extends WakuMessaging {
     const votingContract = new Contract(contractAddress, VotingContract.abi, provider)
     const tokenAddress = await votingContract.token()
     const providerName = (await provider.getNetwork()).name
-    return new WakuVoting(
+    const wakuVoting = new WakuVoting(
       appName,
       votingContract,
       tokenAddress,
@@ -65,6 +65,7 @@ export class WakuVoting extends WakuMessaging {
       providerName,
       waku
     )
+    return wakuVoting
   }
 
   public async createVote(question: string, descripiton: string, tokenAmount: BigNumber) {
@@ -77,25 +78,38 @@ export class WakuVoting extends WakuMessaging {
 
   private lastPolls: VotingRoom[] = []
   private lastGetPollsBlockNumber = 0
+  private lastActivePoll = 0
 
   public async getVotingRooms() {
     const blockNumber = await this.provider.getBlockNumber()
     if (blockNumber != this.lastGetPollsBlockNumber) {
       this.lastGetPollsBlockNumber = blockNumber
-      const polls = await this.votingContract.getVotingRooms()
-      this.lastPolls = polls.map((poll: any, idx: number): VotingRoom => {
-        const timeLeft = poll[1].toNumber() - Date.now() / 1000
-        return {
+
+      this.lastActivePoll = this.lastPolls.findIndex((poll) => poll.timeLeft > 0)
+      if (this.lastActivePoll < 0) {
+        this.lastActivePoll = this.lastPolls.length
+      }
+      const polls = await this.votingContract.getVotingRoomsFrom(this.lastActivePoll)
+      polls.forEach((poll: any) => {
+        const timeLeft = poll[1].toNumber() * 1000 - Date.now()
+        const votingRoom: VotingRoom = {
           startBlock: poll[0],
           endAt: poll[1],
           question: poll[2],
           description: poll[3],
           totalVotesFor: poll[4],
           totalVotesAgainst: poll[5],
-          voters: poll[6],
-          id: idx,
+          wakuTotalVotesFor: poll[4],
+          wakuTotalVotesAgainst: poll[5],
+          voters: poll[7],
+          id: BigNumber.from(poll[6]).toNumber(),
           timeLeft,
           voteWinner: timeLeft <= 0 ? (poll[5].gt(poll[4]) ? 1 : 2) : undefined,
+        }
+        if (this.lastPolls[votingRoom.id]) {
+          this.lastPolls[votingRoom.id] = votingRoom
+        } else {
+          this.lastPolls.push(votingRoom)
         }
       })
       await Promise.all(
@@ -110,15 +124,6 @@ export class WakuVoting extends WakuMessaging {
       )
     }
     return this.lastPolls.slice().reverse()
-  }
-
-  public async getVotingRoom(id: number) {
-    try {
-      await this.getVotingRooms()
-      return this.lastPolls[id]
-    } catch {
-      return undefined
-    }
   }
 
   public async sendVote(roomId: number, selectedAnswer: number, tokenAmount: BigNumber) {
@@ -144,15 +149,26 @@ export class WakuVoting extends WakuMessaging {
     this.votingContract.castVotes(mappedVotes)
   }
 
-  public async getRoomWakuVotes(id: number) {
+  public async getVotingRoom(id: number) {
     await this.updateBalances()
-    const votingRoom = await this.getVotingRoom(id)
-    if (!votingRoom || votingRoom.timeLeft < 0) {
+    let votingRoom: VotingRoom
+    try {
+      await this.getVotingRooms()
+      votingRoom = this.lastPolls[id]
+      votingRoom.wakuVotes = undefined
+      votingRoom.wakuTotalVotesAgainst = votingRoom.totalVotesAgainst
+      votingRoom.wakuTotalVotesFor = votingRoom.totalVotesFor
+    } catch {
       return undefined
+    }
+    if (!votingRoom) {
+      return undefined
+    }
+    if (votingRoom.timeLeft < 0) {
+      return votingRoom
     }
     const votersHashMap: { [voter: string]: boolean } = {}
     votingRoom.voters.forEach((voter) => (votersHashMap[voter] = true))
-    const newVotingRoom: VotingRoom = { ...votingRoom }
     const wakuVotes = this.wakuMessages['vote'].arr.filter((vote: VoteMsg) => {
       if (
         vote.roomId === id &&
@@ -162,9 +178,9 @@ export class WakuVoting extends WakuMessaging {
         if (!votersHashMap[vote.voter]) {
           votersHashMap[vote.voter] = true
           if (vote.answer === 0) {
-            newVotingRoom.totalVotesAgainst = newVotingRoom.totalVotesAgainst.add(vote.tokenAmount)
+            votingRoom.wakuTotalVotesAgainst = votingRoom.wakuTotalVotesAgainst.add(vote.tokenAmount)
           } else {
-            newVotingRoom.totalVotesFor = newVotingRoom.totalVotesFor.add(vote.tokenAmount)
+            votingRoom.wakuTotalVotesFor = votingRoom.wakuTotalVotesFor.add(vote.tokenAmount)
           }
           return true
         }
@@ -173,6 +189,7 @@ export class WakuVoting extends WakuMessaging {
     }) as VoteMsg[]
 
     const sum = wakuVotes.reduce((prev, curr) => prev.add(curr.tokenAmount), BigNumber.from(0))
-    return { sum, wakuVotes, newVotingRoom }
+    votingRoom.wakuVotes = { sum, votes: wakuVotes }
+    return votingRoom
   }
 }

@@ -12,17 +12,17 @@ import { NewVoteModal } from './newVoteModal/NewVoteModal'
 import { useEthers } from '@usedapp/core'
 import { Modal, Networks, useMobileVersion, Theme } from '@status-waku-voting/react-components'
 import { useHistory } from 'react-router'
-import { useVotingRooms } from '@status-waku-voting/proposal-hooks'
+import { useVotingRoomsId } from '@status-waku-voting/proposal-hooks'
 
 type ProposalListHeaderProps = {
-  votes: VotingRoom[]
+  votesLength: number
   theme: Theme
   wakuVoting: WakuVoting
   tokenBalance: number
   account: string | null | undefined
 }
 
-function ProposalListHeader({ votes, theme, wakuVoting, tokenBalance, account }: ProposalListHeaderProps) {
+function ProposalListHeader({ votesLength, theme, wakuVoting, tokenBalance, account }: ProposalListHeaderProps) {
   const [showNewVoteModal, setShowNewVoteModal] = useState(false)
   const [showConnectionModal, setShowConnectionModal] = useState(false)
   const { activateBrowserWallet } = useEthers()
@@ -54,7 +54,7 @@ function ProposalListHeader({ votes, theme, wakuVoting, tokenBalance, account }:
           <Networks />
         </Modal>
       )}
-      {votes?.length === 0 ? (
+      {votesLength === 0 ? (
         <VotingEmpty account={account} theme={theme} onConnectClick={onConnectClick} onCreateClick={onCreateClick} />
       ) : (
         <ProposalHeader account={account} theme={theme} onConnectClick={onConnectClick} onCreateClick={onCreateClick} />
@@ -69,14 +69,14 @@ type ProposalProps = {
 }
 
 export function Proposal({ wakuVoting, account }: ProposalProps) {
-  const votes = useVotingRooms(wakuVoting)
+  const votes = useVotingRoomsId(wakuVoting)
   const tokenBalance = useTokenBalance(account, wakuVoting)
 
   return (
     <ProposalWrapper>
       <ProposalVotesWrapper>
         <ProposalListHeader
-          votes={votes}
+          votesLength={votes.length}
           tokenBalance={tokenBalance}
           theme={blueTheme}
           account={account}
