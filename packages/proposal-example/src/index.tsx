@@ -1,6 +1,7 @@
 import React, { useRef } from 'react'
 import { useWakuProposal } from '@status-waku-voting/proposal-hooks'
-import { Proposal, ProposalMobile } from '@status-waku-voting/proposal-components'
+import { ProposalMobile } from './components/ProposalMobile'
+import { Proposal } from './components/Proposal'
 import { TopBar, GlobalStyle, useMobileVersion } from '@status-waku-voting/react-components'
 import votingIcon from './assets/images/voting.svg'
 import styled from 'styled-components'

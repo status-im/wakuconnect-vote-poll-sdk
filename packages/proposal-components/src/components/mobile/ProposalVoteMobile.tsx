@@ -1,7 +1,6 @@
 import React, { useEffect, useMemo, useState } from 'react'
 import { useParams } from 'react-router'
 import styled from 'styled-components'
-import { useEthers } from '@usedapp/core'
 import { FinalBtn, VoteBtnAgainst, VoteBtnFor } from '../Buttons'
 import { VoteSubmitButton } from '../ProposalVoteCard/VoteSubmitButton'
 import { VoteChart } from '../ProposalVoteCard/VoteChart'
@@ -14,11 +13,11 @@ import { BigNumber } from 'ethers'
 interface ProposalVoteMobileProps {
   wakuVoting: WakuVoting
   availableAmount: number
+  account: string | null | undefined
 }
 
-export function ProposalVoteMobile({ wakuVoting, availableAmount }: ProposalVoteMobileProps) {
+export function ProposalVoteMobile({ wakuVoting, availableAmount, account }: ProposalVoteMobileProps) {
   const { id } = useParams<{ id: string }>()
-  const { account } = useEthers()
   const [proposingAmount, setProposingAmount] = useState(0)
   const [selectedVoted, setSelectedVoted] = useState(0)
   const votingRoom = useVotingRoom(Number(id), wakuVoting)
