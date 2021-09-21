@@ -11,8 +11,9 @@ type ProposalListProps = {
   wakuVoting: WakuVoting
   votes: VotingRoom[]
   availableAmount: number
+  account: string | null | undefined
 }
-export function ProposalList({ theme, wakuVoting, votes, availableAmount }: ProposalListProps) {
+export function ProposalList({ theme, wakuVoting, votes, availableAmount, account }: ProposalListProps) {
   const ref = useRef<HTMLHeadingElement>(null)
   const mobileVersion = useMobileVersion(ref, 600)
   return (
@@ -20,6 +21,7 @@ export function ProposalList({ theme, wakuVoting, votes, availableAmount }: Prop
       {votes.map((votingRoom) => {
         return (
           <ProposalCard
+            account={account}
             votingRoom={votingRoom}
             theme={theme}
             key={votingRoom.id}

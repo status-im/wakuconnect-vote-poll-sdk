@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react'
 import styled from 'styled-components'
-import { useEthers } from '@usedapp/core'
 import { FinalBtn, VoteBtnAgainst, VoteBtnFor } from '../Buttons'
 import { VoteSubmitButton } from './VoteSubmitButton'
 import { VoteChart } from './VoteChart'
@@ -18,14 +17,30 @@ interface ProposalVoteProps {
   availableAmount: number
   hideModalFunction?: (val: boolean) => void
   wakuVoting: WakuVoting
+  account: string | null | undefined
 }
 
-export function ProposalVote({ votingRoom, theme, availableAmount, hideModalFunction, wakuVoting }: ProposalVoteProps) {
-  const { account } = useEthers()
+export function ProposalVote({
+  account,
+  votingRoom,
+  theme,
+  availableAmount,
+  hideModalFunction,
+  wakuVoting,
+}: ProposalVoteProps) {
   const [showVoteModal, setShowVoteModal] = useState(false)
   const [showConfirmModal, setShowConfirmModal] = useState(false)
   const [proposingAmount, setProposingAmount] = useState(0)
   const [selectedVoted, setSelectedVoted] = useState(0)
+  const [alreadyVoted, setAlreadyVoted] = useState(false)
+
+  useEffect(() => {
+    if (votingRoom.voters.findIndex((e) => e === account) >= 0) {
+      setAlreadyVoted(true)
+    } else {
+      setAlreadyVoted(false)
+    }
+  }, [account, votingRoom])
 
   const setNext = (val: boolean) => {
     setShowConfirmModal(val)
@@ -59,7 +74,7 @@ export function ProposalVote({ votingRoom, theme, availableAmount, hideModalFunc
       {showConfirmModal && (
         <Modal heading={votingRoom.question} setShowModal={hideConfirm} theme={theme}>
           <VoteAnimatedModal
-            votingRoom={modifiedVotingRoom ?? votingRoom}
+            votingRoom={votingRoom}
             selectedVote={selectedVoted}
             setShowModal={hideConfirm}
             proposingAmount={proposingAmount}
@@ -80,7 +95,7 @@ export function ProposalVote({ votingRoom, theme, availableAmount, hideModalFunc
         ) : (
           <VotesBtns>
             <VoteBtnAgainst
-              disabled={!account}
+              disabled={!account || alreadyVoted}
               onClick={() => {
                 setSelectedVoted(0)
                 setShowVoteModal(true)
@@ -89,7 +104,7 @@ export function ProposalVote({ votingRoom, theme, availableAmount, hideModalFunc
               Vote Against
             </VoteBtnAgainst>
             <VoteBtnFor
-              disabled={!account}
+              disabled={!account || alreadyVoted}
               onClick={() => {
                 setSelectedVoted(1)
                 setShowVoteModal(true)

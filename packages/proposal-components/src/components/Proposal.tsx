@@ -83,7 +83,13 @@ export function Proposal({ wakuVoting, account }: ProposalProps) {
           wakuVoting={wakuVoting}
         />
         {votes.length > 0 && (
-          <ProposalList theme={blueTheme} wakuVoting={wakuVoting} votes={votes} availableAmount={tokenBalance} />
+          <ProposalList
+            account={account}
+            theme={blueTheme}
+            wakuVoting={wakuVoting}
+            votes={votes}
+            availableAmount={tokenBalance}
+          />
         )}
       </ProposalVotesWrapper>
 

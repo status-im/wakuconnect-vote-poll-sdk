@@ -29,7 +29,7 @@ export function VoteModal({
   const disabled = proposingAmount === 0
   const funds = availableAmount > 0
   const onClick = useCallback(async () => {
-    wakuVoting.sendVote(votingRoom.id, selectedVote, BigNumber.from(proposingAmount))
+    await wakuVoting.sendVote(votingRoom.id, selectedVote, BigNumber.from(proposingAmount))
     setShowConfirmModal(true)
   }, [votingRoom, selectedVote, proposingAmount, wakuVoting])
   return (

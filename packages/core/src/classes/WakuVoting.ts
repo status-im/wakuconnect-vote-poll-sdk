@@ -109,12 +109,13 @@ export class WakuVoting extends WakuMessaging {
         })
       )
     }
-    return this.lastPolls
+    return this.lastPolls.slice().reverse()
   }
 
   public async getVotingRoom(id: number) {
     try {
-      return (await this.getVotingRooms())[id]
+      await this.getVotingRooms()
+      return this.lastPolls[id]
     } catch {
       return undefined
     }

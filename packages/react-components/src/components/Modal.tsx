@@ -68,6 +68,13 @@ const PopUpWindow = styled.div`
   overflow: scroll;
   z-index: 9998;
 
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+
+  $::-webkit-scrollbar {
+    display: none;
+  }
+
   @media (max-width: 600px) {
     padding: 16px 16px 32px;
     margin: 0;

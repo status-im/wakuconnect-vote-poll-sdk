@@ -14,15 +14,29 @@ interface ProposalCardProps {
   hideModalFunction?: (val: boolean) => void
   availableAmount: number
   wakuVoting: WakuVoting
+  account: string | null | undefined
 }
 
-export function ProposalCard({ theme, votingRoom, mobileVersion, availableAmount, wakuVoting }: ProposalCardProps) {
+export function ProposalCard({
+  account,
+  theme,
+  votingRoom,
+  mobileVersion,
+  availableAmount,
+  wakuVoting,
+}: ProposalCardProps) {
   const history = useHistory()
 
   return (
     <Card onClick={() => mobileVersion && history.push(`/votingRoom/${votingRoom.id.toString()}`)}>
       <ProposalInfo votingRoom={votingRoom} providerName={wakuVoting.providerName} />
-      <ProposalVote votingRoom={votingRoom} theme={theme} availableAmount={availableAmount} wakuVoting={wakuVoting} />
+      <ProposalVote
+        votingRoom={votingRoom}
+        theme={theme}
+        availableAmount={availableAmount}
+        wakuVoting={wakuVoting}
+        account={account}
+      />
     </Card>
   )
 }
