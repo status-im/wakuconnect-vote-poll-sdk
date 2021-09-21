@@ -39,6 +39,7 @@ export function NewVoteModal({ theme, showModal, setShowModal, availableAmount, 
           setTitle={setTitle}
           availableAmount={availableAmount}
           setShowProposeVoteModal={() => setScreen(2)}
+          wakuVoting={wakuVoting}
         />
       )}
       {screen === 2 && (

@@ -1,7 +1,6 @@
-import React, { useEffect, useState } from 'react'
+import React from 'react'
 import styled from 'styled-components'
-import { useEthers } from '@usedapp/core'
-import { Modal, Networks, CreateButton } from '@status-waku-voting/react-components'
+import { CreateButton } from '@status-waku-voting/react-components'
 import { Theme } from '@status-waku-voting/react-components/dist/esm/src/style/themes'
 
 type ProposalHeaderProps = {

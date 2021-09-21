@@ -1,0 +1,63 @@
+import React, { useEffect, useState } from 'react'
+import { VotingRoom } from '@status-waku-voting/core/dist/esm/src/types/PollType'
+import { Modal, Theme } from '@status-waku-voting/react-components'
+import { AmountModal } from './AmountModal'
+import { ConfirmModal } from './ConfirmModal'
+import { WakuVoting } from '@status-waku-voting/core'
+
+export interface VoteModalProps {
+  setShowModal: (val: boolean) => void
+  showModal: boolean
+  votingRoom: VotingRoom
+  availableAmount: number
+  selectedVote: number
+  wakuVoting: WakuVoting
+  theme: Theme
+}
+
+export function VoteModal({
+  setShowModal,
+  showModal,
+  votingRoom,
+  availableAmount,
+  selectedVote,
+  wakuVoting,
+  theme,
+}: VoteModalProps) {
+  const [screen, setScreen] = useState(0)
+  useEffect(() => setScreen(0), [])
+  const [proposingAmount, setProposingAmount] = useState(0)
+  useEffect(() => {
+    setScreen(0)
+    setProposingAmount(0)
+  }, [showModal])
+  return (
+    <>
+      {showModal && (
+        <Modal heading={votingRoom.question} setShowModal={setShowModal} theme={theme}>
+          {screen == 0 ? (
+            <AmountModal
+              votingRoom={votingRoom}
+              availableAmount={availableAmount}
+              selectedVote={selectedVote}
+              proposingAmount={proposingAmount}
+              setShowConfirmModal={() => setScreen(1)}
+              setProposingAmount={setProposingAmount}
+              wakuVoting={wakuVoting}
+            />
+          ) : (
+            <ConfirmModal
+              votingRoom={votingRoom}
+              selectedVote={selectedVote}
+              setShowModal={() => {
+                setShowModal(false)
+              }}
+              wakuVoting={wakuVoting}
+              proposingAmount={proposingAmount}
+            />
+          )}
+        </Modal>
+      )}
+    </>
+  )
+}

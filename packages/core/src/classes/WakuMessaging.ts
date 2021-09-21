@@ -33,6 +33,7 @@ export class WakuMessaging {
   protected observers: { callback: (msg: WakuMessage) => void; topics: string[] }[] = []
   protected multicall: Contract
   public tokenDecimals: number | undefined
+  public tokenSymbol: string | undefined
 
   protected constructor(
     appName: string,
@@ -69,7 +70,8 @@ export class WakuMessaging {
 
   protected async setObserver() {
     this.tokenDecimals = await this.token.decimals()
-
+    this.tokenSymbol = await this.token.symbol()
+    console.log(this.tokenSymbol)
     this.waku = await createWaku(this.waku)
     await Promise.all(
       Object.values(this.wakuMessages).map(async (msgObj) => {

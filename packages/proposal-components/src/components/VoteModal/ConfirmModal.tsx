@@ -1,17 +1,25 @@
+import { WakuVoting } from '@status-waku-voting/core'
 import { VotingRoom } from '@status-waku-voting/core/dist/esm/src/types/PollType'
 import React from 'react'
 import styled from 'styled-components'
-import { FinalBtn } from './Buttons'
-import { VoteChart } from './ProposalVoteCard/VoteChart'
+import { FinalBtn } from '../Buttons'
+import { VoteChart } from '../ProposalVoteCard/VoteChart'
 
-interface VoteAnimatedModalProps {
+interface ConfirmModalProps {
   votingRoom: VotingRoom
   proposingAmount: number
   selectedVote: number
   setShowModal: (val: boolean) => void
+  wakuVoting: WakuVoting
 }
 
-export function VoteAnimatedModal({ votingRoom, selectedVote, proposingAmount, setShowModal }: VoteAnimatedModalProps) {
+export function ConfirmModal({
+  votingRoom,
+  selectedVote,
+  proposingAmount,
+  setShowModal,
+  wakuVoting,
+}: ConfirmModalProps) {
   return (
     <VoteConfirm>
       <ConfirmText>Your vote {selectedVote === 0 ? 'against' : 'for'} this proposal has been cast!</ConfirmText>
@@ -20,6 +28,7 @@ export function VoteAnimatedModal({ votingRoom, selectedVote, proposingAmount, s
         proposingAmount={proposingAmount}
         selectedVote={selectedVote}
         isAnimation={true}
+        wakuVoting={wakuVoting}
       />
 
       <FinalBtn onClick={() => setShowModal(false)}>Close</FinalBtn>

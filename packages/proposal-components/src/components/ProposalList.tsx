@@ -3,8 +3,6 @@ import styled from 'styled-components'
 import { Theme, useMobileVersion } from '@status-waku-voting/react-components'
 import { ProposalCard } from './ProposalCard'
 import { WakuVoting } from '@status-waku-voting/core'
-import { VotingEmpty } from './VotingEmpty'
-import { VotingRoom } from '@status-waku-voting/core/dist/esm/src/types/PollType'
 
 type ProposalListProps = {
   theme: Theme

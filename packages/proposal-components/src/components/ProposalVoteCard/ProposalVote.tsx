@@ -4,33 +4,26 @@ import { FinalBtn, VoteBtnAgainst, VoteBtnFor } from '../Buttons'
 import { VoteSubmitButton } from './VoteSubmitButton'
 import { VoteChart } from './VoteChart'
 import { ViewLink } from '../ViewLink'
-import { Modal, Theme } from '@status-waku-voting/react-components'
-import { VoteModal } from '../VoteModal'
-import { VoteAnimatedModal } from '../VoteAnimatedModal'
 import { VotingRoom } from '@status-waku-voting/core/dist/esm/src/types/PollType'
 import { WakuVoting } from '@status-waku-voting/core'
 
 interface ProposalVoteProps {
-  theme: Theme
   votingRoom: VotingRoom
-  availableAmount: number
-  hideModalFunction?: (val: boolean) => void
+  selectedVote: number
   wakuVoting: WakuVoting
   account: string | null | undefined
+  againstClick: () => void
+  forClick: () => void
 }
 
 export function ProposalVote({
   account,
   votingRoom,
-  theme,
-  availableAmount,
-  hideModalFunction,
+  selectedVote,
   wakuVoting,
+  againstClick,
+  forClick,
 }: ProposalVoteProps) {
-  const [showVoteModal, setShowVoteModal] = useState(false)
-  const [showConfirmModal, setShowConfirmModal] = useState(false)
-  const [proposingAmount, setProposingAmount] = useState(0)
-  const [selectedVoted, setSelectedVoted] = useState(0)
   const [alreadyVoted, setAlreadyVoted] = useState(false)
 
   useEffect(() => {
@@ -41,72 +34,25 @@ export function ProposalVote({
     }
   }, [account, votingRoom])
 
-  const setNext = (val: boolean) => {
-    setShowConfirmModal(val)
-    setShowVoteModal(false)
-  }
-
-  const hideConfirm = (val: boolean) => {
-    if (hideModalFunction) {
-      hideModalFunction(false)
-    }
-    setShowConfirmModal(val)
-  }
-
   return (
     <Card>
-      {showVoteModal && (
-        <Modal heading={votingRoom.question} setShowModal={setShowVoteModal} theme={theme}>
-          <VoteModal
-            votingRoom={votingRoom}
-            availableAmount={availableAmount}
-            selectedVote={selectedVoted}
-            proposingAmount={proposingAmount}
-            setShowConfirmModal={setNext}
-            setProposingAmount={setProposingAmount}
-            wakuVoting={wakuVoting}
-          />{' '}
-        </Modal>
-      )}
-      {showConfirmModal && (
-        <Modal heading={votingRoom.question} setShowModal={hideConfirm} theme={theme}>
-          <VoteAnimatedModal
-            votingRoom={votingRoom}
-            selectedVote={selectedVoted}
-            setShowModal={hideConfirm}
-            proposingAmount={proposingAmount}
-          />
-        </Modal>
-      )}
       {votingRoom.voteWinner ? (
         <CardHeading>Proposal {votingRoom.voteWinner == 1 ? 'rejected' : 'passed'}</CardHeading>
       ) : (
         <CardHeading />
       )}
 
-      <VoteChart votingRoom={votingRoom} selectedVote={selectedVoted} />
+      <VoteChart votingRoom={votingRoom} selectedVote={selectedVote} wakuVoting={wakuVoting} />
 
       <CardButtons>
         {votingRoom.voteWinner ? (
           <></>
         ) : (
           <VotesBtns>
-            <VoteBtnAgainst
-              disabled={!account || alreadyVoted}
-              onClick={() => {
-                setSelectedVoted(0)
-                setShowVoteModal(true)
-              }}
-            >
+            <VoteBtnAgainst disabled={!account || alreadyVoted} onClick={againstClick}>
               Vote Against
             </VoteBtnAgainst>
-            <VoteBtnFor
-              disabled={!account || alreadyVoted}
-              onClick={() => {
-                setSelectedVoted(1)
-                setShowVoteModal(true)
-              }}
-            >
+            <VoteBtnFor disabled={!account || alreadyVoted} onClick={forClick}>
               Vote For
             </VoteBtnFor>
           </VotesBtns>

@@ -3,7 +3,7 @@ import styled from 'styled-components'
 import { ProposingBtn } from '../Buttons'
 import { TextArea } from '../Input'
 import { blueTheme } from '@status-waku-voting/react-components/dist/esm/src/style/themes'
-import { BigNumber } from 'ethers'
+import { WakuVoting } from '@status-waku-voting/core'
 
 interface ProposeModalProps {
   availableAmount: number
@@ -12,6 +12,7 @@ interface ProposeModalProps {
   setShowProposeVoteModal: (val: boolean) => void
   setTitle: (val: string) => void
   setText: (val: string) => void
+  wakuVoting: WakuVoting
 }
 
 export function ProposeModal({
@@ -21,6 +22,7 @@ export function ProposeModal({
   setShowProposeVoteModal,
   setTitle,
   setText,
+  wakuVoting,
 }: ProposeModalProps) {
   const insufficientFunds = useMemo(() => availableAmount < 10000, [availableAmount])
 
@@ -29,7 +31,7 @@ export function ProposeModal({
       {availableAmount < 10000 && (
         <ProposingInfo>
           <span>⚠️</span>
-          <InfoText>You need at least 10,000 ABC to create a proposal!</InfoText>
+          <InfoText>You need at least 10,000 {wakuVoting.tokenSymbol} to create a proposal!</InfoText>
         </ProposingInfo>
       )}
       <Label>

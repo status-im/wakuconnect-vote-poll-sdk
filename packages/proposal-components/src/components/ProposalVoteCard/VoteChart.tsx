@@ -10,24 +10,43 @@ import checkIcon from '../../assets/svg/check.svg'
 import checkWinnerIcon from '../../assets/svg/checkWinner.svg'
 import { useMobileVersion } from '@status-waku-voting/react-components'
 import { VotingRoom } from '@status-waku-voting/core/dist/esm/src/types/PollType'
+import { WakuVoting } from '@status-waku-voting/core'
 
 export interface VoteChartProps {
   votingRoom: VotingRoom
+  wakuVoting: WakuVoting
   proposingAmount?: number
   selectedVote?: number
   isAnimation?: boolean
   tabletMode?: (val: boolean) => void
 }
 
-export function VoteChart({ votingRoom, proposingAmount, selectedVote, isAnimation, tabletMode }: VoteChartProps) {
+export function VoteChart({
+  votingRoom,
+  wakuVoting,
+  proposingAmount,
+  selectedVote,
+  isAnimation,
+  tabletMode,
+}: VoteChartProps) {
   const ref = useRef<HTMLHeadingElement>(null)
   const mobileVersion = useMobileVersion(ref, 600)
 
-  const voteSum = useMemo(
-    () => votingRoom.wakuTotalVotesFor.add(votingRoom.wakuTotalVotesAgainst),
-    [votingRoom.wakuTotalVotesFor.toString(), votingRoom.wakuTotalVotesAgainst.toString()]
+  const totalVotesFor = useMemo(
+    () => (isAnimation ? votingRoom.totalVotesFor : votingRoom.wakuTotalVotesFor),
+    [votingRoom, proposingAmount]
   )
-  const graphWidth = useMemo(() => votingRoom.wakuTotalVotesAgainst.mul(100).div(voteSum).toNumber(), [voteSum])
+
+  const totalVotesAgainst = useMemo(
+    () => (isAnimation ? votingRoom.totalVotesAgainst : votingRoom.wakuTotalVotesAgainst),
+    [votingRoom, proposingAmount]
+  )
+
+  const voteSum = useMemo(
+    () => totalVotesFor.add(totalVotesAgainst),
+    [totalVotesFor.toString(), totalVotesAgainst.toString()]
+  )
+  const graphWidth = useMemo(() => totalVotesAgainst.mul(100).div(voteSum).toNumber(), [voteSum])
 
   const balanceWidth = useMemo(() => {
     if (!proposingAmount) {
@@ -35,8 +54,8 @@ export function VoteChart({ votingRoom, proposingAmount, selectedVote, isAnimati
     } else {
       const divider = voteSum.add(proposingAmount)
       return selectedVote === 0
-        ? votingRoom.wakuTotalVotesAgainst.add(proposingAmount).mul(100).div(divider).toNumber()
-        : votingRoom.wakuTotalVotesAgainst.mul(100).div(divider).toNumber()
+        ? totalVotesAgainst.add(proposingAmount).mul(100).div(divider).toNumber()
+        : totalVotesAgainst.mul(100).div(divider).toNumber()
     }
   }, [graphWidth, voteSum, proposingAmount])
 
@@ -47,10 +66,11 @@ export function VoteChart({ votingRoom, proposingAmount, selectedVote, isAnimati
         <VoteBox
           voteType={2}
           mobileVersion={mobileVersion}
-          totalVotes={votingRoom.wakuTotalVotesAgainst.toNumber()}
+          totalVotes={totalVotesAgainst.toNumber()}
           won={voteWinner === 2}
           selected={isAnimation && selectedVote === 0}
           proposingAmount={proposingAmount}
+          wakuVoting={wakuVoting}
         />
         {!voteWinner && (
           <TimeLeft className={selectedVote ? '' : 'notModal'}>{formatTimeLeft(votingRoom.timeLeft)}</TimeLeft>
@@ -58,10 +78,11 @@ export function VoteChart({ votingRoom, proposingAmount, selectedVote, isAnimati
         <VoteBox
           voteType={1}
           mobileVersion={mobileVersion}
-          totalVotes={votingRoom.wakuTotalVotesFor.toNumber()}
+          totalVotes={totalVotesFor.toNumber()}
           won={voteWinner === 1}
           selected={isAnimation && selectedVote === 1}
           proposingAmount={proposingAmount}
+          wakuVoting={wakuVoting}
         />
       </VotesChart>
       <VoteGraphBarWrap className={selectedVote || tabletMode ? '' : 'notModal'}>
@@ -84,11 +105,12 @@ type VoteBoxProps = {
   mobileVersion: boolean
   voteType: number
   totalVotes: number
+  wakuVoting: WakuVoting
   selected?: boolean
   proposingAmount?: number
 }
 
-function VoteBox({ won, mobileVersion, voteType, totalVotes, proposingAmount, selected }: VoteBoxProps) {
+function VoteBox({ won, mobileVersion, voteType, totalVotes, proposingAmount, selected, wakuVoting }: VoteBoxProps) {
   return (
     <VoteBoxWrapper
       style={{
@@ -110,7 +132,7 @@ function VoteBox({ won, mobileVersion, voteType, totalVotes, proposingAmount, se
         ) : (
           addCommas(totalVotes)
         )}{' '}
-        <span style={{ fontWeight: 'normal' }}>ABC</span>
+        <span style={{ fontWeight: 'normal' }}>{wakuVoting.tokenSymbol}</span>
       </span>
     </VoteBoxWrapper>
   )

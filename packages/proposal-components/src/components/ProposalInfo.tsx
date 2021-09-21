@@ -1,4 +1,3 @@
-import { WakuVoting } from '@status-waku-voting/core'
 import { VotingRoom } from '@status-waku-voting/core/dist/esm/src/types/PollType'
 import React from 'react'
 import styled from 'styled-components'

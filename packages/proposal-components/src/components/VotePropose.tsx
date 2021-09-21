@@ -1,3 +1,4 @@
+import { WakuVoting } from '@status-waku-voting/core'
 import React, { useCallback, useMemo } from 'react'
 import { useState } from 'react'
 import styled from 'styled-components'
@@ -8,9 +9,10 @@ export interface VoteProposingProps {
   availableAmount: number
   setProposingAmount: (show: number) => void
   proposingAmount: number
+  wakuVoting: WakuVoting
 }
 
-export function VotePropose({ availableAmount, proposingAmount, setProposingAmount }: VoteProposingProps) {
+export function VotePropose({ availableAmount, proposingAmount, setProposingAmount, wakuVoting }: VoteProposingProps) {
   const [inputFocused, setInputFocused] = useState(false)
   const step = useMemo(
     () => (availableAmount < 100 ? 1 : 10 ** (Math.floor(Math.log10(availableAmount)) - 2)),
@@ -37,10 +39,12 @@ export function VotePropose({ availableAmount, proposingAmount, setProposingAmou
     <VoteProposing>
       <VoteProposingInfo>
         <p>My vote</p>
-        <span>Available {addCommas(availableAmount)} ABC</span>
+        <span>
+          Available {addCommas(availableAmount)} {wakuVoting.tokenSymbol}
+        </span>
       </VoteProposingInfo>
       <VoteProposingAmount
-        value={inputFocused ? proposingAmount.toString() : addCommas(proposingAmount) + ' ABC'}
+        value={inputFocused ? proposingAmount.toString() : addCommas(proposingAmount) + ` wakuVoting.tokenSymbol`}
         onInput={(e) => {
           setProposingAmount(Number(e.currentTarget.value))
         }}

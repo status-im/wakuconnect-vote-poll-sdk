@@ -34,7 +34,7 @@ export function ProposeMobile({ availableAmount, wakuVoting }: ProposeVoteModalP
       {insufficientFunds && (
         <ProposingInfo>
           <span>⚠️</span>
-          <InfoText>You need at least 10,000 ABC to create a proposal!</InfoText>
+          <InfoText>You need at least 10,000 {wakuVoting.tokenSymbol} to create a proposal!</InfoText>
         </ProposingInfo>
       )}
       <ProposingCardHeading>Create proposal</ProposingCardHeading>
@@ -88,6 +88,7 @@ export function ProposeMobile({ availableAmount, wakuVoting }: ProposeVoteModalP
               availableAmount={availableAmount}
               setProposingAmount={setProposingAmount}
               proposingAmount={proposingAmount}
+              wakuVoting={wakuVoting}
             />
           </VoteProposeWrap>
 

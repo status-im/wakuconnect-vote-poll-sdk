@@ -1,13 +1,13 @@
 import React, { useCallback } from 'react'
 import styled from 'styled-components'
-import { VoteChart } from './ProposalVoteCard/VoteChart'
-import { DisabledButton, VoteBtnAgainst, VoteBtnFor } from './Buttons'
-import { VotePropose } from './VotePropose'
+import { VoteChart } from '../ProposalVoteCard/VoteChart'
+import { DisabledButton, VoteBtnAgainst, VoteBtnFor } from '../Buttons'
+import { VotePropose } from '../VotePropose'
 import { VotingRoom } from '@status-waku-voting/core/dist/esm/src/types/PollType'
 import { WakuVoting } from '@status-waku-voting/core'
 import { BigNumber } from 'ethers'
 
-export interface VoteModalProps {
+export interface AmountModalProps {
   votingRoom: VotingRoom
   availableAmount: number
   selectedVote: number
@@ -17,7 +17,7 @@ export interface VoteModalProps {
   wakuVoting: WakuVoting
 }
 
-export function VoteModal({
+export function AmountModal({
   votingRoom,
   selectedVote,
   availableAmount,
@@ -25,7 +25,7 @@ export function VoteModal({
   setShowConfirmModal,
   setProposingAmount,
   wakuVoting,
-}: VoteModalProps) {
+}: AmountModalProps) {
   const disabled = proposingAmount === 0
   const funds = availableAmount > 0
   const onClick = useCallback(async () => {
@@ -34,14 +34,20 @@ export function VoteModal({
   }, [votingRoom, selectedVote, proposingAmount, wakuVoting])
   return (
     <Column>
-      <VoteChart votingRoom={votingRoom} proposingAmount={proposingAmount} selectedVote={selectedVote} />
+      <VoteChart
+        votingRoom={votingRoom}
+        proposingAmount={proposingAmount}
+        selectedVote={selectedVote}
+        wakuVoting={wakuVoting}
+      />
       <VotePropose
         availableAmount={availableAmount}
         setProposingAmount={setProposingAmount}
         proposingAmount={proposingAmount}
+        wakuVoting={wakuVoting}
       />
 
-      {!funds && <DisabledButton>Not enought ABC to vote</DisabledButton>}
+      {!funds && <DisabledButton>Not enough {wakuVoting.tokenSymbol} to vote</DisabledButton>}
 
       {funds && selectedVote === 0 ? (
         <BtnAgainst disabled={disabled} onClick={onClick}>

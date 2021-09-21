@@ -38,6 +38,7 @@ export function ProposeVoteModal({
           availableAmount={availableAmount}
           setProposingAmount={setProposingAmount}
           proposingAmount={proposingAmount}
+          wakuVoting={wakuVoting}
         />
       </VoteProposeWrap>
 

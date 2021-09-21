@@ -15,8 +15,8 @@
     "lint:prettier": "yarn prettier './{src,test}/**/*.{ts,tsx}'"
   },
   "dependencies": {
-    "@status-waku-voting/polling-page": "^0.1.0",
-    "@status-waku-voting/proposal-page": "^0.1.0",
+    "@status-waku-voting/polling-example": "^0.1.0",
+    "@status-waku-voting/proposal-example": "^0.1.0",
     "assert": "^2.0.0",
     "buffer": "^6.0.3",
     "crypto-browserify": "^3.12.0",

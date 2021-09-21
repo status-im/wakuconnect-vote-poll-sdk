@@ -1,12 +1,12 @@
-import React from 'react'
+import React, { ReactElement, useCallback, useState } from 'react'
 import { useHistory } from 'react-router'
 import styled from 'styled-components'
 import { Theme } from '@status-waku-voting/react-components'
 import { ProposalInfo } from './ProposalInfo'
 import { ProposalVote } from './ProposalVoteCard/ProposalVote'
-import { VotingRoom } from '@status-waku-voting/core/dist/esm/src/types/PollType'
 import { WakuVoting } from '@status-waku-voting/core'
 import { useVotingRoom } from '@status-waku-voting/proposal-hooks'
+import { VoteModal, VoteModalProps } from './VoteModal/VoteModal'
 
 interface ProposalCardProps {
   votingRoomId: number
@@ -16,6 +16,9 @@ interface ProposalCardProps {
   availableAmount: number
   wakuVoting: WakuVoting
   account: string | null | undefined
+  CustomVoteModal?: (props: VoteModalProps) => ReactElement
+  customAgainstClick?: () => void
+  customForClick?: () => void
 }
 
 export function ProposalCard({
@@ -25,22 +28,61 @@ export function ProposalCard({
   mobileVersion,
   availableAmount,
   wakuVoting,
+  CustomVoteModal,
+  customAgainstClick,
+  customForClick,
 }: ProposalCardProps) {
   const history = useHistory()
   const votingRoom = useVotingRoom(votingRoomId, wakuVoting)
+
+  const [showVoteModal, setShowVoteModal] = useState(false)
+  const [selectedVote, setSelectedVote] = useState(0)
+
+  const againstClick = useCallback(() => {
+    setSelectedVote(0)
+    setShowVoteModal(true)
+  }, [])
+
+  const forClick = useCallback(() => {
+    setSelectedVote(1)
+    setShowVoteModal(true)
+  }, [])
+
   if (!votingRoom) {
     return <></>
   }
 
   return (
     <Card onClick={() => mobileVersion && history.push(`/votingRoom/${votingRoom.id.toString()}`)}>
+      {CustomVoteModal ? (
+        <CustomVoteModal
+          setShowModal={setShowVoteModal}
+          showModal={showVoteModal}
+          votingRoom={votingRoom}
+          availableAmount={availableAmount}
+          selectedVote={selectedVote}
+          wakuVoting={wakuVoting}
+          theme={theme}
+        />
+      ) : (
+        <VoteModal
+          setShowModal={setShowVoteModal}
+          showModal={showVoteModal}
+          votingRoom={votingRoom}
+          availableAmount={availableAmount}
+          selectedVote={selectedVote}
+          wakuVoting={wakuVoting}
+          theme={theme}
+        />
+      )}
       <ProposalInfo votingRoom={votingRoom} providerName={wakuVoting.providerName} />
       <ProposalVote
         votingRoom={votingRoom}
-        theme={theme}
-        availableAmount={availableAmount}
+        selectedVote={selectedVote}
         wakuVoting={wakuVoting}
         account={account}
+        againstClick={customAgainstClick ?? againstClick}
+        forClick={customForClick ?? forClick}
       />
     </Card>
   )
