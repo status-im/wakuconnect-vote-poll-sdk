@@ -22,7 +22,7 @@ export function TopBar({ logo, title, theme, activate, deactivate, account }: To
   return (
     <Wrapper theme={theme}>
       <ContentWrapper>
-        <Logo style={{ backgroundImage: `url(${logo})` }} />
+        <Logo src={logo} />
         <TitleWrapper>
           {title.split(' ').map((text, idx) => (
             <div key={idx}>{text}</div>
@@ -90,7 +90,7 @@ const TitleWrapper = styled.div`
   line-height: 17px;
 `
 
-const Logo = styled.div`
+const Logo = styled.img`
   height: 30px;
   width: 32px;
 `

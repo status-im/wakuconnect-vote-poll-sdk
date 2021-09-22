@@ -131,6 +131,15 @@ For more information about EIP-712 go to [docs](https://eips.ethereum.org/EIPS/e
 - `getVotingRooms()`
     Returns votingRooms
 
+- `getVotingRoomLength()`
+    Returns votingRooms length
+
+- `getLastNVotingRooms(uint256 amount)`
+    Gets last voting rooms returns amount of voting rooms
+
+- `getVotingRoomsFrom(uint256 id)`
+    Gets voting rooms from given id
+
 - `getOngoingVotingRooms()`
     Returns votingRooms in which `room.endAt > block.timestamp` which means the rooms are still accepting votes.
     Since `votingLength` is set at contract creation and never changed, `room.endAt` is never decreasing with increasing index of votingRoom. Therefore it is enough to check from votingRooms.length up to first element which `endAt < block.timestamp`

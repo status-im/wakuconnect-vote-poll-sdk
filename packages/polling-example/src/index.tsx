@@ -4,7 +4,7 @@ import { DAppProvider, ChainId, useEthers } from '@usedapp/core'
 import { DEFAULT_CONFIG } from '@usedapp/core/dist/cjs/src/model/config/default'
 import { WakuPolling } from './components/WakuPolling'
 import { TopBar, GlobalStyle } from '@status-waku-voting/react-components'
-import pollingIcon from './assets/images/pollingIcon.svg'
+import pollingIcon from './assets/images/pollingIcon.png'
 import { JsonRpcSigner } from '@ethersproject/providers'
 import { orangeTheme } from '@status-waku-voting/react-components/dist/esm/src/style/themes'
 
