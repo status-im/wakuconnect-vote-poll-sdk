@@ -1,5 +1,4 @@
-import React, { ReactElement, useCallback, useState } from 'react'
-import { useHistory } from 'react-router'
+import React, { ReactElement, useCallback, useState, useRef, useMemo } from 'react'
 import styled from 'styled-components'
 import { Theme } from '@status-waku-voting/react-components'
 import { ProposalInfo } from './ProposalInfo'
@@ -7,15 +6,17 @@ import { ProposalVote } from './ProposalVoteCard/ProposalVote'
 import { WakuVoting } from '@status-waku-voting/core'
 import { useVotingRoom } from '@status-waku-voting/proposal-hooks'
 import { VoteModal, VoteModalProps } from './VoteModal/VoteModal'
+import { useRefMobileVersion } from '@status-waku-voting/react-components'
+import { VotingRoom } from '@status-waku-voting/core/dist/esm/src/types/PollType'
 
 interface ProposalCardProps {
   votingRoomId: number
-  mobileVersion?: boolean
   theme: Theme
   hideModalFunction?: (val: boolean) => void
   availableAmount: number
   wakuVoting: WakuVoting
   account: string | null | undefined
+  mobileOnClick: (votingRoom: VotingRoom) => void
   CustomVoteModal?: (props: VoteModalProps) => ReactElement
   customAgainstClick?: () => void
   customForClick?: () => void
@@ -25,16 +26,21 @@ export function ProposalCard({
   account,
   theme,
   votingRoomId,
-  mobileVersion,
   availableAmount,
   wakuVoting,
   CustomVoteModal,
   customAgainstClick,
   customForClick,
+  mobileOnClick,
 }: ProposalCardProps) {
-  const history = useHistory()
   const votingRoom = useVotingRoom(votingRoomId, wakuVoting)
-
+  const ref = useRef<HTMLHeadingElement>(null)
+  const mobileVersion = useRefMobileVersion(ref, 568)
+  const tabletVersion = useRefMobileVersion(ref, 703)
+  const className = useMemo(
+    () => (mobileVersion ? 'mobile' : tabletVersion ? 'tablet' : ''),
+    [mobileVersion, tabletVersion]
+  )
   const [showVoteModal, setShowVoteModal] = useState(false)
   const [selectedVote, setSelectedVote] = useState(0)
 
@@ -53,7 +59,7 @@ export function ProposalCard({
   }
 
   return (
-    <Card onClick={() => mobileVersion && history.push(`/votingRoom/${votingRoom.id.toString()}`)}>
+    <Card className={className} ref={ref} onClick={() => mobileVersion && mobileOnClick(votingRoom)}>
       {CustomVoteModal ? (
         <CustomVoteModal
           setShowModal={setShowVoteModal}
@@ -63,6 +69,7 @@ export function ProposalCard({
           selectedVote={selectedVote}
           wakuVoting={wakuVoting}
           theme={theme}
+          className={className}
         />
       ) : (
         <VoteModal
@@ -73,9 +80,10 @@ export function ProposalCard({
           selectedVote={selectedVote}
           wakuVoting={wakuVoting}
           theme={theme}
+          className={className}
         />
       )}
-      <ProposalInfo votingRoom={votingRoom} providerName={wakuVoting.providerName} />
+      <ProposalInfo votingRoom={votingRoom} providerName={wakuVoting.providerName} className={className} />
       <ProposalVote
         votingRoom={votingRoom}
         selectedVote={selectedVote}
@@ -83,6 +91,7 @@ export function ProposalCard({
         account={account}
         againstClick={customAgainstClick ?? againstClick}
         forClick={customForClick ?? forClick}
+        className={className}
       />
     </Card>
   )
@@ -93,19 +102,20 @@ export const Card = styled.div`
   align-items: stretch;
   margin-bottom: 24px;
 
-  @media (max-width: 768px) {
+  &.tablet {
     flex-direction: column;
     box-shadow: 0px 1px 6px rgba(0, 0, 0, 0.15);
   }
 
-  @media (max-width: 600px) {
+  &.mobile {
+    flex-direction: column;
     padding-bottom: 24px;
     box-shadow: none;
     border-bottom: 1px solid rgba(0, 0, 0, 0.3);
   }
 
   &:not:first-child {
-    @media (max-width: 768px) {
+    &.tablet {
       border-top: 1px solid #e0e0e0;
     }
   }

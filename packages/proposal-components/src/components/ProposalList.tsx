@@ -1,8 +1,10 @@
-import React, { useRef } from 'react'
+import React from 'react'
 import styled from 'styled-components'
-import { Theme, useMobileVersion } from '@status-waku-voting/react-components'
+import { Theme } from '@status-waku-voting/react-components'
 import { ProposalCard } from './ProposalCard'
 import { WakuVoting } from '@status-waku-voting/core'
+
+import { VotingRoom } from '@status-waku-voting/core/dist/esm/src/types/PollType'
 
 type ProposalListProps = {
   theme: Theme
@@ -10,12 +12,11 @@ type ProposalListProps = {
   votes: number[]
   availableAmount: number
   account: string | null | undefined
+  mobileOnClick: (votingRoom: VotingRoom) => void
 }
-export function ProposalList({ theme, wakuVoting, votes, availableAmount, account }: ProposalListProps) {
-  const ref = useRef<HTMLHeadingElement>(null)
-  const mobileVersion = useMobileVersion(ref, 600)
+export function ProposalList({ theme, wakuVoting, votes, availableAmount, account, mobileOnClick }: ProposalListProps) {
   return (
-    <List ref={ref}>
+    <List>
       {votes.map((votingRoom) => {
         return (
           <ProposalCard
@@ -23,9 +24,9 @@ export function ProposalList({ theme, wakuVoting, votes, availableAmount, accoun
             votingRoomId={votingRoom}
             theme={theme}
             key={votingRoom}
-            mobileVersion={mobileVersion}
             availableAmount={availableAmount}
             wakuVoting={wakuVoting}
+            mobileOnClick={mobileOnClick}
           />
         )
       })}

@@ -14,6 +14,7 @@ interface ProposalVoteProps {
   account: string | null | undefined
   againstClick: () => void
   forClick: () => void
+  className: string
 }
 
 export function ProposalVote({
@@ -23,6 +24,7 @@ export function ProposalVote({
   wakuVoting,
   againstClick,
   forClick,
+  className,
 }: ProposalVoteProps) {
   const [alreadyVoted, setAlreadyVoted] = useState(false)
 
@@ -35,20 +37,20 @@ export function ProposalVote({
   }, [account, votingRoom])
 
   return (
-    <Card>
+    <Card className={className}>
       {votingRoom.voteWinner ? (
-        <CardHeading>Proposal {votingRoom.voteWinner == 1 ? 'rejected' : 'passed'}</CardHeading>
+        <CardHeading className={className}>Proposal {votingRoom.voteWinner == 1 ? 'rejected' : 'passed'}</CardHeading>
       ) : (
-        <CardHeading />
+        <CardHeading className={className} />
       )}
 
-      <VoteChart votingRoom={votingRoom} selectedVote={selectedVote} wakuVoting={wakuVoting} />
+      <VoteChart votingRoom={votingRoom} selectedVote={selectedVote} wakuVoting={wakuVoting} className={className} />
 
-      <CardButtons>
+      <CardButtons className={className}>
         {votingRoom.voteWinner ? (
           <></>
         ) : (
-          <VotesBtns>
+          <VotesBtns className={className}>
             <VoteBtnAgainst disabled={!account || alreadyVoted} onClick={againstClick}>
               Vote Against
             </VoteBtnAgainst>
@@ -59,8 +61,8 @@ export function ProposalVote({
         )}
       </CardButtons>
 
-      <CardVoteBottom>
-        <CardViewLink>
+      <CardVoteBottom className={className}>
+        <CardViewLink className={className}>
           {' '}
           <ViewLink address={'#'} />
         </CardViewLink>
@@ -85,7 +87,7 @@ export const Card = styled.div`
   border-radius: 6px 0px 0px 6px;
   background-color: #fbfcfe;
 
-  @media (max-width: 768px) {
+  &.tablet {
     width: 100%;
     box-shadow: none;
     border-radius: unset;
@@ -93,7 +95,11 @@ export const Card = styled.div`
     padding-top: 0;
   }
 
-  @media (max-width: 600px) {
+  &.mobile {
+    width: 100%;
+    box-shadow: none;
+    border-radius: unset;
+    background-color: unset;
     flex-direction: column;
     padding: 0;
     border-bottom: none;
@@ -108,13 +114,16 @@ export const CardHeading = styled.h2`
   margin: 0;
   margin-bottom: 15px;
 
-  @media (max-width: 768px) {
+  &.tablet {
     font-size: 15px;
     line-height: 22px;
     margin-bottom: 6px;
   }
 
-  @media (max-width: 600px) {
+  &.mobile {
+    font-size: 15px;
+    line-height: 22px;
+    margin-bottom: 6px;
     display: none;
   }
 `
@@ -122,7 +131,7 @@ export const CardHeading = styled.h2`
 const CardButtons = styled.div`
   width: 100%;
 
-  @media (max-width: 600px) {
+  &.mobile {
     display: none;
   }
 `
@@ -132,7 +141,7 @@ export const VotesBtns = styled.div`
   justify-content: space-between;
   width: 100%;
 
-  @media (max-width: 600px) {
+  &.mobile {
     margin-top: 24px;
   }
 `
@@ -144,18 +153,18 @@ const CardVoteBottom = styled.div`
   width: 100%;
   margin-top: 24px;
 
-  @media (max-width: 768px) {
+  &.tablet {
     justify-content: space-between;
   }
 
-  @media (max-width: 600px) {
+  &.mobile {
     display: none;
   }
 `
 const CardViewLink = styled.div`
   display: none;
 
-  @media (max-width: 768px) {
+  &.tablet {
     display: block;
   }
 `

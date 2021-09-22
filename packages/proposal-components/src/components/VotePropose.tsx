@@ -44,7 +44,7 @@ export function VotePropose({ availableAmount, proposingAmount, setProposingAmou
         </span>
       </VoteProposingInfo>
       <VoteProposingAmount
-        value={inputFocused ? proposingAmount.toString() : addCommas(proposingAmount) + ` wakuVoting.tokenSymbol`}
+        value={inputFocused ? proposingAmount.toString() : addCommas(proposingAmount) + ` ${wakuVoting.tokenSymbol}`}
         onInput={(e) => {
           setProposingAmount(Number(e.currentTarget.value))
         }}

@@ -15,6 +15,7 @@ export interface AmountModalProps {
   setShowConfirmModal: (show: boolean) => void
   setProposingAmount: (val: number) => void
   wakuVoting: WakuVoting
+  className: string
 }
 
 export function AmountModal({
@@ -25,6 +26,7 @@ export function AmountModal({
   setShowConfirmModal,
   setProposingAmount,
   wakuVoting,
+  className,
 }: AmountModalProps) {
   const disabled = proposingAmount === 0
   const funds = availableAmount > 0
@@ -39,6 +41,7 @@ export function AmountModal({
         proposingAmount={proposingAmount}
         selectedVote={selectedVote}
         wakuVoting={wakuVoting}
+        className={className}
       />
       <VotePropose
         availableAmount={availableAmount}

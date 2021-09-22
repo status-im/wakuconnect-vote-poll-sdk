@@ -16,10 +16,12 @@ import statusIcon from './assets/svg/status.svg'
 import themes, { Theme } from './style/themes'
 import { useRefSize } from './hooks/useRefSize'
 import { useMobileVersion } from './hooks/useMobileVersion'
+import { useRefMobileVersion } from './hooks/useRefMobileVersion'
 import { useTokenBalance } from './hooks/useTokenBalance'
 export {
   useTokenBalance,
   useMobileVersion,
+  useRefMobileVersion,
   useRefSize,
   Modal,
   Input,

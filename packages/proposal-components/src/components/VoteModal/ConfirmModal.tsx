@@ -11,6 +11,7 @@ interface ConfirmModalProps {
   selectedVote: number
   setShowModal: (val: boolean) => void
   wakuVoting: WakuVoting
+  className: string
 }
 
 export function ConfirmModal({
@@ -19,6 +20,7 @@ export function ConfirmModal({
   proposingAmount,
   setShowModal,
   wakuVoting,
+  className,
 }: ConfirmModalProps) {
   return (
     <VoteConfirm>
@@ -29,6 +31,7 @@ export function ConfirmModal({
         selectedVote={selectedVote}
         isAnimation={true}
         wakuVoting={wakuVoting}
+        className={className}
       />
 
       <FinalBtn onClick={() => setShowModal(false)}>Close</FinalBtn>

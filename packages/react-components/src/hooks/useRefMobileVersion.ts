@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from 'react'
 
-export function useMobileVersion(sizeThreshold: number) {
+export function useRefMobileVersion(myRef: React.RefObject<HTMLHeadingElement>, sizeThreshold: number) {
   const [mobileVersion, setMobileVersion] = useState(false)
 
   useEffect(() => {
     const checkDimensions = () => {
-      const width = window.innerWidth
+      const width = myRef?.current?.offsetWidth ?? 0
       if (width && width < sizeThreshold && width > 0) {
         if (mobileVersion === false) {
           setMobileVersion(true)
@@ -21,7 +21,7 @@ export function useMobileVersion(sizeThreshold: number) {
     return () => {
       window.removeEventListener('resize', checkDimensions)
     }
-  }, [mobileVersion])
+  }, [myRef, mobileVersion, myRef?.current?.offsetWidth])
 
   return mobileVersion
 }

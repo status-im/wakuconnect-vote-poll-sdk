@@ -13,6 +13,7 @@ export interface VoteModalProps {
   selectedVote: number
   wakuVoting: WakuVoting
   theme: Theme
+  className: string
 }
 
 export function VoteModal({
@@ -23,6 +24,7 @@ export function VoteModal({
   selectedVote,
   wakuVoting,
   theme,
+  className,
 }: VoteModalProps) {
   const [screen, setScreen] = useState(0)
   useEffect(() => setScreen(0), [])
@@ -44,6 +46,7 @@ export function VoteModal({
               setShowConfirmModal={() => setScreen(1)}
               setProposingAmount={setProposingAmount}
               wakuVoting={wakuVoting}
+              className={className}
             />
           ) : (
             <ConfirmModal
@@ -53,6 +56,7 @@ export function VoteModal({
                 setShowModal(false)
               }}
               wakuVoting={wakuVoting}
+              className={className}
               proposingAmount={proposingAmount}
             />
           )}

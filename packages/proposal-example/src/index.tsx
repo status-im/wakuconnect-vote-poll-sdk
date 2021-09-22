@@ -36,7 +36,7 @@ function Proposals() {
     config?.multicallAddresses?.[chainId ?? 1337]
   )
   const ref = useRef<HTMLHeadingElement>(null)
-  const mobileVersion = useMobileVersion(ref, 600)
+  const mobileVersion = useMobileVersion(600)
 
   return (
     <Wrapper ref={ref}>

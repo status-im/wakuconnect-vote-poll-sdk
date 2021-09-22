@@ -6,8 +6,9 @@ import { WakuVoting } from '@status-waku-voting/core'
 import { useTokenBalance } from '@status-waku-voting/react-components'
 import { useEthers } from '@usedapp/core'
 import { Modal, Networks, useMobileVersion, Theme } from '@status-waku-voting/react-components'
-import { useHistory } from 'react-router'
 import { useVotingRoomsId } from '@status-waku-voting/proposal-hooks'
+import { VotingRoom } from '@status-waku-voting/core/dist/esm/src/types/PollType'
+import { useHistory } from 'react-router'
 
 type ProposalListHeaderProps = {
   votesLength: number
@@ -23,7 +24,7 @@ function ProposalListHeader({ votesLength, theme, wakuVoting, tokenBalance, acco
   const { activateBrowserWallet } = useEthers()
   const history = useHistory()
   const ref = useRef<HTMLHeadingElement>(null)
-  const mobileVersion = useMobileVersion(ref, 600)
+  const mobileVersion = useMobileVersion(600)
 
   const onCreateClick = useCallback(() => {
     mobileVersion ? history.push(`/creation`) : setShowNewVoteModal(true)
@@ -66,7 +67,7 @@ type ProposalProps = {
 export function Proposal({ wakuVoting, account }: ProposalProps) {
   const votes = useVotingRoomsId(wakuVoting)
   const tokenBalance = useTokenBalance(account, wakuVoting)
-
+  const history = useHistory()
   return (
     <ProposalWrapper>
       <ProposalVotesWrapper>
@@ -84,6 +85,7 @@ export function Proposal({ wakuVoting, account }: ProposalProps) {
             wakuVoting={wakuVoting}
             votes={votes}
             availableAmount={tokenBalance}
+            mobileOnClick={(votingRoom: VotingRoom) => history.push(`/votingRoom/${votingRoom.id.toString()}`)}
           />
         )}
       </ProposalVotesWrapper>

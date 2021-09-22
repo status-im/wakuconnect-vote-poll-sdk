@@ -6,15 +6,15 @@ import { ViewLink } from './ViewLink'
 type ProposalInfoProps = {
   votingRoom: VotingRoom
   providerName: string
-  mobileMode?: boolean
+  className?: string
 }
 
-export function ProposalInfo({ votingRoom, mobileMode, providerName }: ProposalInfoProps) {
+export function ProposalInfo({ votingRoom, className, providerName }: ProposalInfoProps) {
   return (
-    <Card>
-      <CardHeading>{votingRoom.question}</CardHeading>
-      <CardText className={mobileMode ? 'mobile' : ''}>{votingRoom.description}</CardText>
-      <CardViewLink className={mobileMode ? 'mobile' : ''}>
+    <Card className={className}>
+      <CardHeading className={className}>{votingRoom.question}</CardHeading>
+      <CardText className={className}>{votingRoom.description}</CardText>
+      <CardViewLink className={className}>
         <ViewLink
           address={
             votingRoom.transactionHash ? `https://${providerName}.etherscan.io/tx/${votingRoom.transactionHash}` : '#'
@@ -35,7 +35,7 @@ export const Card = styled.div`
   box-shadow: 0px 2px 8px rgba(0, 0, 0, 0.1);
   border-radius: 6px 0px 0px 6px;
 
-  @media (max-width: 768px) {
+  &.tablet {
     width: 100%;
     margin: 0;
     border: none;
@@ -43,7 +43,12 @@ export const Card = styled.div`
     padding-bottom: 0;
   }
 
-  @media (max-width: 600px) {
+  &.mobile {
+    width: 100%;
+    margin: 0;
+    border: none;
+    box-shadow: none;
+    padding-bottom: 0;
     padding: 0;
   }
 `
@@ -55,7 +60,7 @@ export const CardHeading = styled.div`
   margin-bottom: 8px;
   align-self: flex-start;
 
-  @media (max-width: 600px) {
+  &.mobile {
     font-size: 17px;
   }
 `
@@ -65,35 +70,22 @@ export const CardText = styled.div`
   line-height: 18px;
   margin-bottom: 16px;
 
-  @media (max-width: 600px) {
-    height: 56px;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    display: -webkit-box;
-    -webkit-line-clamp: 3;
-    -webkit-box-orient: vertical;
-  }
-
   &.mobile {
-    @media (max-width: 600px) {
-      height: 100%;
-      overflow: unset;
-      text-overflow: unset;
-      -webkit-line-clamp: unset;
-      margin-bottom: 24px;
-    }
+    height: 100%;
+    overflow: unset;
+    text-overflow: unset;
+    -webkit-line-clamp: unset;
+    margin-bottom: 24px;
   }
 `
 
 const CardViewLink = styled.div`
-  @media (max-width: 768px) {
+  &.tablet {
     display: none;
   }
 
   &.mobile {
-    @media (max-width: 600px) {
-      display: block;
-      margin-bottom: 37px;
-    }
+    display: block;
+    margin-bottom: 37px;
   }
 `

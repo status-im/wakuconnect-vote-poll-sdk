@@ -15,6 +15,7 @@ import { WakuVoting } from '@status-waku-voting/core'
 export interface VoteChartProps {
   votingRoom: VotingRoom
   wakuVoting: WakuVoting
+  className: string
   proposingAmount?: number
   selectedVote?: number
   isAnimation?: boolean
@@ -28,10 +29,8 @@ export function VoteChart({
   selectedVote,
   isAnimation,
   tabletMode,
+  className,
 }: VoteChartProps) {
-  const ref = useRef<HTMLHeadingElement>(null)
-  const mobileVersion = useMobileVersion(ref, 600)
-
   const totalVotesFor = useMemo(
     () => (isAnimation ? votingRoom.totalVotesFor : votingRoom.wakuTotalVotesFor),
     [votingRoom, proposingAmount]
@@ -61,11 +60,12 @@ export function VoteChart({
 
   const voteWinner = useMemo(() => votingRoom.voteWinner, [votingRoom.voteWinner])
   return (
-    <Votes ref={ref}>
-      <VotesChart className={selectedVote || tabletMode ? '' : 'notModal'}>
+    <Votes className={className}>
+      <VotesChart className={selectedVote || tabletMode ? '' : `notModal ${className}`}>
         <VoteBox
           voteType={2}
-          mobileVersion={mobileVersion}
+          className={className}
+          mobileVersion={className === 'mobile'}
           totalVotes={totalVotesAgainst.toNumber()}
           won={voteWinner === 2}
           selected={isAnimation && selectedVote === 0}
@@ -73,11 +73,14 @@ export function VoteChart({
           wakuVoting={wakuVoting}
         />
         {!voteWinner && (
-          <TimeLeft className={selectedVote ? '' : 'notModal'}>{formatTimeLeft(votingRoom.timeLeft)}</TimeLeft>
+          <TimeLeft className={selectedVote ? '' : `notModal ${className}`}>
+            {formatTimeLeft(votingRoom.timeLeft)}
+          </TimeLeft>
         )}
         <VoteBox
           voteType={1}
-          mobileVersion={mobileVersion}
+          className={className}
+          mobileVersion={className === 'mobile'}
           totalVotes={totalVotesFor.toNumber()}
           won={voteWinner === 1}
           selected={isAnimation && selectedVote === 1}
@@ -85,14 +88,14 @@ export function VoteChart({
           wakuVoting={wakuVoting}
         />
       </VotesChart>
-      <VoteGraphBarWrap className={selectedVote || tabletMode ? '' : 'notModal'}>
+      <VoteGraphBarWrap className={selectedVote || tabletMode ? '' : `notModal ${className}`}>
         <VoteGraphBar
           graphWidth={graphWidth}
           balanceWidth={balanceWidth}
           voteWinner={voteWinner}
           isAnimation={isAnimation}
         />
-        <TimeLeftMobile className={selectedVote ? '' : 'notModal'}>
+        <TimeLeftMobile className={selectedVote ? '' : `notModal ${className}`}>
           {formatTimeLeft(votingRoom.timeLeft)}
         </TimeLeftMobile>
       </VoteGraphBarWrap>
@@ -106,13 +109,24 @@ type VoteBoxProps = {
   voteType: number
   totalVotes: number
   wakuVoting: WakuVoting
+  className: string
   selected?: boolean
   proposingAmount?: number
 }
 
-function VoteBox({ won, mobileVersion, voteType, totalVotes, proposingAmount, selected, wakuVoting }: VoteBoxProps) {
+function VoteBox({
+  won,
+  mobileVersion,
+  className,
+  voteType,
+  totalVotes,
+  proposingAmount,
+  selected,
+  wakuVoting,
+}: VoteBoxProps) {
   return (
     <VoteBoxWrapper
+      className={className}
       style={{
         filter: won ? 'grayscale(1)' : 'none',
         alignItems: mobileVersion ? (voteType == 1 ? 'flex-end' : 'flex-start') : 'center',
@@ -145,11 +159,11 @@ const Votes = styled.div`
   width: 100%;
   position: relative;
 
-  @media (max-width: 768px) {
+  &.tablet {
     margin-bottom: 24px;
   }
 
-  @media (max-width: 600px) {
+  &.mobile {
     margin-bottom: 0;
   }
 `
@@ -161,7 +175,7 @@ const VotesChart = styled.div`
   margin-bottom: 13px;
 
   &.notModal {
-    @media (max-width: 768px) {
+    &.tablet {
       margin-bottom: 0;
     }
   }
@@ -180,11 +194,11 @@ const VoteBoxWrapper = styled.div`
     font-weight: bold;
   }
 
-  @media (max-width: 768px) {
+  &.tablet {
     min-width: 70px;
   }
 
-  @media (max-width: 600px) {
+  &.mobile {
     min-width: unset;
   }
 `
@@ -202,11 +216,12 @@ const TimeLeft = styled.div`
   color: #939ba1;
 
   &.notModal {
-    @media (max-width: 768px) {
+    &.tablet {
       top: -27px;
     }
 
-    @media (max-width: 600px) {
+    &.mobile {
+      top: -27px;
       display: none;
     }
   }
@@ -222,7 +237,7 @@ const TimeLeftMobile = styled.div`
   letter-spacing: 0.1px;
   color: #939ba1;
 
-  @media (max-width: 600px) {
+  &.mobile {
     font-size: 12px;
   }
 `
@@ -233,7 +248,7 @@ const VoteGraphBarWrap = styled.div`
   justify-content: center;
 
   &.notModal {
-    @media (max-width: 768px) {
+    &.tablet {
       position: absolute;
       width: 65%;
       top: 4px;
@@ -241,7 +256,11 @@ const VoteGraphBarWrap = styled.div`
       transform: translateX(-50%);
     }
 
-    @media (max-width: 600px) {
+    &.mobile {
+      position: absolute;
+      top: 4px;
+      left: 50%;
+      transform: translateX(-50%);
       width: 70%;
     }
   }
