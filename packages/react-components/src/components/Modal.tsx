@@ -47,6 +47,7 @@ const PopUpOverlay = styled.div`
   background-color: rgba(0, 0, 0, 0.4);
   z-index: 9999;
   transition: all 0.3s;
+  overflow: scroll;
 
   @media (max-width: 600px) {
     padding: 16px;
@@ -59,13 +60,11 @@ const PopUpWindow = styled.div`
   flex-direction: column;
   justify-content: space-between;
   width: 468px;
-  max-height: 75vh;
   background-color: white;
   margin: 20vh auto 2vh;
   padding: 24px 24px 32px;
   box-shadow: 10px 10px 31px -2px #a3a1a1;
   border-radius: 5px;
-  overflow: scroll;
   z-index: 9998;
 
   -ms-overflow-style: none;

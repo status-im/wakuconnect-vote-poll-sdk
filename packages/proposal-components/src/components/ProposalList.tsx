@@ -43,4 +43,8 @@ const List = styled.div`
   @media (max-width: 425px) {
     padding-top: 118px;
   }
+
+  @media (max-width: 375px) {
+    padding-top: 142px;
+  }
 `

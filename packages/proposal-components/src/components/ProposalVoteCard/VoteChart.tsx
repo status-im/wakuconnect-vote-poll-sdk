@@ -237,6 +237,11 @@ const TimeLeftMobile = styled.div`
   letter-spacing: 0.1px;
   color: #939ba1;
 
+  @media (max-width: 375px) {
+    bottom: unset;
+    top: -23px;
+  }
+
   &.mobile {
     font-size: 12px;
   }
