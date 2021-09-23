@@ -28,12 +28,7 @@ export function WakuPolling({ appName, signer, theme }: WakuPollingProps) {
   return (
     <Wrapper>
       {showPollCreation && signer && (
-        <PollCreation
-          signer={signer}
-          wakuPolling={wakuPolling}
-          setShowPollCreation={setShowPollCreation}
-          theme={theme}
-        />
+        <PollCreation wakuPolling={wakuPolling} setShowPollCreation={setShowPollCreation} theme={theme} />
       )}
       {account ? (
         <CreateButton theme={theme} disabled={!signer} onClick={() => setShowPollCreation(true)}>
@@ -57,7 +52,7 @@ export function WakuPolling({ appName, signer, theme }: WakuPollingProps) {
         </Modal>
       )}
 
-      <PollList wakuPolling={wakuPolling} signer={signer} theme={theme} />
+      <PollList wakuPolling={wakuPolling} account={account} theme={theme} />
     </Wrapper>
   )
 }

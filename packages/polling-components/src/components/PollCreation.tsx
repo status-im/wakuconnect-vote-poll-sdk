@@ -1,6 +1,4 @@
-import React, { ReactNode, useEffect, useState } from 'react'
-import { Wallet } from 'ethers'
-import { JsonRpcSigner } from '@ethersproject/providers'
+import React, { ReactNode, useState } from 'react'
 import styled from 'styled-components'
 import { PollType } from '@status-waku-voting/core/dist/esm/src/types/PollType'
 import { WakuPolling } from '@status-waku-voting/core'
@@ -36,12 +34,11 @@ function ConfirmScreen({ children, setShowModal }: ConfirmScreenProps) {
 
 type PollCreationProps = {
   theme: Theme
-  signer: JsonRpcSigner | Wallet
   wakuPolling: WakuPolling | undefined
   setShowPollCreation: (val: boolean) => void
 }
 
-export function PollCreation({ signer, wakuPolling, theme, setShowPollCreation }: PollCreationProps) {
+export function PollCreation({ wakuPolling, theme, setShowPollCreation }: PollCreationProps) {
   const [answers, setAnswers] = useState<string[]>(['', ''])
   const [question, setQuestion] = useState('')
   const [showCreateConfirmation, setShowCreateConfirmation] = useState(false)

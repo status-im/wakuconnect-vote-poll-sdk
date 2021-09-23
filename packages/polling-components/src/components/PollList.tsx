@@ -1,19 +1,17 @@
 import { WakuPolling } from '@status-waku-voting/core'
 import { DetailedTimedPoll } from '@status-waku-voting/core/dist/esm/src/models/DetailedTimedPoll'
-import { Wallet } from 'ethers'
 import React, { useEffect, useState } from 'react'
 import { Poll } from './Poll'
-import { JsonRpcSigner } from '@ethersproject/providers'
 import styled from 'styled-components'
 import { Theme } from '@status-waku-voting/react-components'
 
 type PollListProps = {
   theme: Theme
   wakuPolling: WakuPolling | undefined
-  signer: Wallet | JsonRpcSigner | undefined
+  account: string | null | undefined
 }
 
-export function PollList({ wakuPolling, signer, theme }: PollListProps) {
+export function PollList({ wakuPolling, account, theme }: PollListProps) {
   const [polls, setPolls] = useState<DetailedTimedPoll[]>([])
   const [dividedPolls, setDividedPolls] = useState<DetailedTimedPoll[][]>([[], [], []])
   useEffect(() => {
@@ -45,7 +43,7 @@ export function PollList({ wakuPolling, signer, theme }: PollListProps) {
         return (
           <ColumnWrapper key={idx}>
             {pollArray.map((poll) => {
-              return <Poll key={poll.poll.id} poll={poll} wakuPolling={wakuPolling} signer={signer} theme={theme} />
+              return <Poll key={poll.poll.id} poll={poll} wakuPolling={wakuPolling} account={account} theme={theme} />
             })}
           </ColumnWrapper>
         )

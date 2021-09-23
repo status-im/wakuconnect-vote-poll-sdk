@@ -1,42 +1,32 @@
 import { WakuPolling } from '@status-waku-voting/core'
 import { DetailedTimedPoll } from '@status-waku-voting/core/dist/esm/src/models/DetailedTimedPoll'
-import { Wallet, BigNumber } from 'ethers'
+import { BigNumber } from 'ethers'
 import React, { useEffect, useState } from 'react'
-import { JsonRpcSigner } from '@ethersproject/providers'
 import { PollType } from '@status-waku-voting/core/dist/esm/src/types/PollType'
 import styled from 'styled-components'
 import { RadioGroup, SmallButton, Theme } from '@status-waku-voting/react-components'
 import { PollResults } from './PollResults'
-import { useEthers } from '@usedapp/core'
 import { Modal } from '@status-waku-voting/react-components'
 
 type PollProps = {
   theme: Theme
   poll: DetailedTimedPoll
   wakuPolling: WakuPolling | undefined
-  signer: Wallet | JsonRpcSigner | undefined
+  account: string | null | undefined
 }
 
-export function Poll({ poll, wakuPolling, theme, signer }: PollProps) {
-  const { account } = useEthers()
+export function Poll({ poll, wakuPolling, theme, account }: PollProps) {
   const [selectedAnswer, setSelectedAnswer] = useState<number | undefined>(undefined)
   const [tokenAmount, setTokenAmount] = useState(0)
-  const [address, setAddress] = useState('')
   const [userInVoters, setUserInVoters] = useState(-1)
   const [showNotEnoughTokens, setShowNotEnoughTokens] = useState(false)
 
   useEffect(() => {
-    if (signer) {
-      signer.getAddress().then((e) => setAddress(e))
-    } else {
-      setAddress('')
+    if (account) {
+      const msg = poll.votesMessages.find((vote) => vote.voter === account)
+      setUserInVoters(msg?.answer ?? -1)
     }
-  }, [signer])
-
-  useEffect(() => {
-    const msg = poll.votesMessages.find((vote) => vote.voter === address)
-    setUserInVoters(msg?.answer ?? -1)
-  }, [poll, address])
+  }, [poll, account])
 
   return (
     <PollWrapper>
@@ -65,9 +55,9 @@ export function Poll({ poll, wakuPolling, theme, signer }: PollProps) {
       </PollAnswersWrapper>
       {userInVoters < 0 && (
         <SmallButton
-          disabled={!signer || !account}
+          disabled={!account}
           onClick={async () => {
-            if (wakuPolling && signer) {
+            if (wakuPolling && account) {
               const result = await wakuPolling.sendTimedPollVote(
                 poll.poll.id,
                 selectedAnswer ?? 0,
