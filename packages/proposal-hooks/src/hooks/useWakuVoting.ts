@@ -2,7 +2,7 @@ import { WakuVoting } from '@status-waku-voting/core'
 import React, { useEffect, useRef, useState } from 'react'
 import { Web3Provider } from '@ethersproject/providers'
 
-export function useWakuProposal(
+export function useWakuVoting(
   appName: string,
   contractAddress: string,
   provider: Web3Provider | undefined,

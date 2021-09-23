@@ -13,7 +13,7 @@ export interface VoteModalProps {
   selectedVote: number
   wakuVoting: WakuVoting
   theme: Theme
-  className: string
+  className?: string
 }
 
 export function VoteModal({
@@ -46,7 +46,7 @@ export function VoteModal({
               setShowConfirmModal={() => setScreen(1)}
               setProposingAmount={setProposingAmount}
               wakuVoting={wakuVoting}
-              className={className}
+              className={className ?? ''}
             />
           ) : (
             <ConfirmModal
@@ -56,7 +56,7 @@ export function VoteModal({
                 setShowModal(false)
               }}
               wakuVoting={wakuVoting}
-              className={className}
+              className={className ?? ''}
               proposingAmount={proposingAmount}
             />
           )}

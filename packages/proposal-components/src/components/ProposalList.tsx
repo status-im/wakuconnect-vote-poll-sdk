@@ -12,7 +12,7 @@ type ProposalListProps = {
   votes: number[]
   availableAmount: number
   account: string | null | undefined
-  mobileOnClick: (votingRoom: VotingRoom) => void
+  mobileOnClick?: (votingRoom: VotingRoom) => void
 }
 export function ProposalList({ theme, wakuVoting, votes, availableAmount, account, mobileOnClick }: ProposalListProps) {
   return (

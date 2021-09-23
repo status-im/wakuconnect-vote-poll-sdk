@@ -12,11 +12,10 @@ import { VotingRoom } from '@status-waku-voting/core/dist/esm/src/types/PollType
 interface ProposalCardProps {
   votingRoomId: number
   theme: Theme
-  hideModalFunction?: (val: boolean) => void
   availableAmount: number
   wakuVoting: WakuVoting
   account: string | null | undefined
-  mobileOnClick: (votingRoom: VotingRoom) => void
+  mobileOnClick?: (votingRoom: VotingRoom) => void
   CustomVoteModal?: (props: VoteModalProps) => ReactElement
   customAgainstClick?: () => void
   customForClick?: () => void
@@ -59,7 +58,7 @@ export function ProposalCard({
   }
 
   return (
-    <Card className={className} ref={ref} onClick={() => mobileVersion && mobileOnClick(votingRoom)}>
+    <Card className={className} ref={ref} onClick={() => mobileVersion && mobileOnClick && mobileOnClick(votingRoom)}>
       {CustomVoteModal ? (
         <CustomVoteModal
           setShowModal={setShowVoteModal}

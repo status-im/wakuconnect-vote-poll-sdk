@@ -1,5 +1,5 @@
 import React, { useRef } from 'react'
-import { useWakuProposal } from '@status-waku-voting/proposal-hooks'
+import { useWakuVoting } from '@status-waku-voting/proposal-hooks'
 import { ProposalMobile } from './components/ProposalMobile'
 import { Proposal } from './components/Proposal'
 import { TopBar, GlobalStyle, useMobileVersion } from '@status-waku-voting/react-components'
@@ -29,7 +29,7 @@ const config = {
 function Proposals() {
   const { account, activateBrowserWallet, deactivate, library, chainId } = useEthers()
   const config = useConfig()
-  const waku = useWakuProposal(
+  const waku = useWakuVoting(
     'test',
     '0x965a61B9A91400AdA142b591ab0E235024c94E3D',
     library,

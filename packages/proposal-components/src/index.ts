@@ -2,7 +2,7 @@ import { ProposeMobile } from './components/mobile/ProposeMobile'
 import { ProposalVoteMobile } from './components/mobile/ProposalVoteMobile'
 
 import { VotingEmpty } from './components/VotingEmpty'
-import { VotePropose } from './components/VotePropose'
+import { VoteModal } from './components/VoteModal/VoteModal'
 import { ProposalList } from './components/ProposalList'
 import { ProposalCard } from './components/ProposalCard'
 import { ProposalHeader } from './components/ProposalHeader'
@@ -11,7 +11,7 @@ import { NewVoteModal } from './components/newVoteModal/NewVoteModal'
 
 export {
   VotingEmpty,
-  VotePropose,
+  VoteModal,
   ProposalList,
   ProposalCard,
   ProposalHeader,

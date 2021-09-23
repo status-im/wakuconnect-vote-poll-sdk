@@ -16,12 +16,12 @@ import { VotePropose } from '../VotePropose'
 import { BigNumber } from 'ethers'
 import { WakuVoting } from '@status-waku-voting/core'
 
-interface ProposeVoteModalProps {
+interface ProposeMobileProps {
   availableAmount: number
   wakuVoting: WakuVoting
 }
 
-export function ProposeMobile({ availableAmount, wakuVoting }: ProposeVoteModalProps) {
+export function ProposeMobile({ availableAmount, wakuVoting }: ProposeMobileProps) {
   const insufficientFunds = availableAmount < 10000
   const [proposingAmount, setProposingAmount] = useState(0)
   const [title, setTitle] = useState('')
