@@ -69,7 +69,6 @@ export function Poll({ poll, wakuPolling, theme, signer }: PollProps) {
           onClick={async () => {
             if (wakuPolling && signer) {
               const result = await wakuPolling.sendTimedPollVote(
-                signer,
                 poll.poll.id,
                 selectedAnswer ?? 0,
                 poll.poll.pollType === PollType.WEIGHTED ? BigNumber.from(tokenAmount) : undefined

@@ -39,21 +39,33 @@ type WakuMessageStore = {
 }
 ```
 
+# Voting 
+
+Voting is done on-chain and allows to accumulate votes over waku network to allow user for voting without gas (although those votes won't be counted until someone commits those votes to blockchain).
+
+To make it easier to use WakuVoting class makes it easier to create and use this kind of voting.
+
 ## Waku Voting
 
-Objects of type of WakuVoting, hold their own Waku objects and also store list of polls and votes for later use.
+Objects of class of WakuVoting, hold their own Waku objects and also store list of proposals and votes for later use.
 
-Creating instance of WakuVoting: 
+### Creating instance of WakuVoting
 
-WakuVoting constructor expects name of DApp and address of a token, web3provider, also as optional parameter can take custom Waku object.
+WakuVoting create function expects name of DApp and address of a voting contract, web3provider, also as optional parameter can take custom Waku object.
+
+Address of token is derived from votingContract
 
 ```ts
     import { WakuVoting } from '@status-waku-voting/core'
 
-    await WakuVoting.create(appName, contractAddress, provider, multicallAddress)
+    await WakuVoting.create(appName, contractAddress, provider, multicallAddress, waku)
 ```
 
-objects of type WakuVoting expose functions:
+### API
+
+All api functions use `provider.getSigner()` to define signer
+
+- `createVote(question: string, descripiton: string, tokenAmount: BigNumber)` creates new votingRoom on blockchain
 
 - `getVotingRooms()` which return a list o VotingRoom
 
@@ -85,9 +97,9 @@ export type VotingRoom = {
 
 - `getVotingRoom(id: number)` gets VotingRoom with given id
 
-## Polls
+# Polls
 
-### Creating time-limited poll
+Polls are similar to twitter polls with main difference being that they aren't immutable and only appear on network for limited time. 
 
 To create a poll user has to send a message over waku network on specific topic 
 
@@ -112,8 +124,6 @@ message PollInit {
 }
 ```
 
-### Voting on timed poll
-
 To vote on poll user has to send waku message on topic:
 
 `/{dapp name}/waku-polling/votes/proto`
@@ -128,5 +138,84 @@ message TimedPollVote {
     int64 answer = 4; // specified poll answer
     optional bytes tokenAmount = 5; // amount of token used for WEIGHTED voting
     bytes signature = 6; // signature of all above fields
+}
+```
+
+To make it easier to use WakuPolling class was created
+
+## Creating instance of WakuPolling
+
+WakuPolling create expects name of DApp and address of a token contract, web3provider, also as optional parameter can take custom Waku object.
+
+```ts
+    import { WakuPolling } from '@status-waku-voting/core'
+
+    await WakuPolling.create(appName, tokenAddress, provider, multicallAddress, waku)
+```
+
+
+### API
+
+All api functions use `provider.getSigner()` to define signer
+
+- `createTimedPoll(question: string, answers: string[], pollType: PollType, minToken?: BigNumber, endTime?: number)` creates new poll on waku network 
+
+`question` is a question of a poll
+`answers` is a array of possible answers in poll, order of answers stays the same
+
+`pollType` determines type of poll
+
+```
+export enum PollType {
+  WEIGHTED = 0,
+  NON_WEIGHTED = 1,
+}
+```
+
+`minToken` determines how much tokens user need to hold to be able to vote in NON_WEIGHTED poll
+
+- `sendTimedPollVote(pollId: string, selectedAnswer: number, tokenAmount?: BigNumber)` sends a vote on a given poll
+
+`pollId` id of poll
+`selectedAnswer` id of given answer in a poll
+`tokenAmount` if poll is weighted this determines with how much tokens user votes
+
+-`getDetailedTimedPolls()` returns a list of `DetailedTimedPoll`
+
+```
+DetailedTimedPoll {
+  answers: TimedPollAnswer[]
+  poll: PollInitMsg
+  votesMessages: TimedPollVoteMsg[]
+  numberOfVotes: BigNumber
+}
+
+TimedPollAnswer {
+  text: string
+  votes: BigNumber
+}
+
+PollInitMsg {
+  owner: string
+  timestamp: number
+  question: string
+  answers: string[]
+  pollType: PollType
+  minToken?: BigNumber
+  endTime: number
+  signature: string
+  id: string
+  chainId: number
+}
+
+TimedPollVoteMsg {
+  pollId: string
+  voter: string
+  timestamp: number
+  answer: number
+  tokenAmount?: BigNumber
+  signature: string
+  id: string
+  chainId: number
 }
 ```

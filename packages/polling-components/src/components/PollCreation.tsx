@@ -89,7 +89,6 @@ export function PollCreation({ signer, wakuPolling, theme, setShowPollCreation }
               onClick={async (e) => {
                 e.preventDefault()
                 const result = await wakuPolling?.createTimedPoll(
-                  signer,
                   question,
                   answers,
                   selectedType,

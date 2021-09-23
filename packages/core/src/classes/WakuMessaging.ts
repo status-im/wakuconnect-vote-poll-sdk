@@ -102,9 +102,11 @@ export class WakuMessaging {
       .sort((a, b) => ((a?.timestamp ?? new Date(0)) > (b?.timestamp ?? new Date(0)) ? 1 : -1))
       .forEach((e) => {
         if (e) {
-          if (filterFunction ? filterFunction(e) : true && !hashMap?.[e.id]) {
-            arr.unshift(e)
-            hashMap[e.id] = true
+          if (filterFunction ? filterFunction(e) : true) {
+            if (!hashMap?.[e.id]) {
+              arr.unshift(e)
+              hashMap[e.id] = true
+            }
           }
         }
       })

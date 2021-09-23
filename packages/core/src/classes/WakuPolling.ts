@@ -63,13 +63,13 @@ export class WakuPolling extends WakuMessaging {
   }
 
   public async createTimedPoll(
-    signer: JsonRpcSigner | Wallet,
     question: string,
     answers: string[],
     pollType: PollType,
     minToken?: BigNumber,
     endTime?: number
   ) {
+    const signer = this.provider.getSigner()
     const address = await signer.getAddress()
     await this.updateBalances([address])
     if (this.addressesBalances[address] && this.addressesBalances[address]?.gt(minToken ?? BigNumber.from(0))) {
@@ -85,12 +85,8 @@ export class WakuPolling extends WakuMessaging {
     }
   }
 
-  public async sendTimedPollVote(
-    signer: JsonRpcSigner | Wallet,
-    pollId: string,
-    selectedAnswer: number,
-    tokenAmount?: BigNumber
-  ) {
+  public async sendTimedPollVote(pollId: string, selectedAnswer: number, tokenAmount?: BigNumber) {
+    const signer = this.provider.getSigner()
     const address = await signer.getAddress()
     const poll = this.wakuMessages['pollInit'].arr.find((poll: PollInitMsg): poll is PollInitMsg => poll.id === pollId)
     if (poll) {
