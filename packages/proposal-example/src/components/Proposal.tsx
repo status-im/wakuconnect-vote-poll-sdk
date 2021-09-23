@@ -31,7 +31,7 @@ function ProposalListHeader({ votesLength, theme, wakuVoting, tokenBalance, acco
   }, [mobileVersion])
 
   const onConnectClick = useCallback(() => {
-    if ((window as any).ethereum) {
+    if ((window as any)?.ethereum) {
       activateBrowserWallet()
     } else setShowConnectionModal(true)
   }, [])

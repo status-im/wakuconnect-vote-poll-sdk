@@ -43,7 +43,7 @@ export function WakuPolling({ appName, signer, theme }: WakuPollingProps) {
         <CreateButton
           theme={theme}
           onClick={() => {
-            if ((window as any).ethereum) {
+            if ((window as any)?.ethereum) {
               activateBrowserWallet()
             } else setSelectConnect(true)
           }}

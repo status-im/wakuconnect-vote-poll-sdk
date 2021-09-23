@@ -18,8 +18,8 @@ export function useWakuProposal(
       const network = await provider?.getNetwork()
       setChainId(network?.chainId ?? 0)
     }
-    ;(window as any).ethereum.on('chainChanged', updateChainId)
-    return () => (window as any).ethereum.removeListener('chainChanged', updateChainId)
+    ;(window as any)?.ethereum?.on('chainChanged', updateChainId)
+    return () => (window as any)?.ethereum?.removeListener('chainChanged', updateChainId)
   }, [])
 
   useEffect(() => {

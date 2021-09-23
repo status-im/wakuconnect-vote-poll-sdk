@@ -48,7 +48,7 @@ export function TopBar({ logo, title, theme, activate, deactivate, account }: To
           <ConnectButton
             theme={theme}
             onClick={() => {
-              if ((window as any).ethereum) {
+              if ((window as any)?.ethereum) {
                 activate()
               } else setSelectConnect(true)
             }}
