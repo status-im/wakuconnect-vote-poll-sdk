@@ -4,7 +4,7 @@ import React, { useEffect, useState } from 'react'
 import { Poll } from './Poll'
 import styled from 'styled-components'
 import { Theme } from '@status-waku-voting/react-components'
-
+import { usePollList } from '@status-waku-voting/polling-hooks'
 type PollListProps = {
   theme: Theme
   wakuPolling: WakuPolling | undefined
@@ -12,18 +12,9 @@ type PollListProps = {
 }
 
 export function PollList({ wakuPolling, account, theme }: PollListProps) {
-  const [polls, setPolls] = useState<DetailedTimedPoll[]>([])
-  const [dividedPolls, setDividedPolls] = useState<DetailedTimedPoll[][]>([[], [], []])
-  useEffect(() => {
-    const interval = setInterval(async () => {
-      if (wakuPolling) {
-        const DetailedTimedPolls = await wakuPolling.getDetailedTimedPolls()
-        setPolls(DetailedTimedPolls)
-      }
-    }, 1000)
-    return () => clearInterval(interval)
-  }, [wakuPolling])
+  const polls = usePollList(wakuPolling)
 
+  const [dividedPolls, setDividedPolls] = useState<DetailedTimedPoll[][]>([[], [], []])
   useEffect(() => {
     let arrayNo = 0
     const newDividedPolls: DetailedTimedPoll[][] = [[], [], []]

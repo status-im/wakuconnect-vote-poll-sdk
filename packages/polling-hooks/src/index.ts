@@ -1,3 +1,4 @@
+import { usePollList } from './hooks/usePollList'
 import { useWakuPolling } from './hooks/useWakuPolling'
 
-export { useWakuPolling }
+export { useWakuPolling, usePollList }
