@@ -53,7 +53,7 @@ export class WakuMessaging {
 
     wakuMessagesSetup.forEach((setupData) => {
       this.wakuMessages[setupData.name] = {
-        topic: `/${this.appName}/0.1/${setupData.name}/proto/`,
+        topic: `/${this.appName}/0.0.1/${setupData.name}/proto/`,
         tokenCheckArray: setupData.tokenCheckArray,
         hashMap: {},
         arr: [],

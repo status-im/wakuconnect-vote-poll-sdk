@@ -1,0 +1,64 @@
+{
+  "name": "@status-waku-voting/voting-components",
+  "version": "0.1.0",
+  "main": "dist/cjs/src/index.js",
+  "module": "dist/esm/src/index.js",
+  "types": "dist/esm/src/index.d.ts",
+  "license": "MIT",
+  "watch": {
+    "build": {
+      "patterns": [
+        "src"
+      ],
+      "extensions": "ts,tsx",
+      "runOnChangeOnly": false
+    }
+  },
+  "scripts": {
+    "watch": "yarn npm-watch",
+    "clean:all": "yarn clean && rimraf node_modules/",
+    "clean": "rimraf dist/",
+    "copy-assets": "yarn copy-files:cjs && yarn copy-files:esm",
+    "copy-files:cjs": "copyfiles -u 1 src/**/*.svg src/**/*.png dist/cjs/src",
+    "copy-files:esm": "copyfiles -u 1 src/**/*.svg src/**/*.png dist/esm/src",
+    "build": "yarn build:all && yarn copy-assets",
+    "build:all": "yarn run build:esm && yarn run build:cjs",
+    "build:esm": "tsc --module es2020 --target es2017 --outDir dist/esm",
+    "build:cjs": "tsc --outDir dist/cjs",
+    "test": "mocha -r jsdom-global/register",
+    "lint": "yarn lint:prettier --check && yarn lint:eslint",
+    "lint:fix": "yarn lint:prettier --write && yarn lint:eslint --fix",
+    "lint:eslint": "eslint './{src,test}/**/*.{ts,tsx}'",
+    "lint:prettier": "yarn prettier './{src,test}/**/*.{ts,tsx}'"
+  },
+  "dependencies": {
+    "@status-waku-voting/core": "^0.1.0",
+    "@status-waku-voting/voting-hooks": "^0.1.0",
+    "@status-waku-voting/react-components": "^0.1.0",
+    "ethers": "^5.4.4",
+    "humanize-duration": "^3.27.0",
+    "react": "^17.0.2",
+    "react-countup": "^5.2.0",
+    "styled-components": "^5.3.0"
+  },
+  "devDependencies": {
+    "@types/chai": "^4.2.21",
+    "@types/humanize-duration": "^3.25.1",
+    "@types/mocha": "^9.0.0",
+    "@types/react": "^17.0.16",
+    "@types/react-countup": "^4.3.1",
+    "@types/styled-components": "^5.1.12",
+    "@typescript-eslint/eslint-plugin": "^4.29.0",
+    "@typescript-eslint/parser": "^4.29.0",
+    "chai": "^4.3.4",
+    "copyfiles": "^2.4.1",
+    "eslint": "^7.32.0",
+    "jsdom": "^16.7.0",
+    "jsdom-global": "^3.0.2",
+    "mocha": "^9.0.3",
+    "npm-watch": "^0.11.0",
+    "rimraf": "^3.0.2",
+    "ts-node": "^10.1.0",
+    "typescript": "^4.3.5"
+  }
+}

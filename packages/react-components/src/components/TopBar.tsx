@@ -13,16 +13,17 @@ type TopBarProps = {
   activate: () => void
   deactivate: () => void
   account: string | undefined | null
+  logoWidth?: number
 }
 
-export function TopBar({ logo, title, theme, activate, deactivate, account }: TopBarProps) {
+export function TopBar({ logo, title, theme, activate, deactivate, account, logoWidth }: TopBarProps) {
   const [isOpened, setIsOpened] = useState(false)
   const [selectConnect, setSelectConnect] = useState(false)
 
   return (
     <Wrapper theme={theme}>
       <ContentWrapper>
-        <Logo src={logo} />
+        <Logo src={logo} style={{ width: `${logoWidth ?? 32}px` }} />
         <TitleWrapper>
           {title.split(' ').map((text, idx) => (
             <div key={idx}>{text}</div>

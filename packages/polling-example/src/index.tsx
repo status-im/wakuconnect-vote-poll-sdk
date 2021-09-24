@@ -37,6 +37,7 @@ export function Polling() {
     <Wrapper>
       <TopBar
         logo={pollingIcon}
+        logoWidth={84}
         title={'Polling Dapp'}
         theme={orangeTheme}
         activate={activateBrowserWallet}
