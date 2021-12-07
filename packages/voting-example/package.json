@@ -33,7 +33,7 @@
   },
   "dependencies": {
     "@dappconnect/vote-poll-sdk-core": "^0.1.0",
-    "@status-waku-voting/voting-components": "^0.1.0",
+    "@dappconnect/vote-sdk-react-components": "^0.1.0",
     "@status-waku-voting/voting-hooks": "^0.1.0",
     "@dappconnect/vote-poll-sdk-react-components": "^0.1.0",
     "@usedapp/core": "^0.4.7",

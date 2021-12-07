@@ -5,7 +5,7 @@ import {
   VotingRoomList,
   VotingRoomListEmpty,
   NewVotingRoomModal,
-} from '@status-waku-voting/voting-components'
+} from '@dappconnect/vote-sdk-react-components'
 import { blueTheme } from '@dappconnect/vote-poll-sdk-react-components/dist/esm/src/style/themes'
 import { WakuVoting } from '@dappconnect/vote-poll-sdk-core'
 import { useTokenBalance } from '@dappconnect/vote-poll-sdk-react-components'
