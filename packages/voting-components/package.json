@@ -32,7 +32,7 @@
     "lint:prettier": "yarn prettier './{src,test}/**/*.{ts,tsx}'"
   },
   "dependencies": {
-    "@status-waku-voting/core": "^0.1.0",
+    "@dappconnect/vote-poll-sdk-core": "^0.1.0",
     "@status-waku-voting/voting-hooks": "^0.1.0",
     "@status-waku-voting/react-components": "^0.1.0",
     "ethers": "^5.4.4",

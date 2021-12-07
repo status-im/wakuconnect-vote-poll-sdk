@@ -1,5 +1,5 @@
 import React from 'react'
-import { DetailedTimedPoll } from '@status-waku-voting/core/dist/esm/src/models/DetailedTimedPoll'
+import { DetailedTimedPoll } from '@dappconnect/vote-poll-sdk-core/dist/esm/src/models/DetailedTimedPoll'
 import styled from 'styled-components'
 import { colorRouletteGenerator, checkCircleIcon } from '@status-waku-voting/react-components'
 

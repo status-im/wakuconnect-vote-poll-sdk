@@ -1,4 +1,4 @@
-import { WakuVoting } from '@status-waku-voting/core'
+import { WakuVoting } from '@dappconnect/vote-poll-sdk-core'
 import { Modal, Theme } from '@status-waku-voting/react-components'
 import React, { useEffect, useState } from 'react'
 import { VotingRoomDetailInput } from './VotingRoomDetailInput'

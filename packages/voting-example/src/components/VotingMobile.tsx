@@ -4,7 +4,7 @@ import { BrowserRouter } from 'react-router-dom'
 import styled from 'styled-components'
 import { VotingRoomMobile, NewVotingRoomMobile } from '@status-waku-voting/voting-components'
 import { Voting } from './Voting'
-import { WakuVoting } from '@status-waku-voting/core'
+import { WakuVoting } from '@dappconnect/vote-poll-sdk-core'
 import { useTokenBalance } from '@status-waku-voting/react-components'
 
 type VotingRoomCreationProps = {

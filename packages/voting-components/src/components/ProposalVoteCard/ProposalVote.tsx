@@ -4,8 +4,8 @@ import { FinalBtn, VoteBtnAgainst, VoteBtnFor } from '../Buttons'
 import { VoteSubmitButton } from './VoteSubmitButton'
 import { VoteChart } from './VoteChart'
 import { ViewLink } from '../ViewLink'
-import { VotingRoom } from '@status-waku-voting/core/dist/esm/src/types/PollType'
-import { WakuVoting } from '@status-waku-voting/core'
+import { VotingRoom } from '@dappconnect/vote-poll-sdk-core/dist/esm/src/types/PollType'
+import { WakuVoting } from '@dappconnect/vote-poll-sdk-core'
 
 interface ProposalVoteProps {
   votingRoom: VotingRoom

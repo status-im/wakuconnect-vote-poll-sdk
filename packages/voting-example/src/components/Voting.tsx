@@ -7,12 +7,12 @@ import {
   NewVotingRoomModal,
 } from '@status-waku-voting/voting-components'
 import { blueTheme } from '@status-waku-voting/react-components/dist/esm/src/style/themes'
-import { WakuVoting } from '@status-waku-voting/core'
+import { WakuVoting } from '@dappconnect/vote-poll-sdk-core'
 import { useTokenBalance } from '@status-waku-voting/react-components'
 import { useEthers } from '@usedapp/core'
 import { Modal, Networks, useMobileVersion, Theme } from '@status-waku-voting/react-components'
 import { useVotingRoomsId } from '@status-waku-voting/voting-hooks'
-import { VotingRoom } from '@status-waku-voting/core/dist/esm/src/types/PollType'
+import { VotingRoom } from '@dappconnect/vote-poll-sdk-core/dist/esm/src/types/PollType'
 import { useHistory } from 'react-router'
 
 type VotingListHeaderProps = {

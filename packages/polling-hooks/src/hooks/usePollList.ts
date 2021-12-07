@@ -1,5 +1,5 @@
-import { WakuPolling } from '@status-waku-voting/core'
-import { DetailedTimedPoll } from '@status-waku-voting/core/dist/esm/src/models/DetailedTimedPoll'
+import { WakuPolling } from '@dappconnect/vote-poll-sdk-core'
+import { DetailedTimedPoll } from '@dappconnect/vote-poll-sdk-core/dist/esm/src/models/DetailedTimedPoll'
 import React, { useEffect, useState } from 'react'
 
 export function usePollList(wakuPolling: WakuPolling | undefined) {

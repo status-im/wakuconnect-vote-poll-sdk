@@ -3,7 +3,7 @@ import styled from 'styled-components'
 import { ProposingBtn } from '../Buttons'
 import { TextArea } from '../Input'
 import { blueTheme } from '@status-waku-voting/react-components/dist/esm/src/style/themes'
-import { WakuVoting } from '@status-waku-voting/core'
+import { WakuVoting } from '@dappconnect/vote-poll-sdk-core'
 
 interface VotingRoomDetailInputProps {
   availableAmount: number

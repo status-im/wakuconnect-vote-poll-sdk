@@ -3,7 +3,7 @@ import styled from 'styled-components'
 import { CardHeading } from '../ProposalInfo'
 import { VotingRoomDetailInput, ProposingData } from '../newVoteModal/VotingRoomDetailInput'
 import { TokenAmountScreen } from '../newVoteModal/TokenAmountScreen'
-import { WakuVoting } from '@status-waku-voting/core'
+import { WakuVoting } from '@dappconnect/vote-poll-sdk-core'
 
 interface NewVotingRoomMobileProps {
   availableAmount: number

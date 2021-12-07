@@ -28,7 +28,7 @@
     "lint:prettier": "yarn prettier './{src,test}/**/*.{ts,tsx}'"
   },
   "dependencies": {
-    "@status-waku-voting/core": "^0.1.0",
+    "@dappconnect/vote-poll-sdk-core": "^0.1.0",
     "@usedapp/core": "^0.4.7",
     "ethers": "^5.4.4",
     "react": "^17.0.2",

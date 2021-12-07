@@ -1,5 +1,5 @@
 {
-  "name": "@status-waku-voting/core",
+  "name": "@dappconnect/vote-poll-sdk-core",
   "main": "dist/cjs/src/index.js",
   "module": "dist/esm/src/index.js",
   "types": "dist/esm/src/index.d.ts",

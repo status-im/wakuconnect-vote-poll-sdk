@@ -9,8 +9,8 @@ import crossWinnerIcon from '../../assets/svg/crossWinner.svg'
 import checkIcon from '../../assets/svg/check.svg'
 import checkWinnerIcon from '../../assets/svg/checkWinner.svg'
 import { useMobileVersion } from '@status-waku-voting/react-components'
-import { VotingRoom } from '@status-waku-voting/core/dist/esm/src/types/PollType'
-import { WakuVoting } from '@status-waku-voting/core'
+import { VotingRoom } from '@dappconnect/vote-poll-sdk-core/dist/esm/src/types/PollType'
+import { WakuVoting } from '@dappconnect/vote-poll-sdk-core'
 
 export interface VoteChartProps {
   votingRoom: VotingRoom

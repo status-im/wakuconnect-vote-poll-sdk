@@ -3,11 +3,11 @@ import styled from 'styled-components'
 import { Theme } from '@status-waku-voting/react-components'
 import { ProposalInfo } from './ProposalInfo'
 import { ProposalVote } from './ProposalVoteCard/ProposalVote'
-import { WakuVoting } from '@status-waku-voting/core'
+import { WakuVoting } from '@dappconnect/vote-poll-sdk-core'
 import { useVotingRoom } from '@status-waku-voting/voting-hooks'
 import { VoteModal, VoteModalProps } from './VoteModal/VoteModal'
 import { useRefMobileVersion } from '@status-waku-voting/react-components'
-import { VotingRoom } from '@status-waku-voting/core/dist/esm/src/types/PollType'
+import { VotingRoom } from '@dappconnect/vote-poll-sdk-core/dist/esm/src/types/PollType'
 
 interface VotingRoomCardProps {
   votingRoomId: number

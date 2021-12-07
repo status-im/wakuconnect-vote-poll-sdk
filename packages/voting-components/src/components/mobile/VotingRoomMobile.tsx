@@ -8,7 +8,7 @@ import { ProposalInfo } from '../ProposalInfo'
 import { VotePropose } from '../VotePropose'
 import { VotesBtns } from '../ProposalVoteCard/ProposalVote'
 import { useVotingRoom } from '@status-waku-voting/voting-hooks'
-import { WakuVoting } from '@status-waku-voting/core'
+import { WakuVoting } from '@dappconnect/vote-poll-sdk-core'
 import { BigNumber } from 'ethers'
 interface VotingRoomMobileProps {
   wakuVoting: WakuVoting
