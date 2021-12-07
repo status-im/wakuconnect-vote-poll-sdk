@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react'
 import { useConfig, useEthers } from '@usedapp/core'
 
 import styled from 'styled-components'
-import { PollList, PollCreation } from '@status-waku-voting/polling-components'
+import { PollList, PollCreation } from '@dappconnect/poll-sdk-react-components'
 import { JsonRpcSigner } from '@ethersproject/providers'
 import { useWakuPolling } from '@status-waku-voting/polling-hooks'
 import { Modal, Networks, CreateButton } from '@status-waku-voting/react-components'

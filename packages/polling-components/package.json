@@ -1,5 +1,5 @@
 {
-  "name": "@status-waku-voting/polling-components",
+  "name": "@dappconnect/poll-sdk-react-components",
   "version": "0.1.0",
   "main": "dist/cjs/src/index.js",
   "module": "dist/esm/src/index.js",
