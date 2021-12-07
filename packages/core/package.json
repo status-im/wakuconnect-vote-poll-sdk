@@ -1,5 +1,6 @@
 {
   "name": "@dappconnect/vote-poll-sdk-core",
+  "repository": "git@github.com:status-im/dappconnect-vote-poll-sdk.git",
   "main": "dist/cjs/src/index.js",
   "module": "dist/esm/src/index.js",
   "types": "dist/esm/src/index.d.ts",
