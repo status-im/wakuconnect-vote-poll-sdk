@@ -1,5 +1,5 @@
 import React, { useRef } from 'react'
-import { useWakuVoting } from '@status-waku-voting/voting-hooks'
+import { useWakuVoting } from '@dappconnect/vote-sdk-react-hooks'
 import { VotingMobile } from './components/VotingMobile'
 import { Voting } from './components/Voting'
 import { TopBar, GlobalStyle, useMobileVersion } from '@dappconnect/vote-poll-sdk-react-components'

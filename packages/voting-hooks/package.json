@@ -1,5 +1,5 @@
 {
-  "name": "@status-waku-voting/voting-hooks",
+  "name": "@dappconnect/vote-sdk-react-hooks",
   "version": "0.1.0",
   "main": "dist/cjs/src/index.js",
   "module": "dist/esm/src/index.js",
