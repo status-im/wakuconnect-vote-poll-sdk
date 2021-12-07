@@ -3,6 +3,7 @@ import styled from 'styled-components'
 import { PollType } from '@dappconnect/vote-poll-sdk-core/dist/esm/src/types/PollType'
 import { WakuPolling } from '@dappconnect/vote-poll-sdk-core'
 import { Input, addIcon, SmallButton, Modal, Theme } from '@dappconnect/vote-poll-sdk-react-components'
+import { MESSAGE_SENDING_RESULT } from '@dappconnect/vote-poll-sdk-core/dist/esm/src/classes/WakuPolling'
 
 function getLocaleIsoTime(dateTime: Date) {
   const MS_PER_MINUTE = 60000
@@ -92,10 +93,10 @@ export function PollCreation({ wakuPolling, theme, setShowPollCreation }: PollCr
                   undefined,
                   endTimePicker.getTime()
                 )
-                if (result === 0) {
+                if (result === MESSAGE_SENDING_RESULT.ok) {
                   setShowCreateConfirmation(true)
                 }
-                if (result === 1) {
+                if (result === MESSAGE_SENDING_RESULT.notEnoughToken) {
                   setShowNotEnoughTokens(true)
                 }
               }}
