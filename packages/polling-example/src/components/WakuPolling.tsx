@@ -4,7 +4,7 @@ import { useConfig, useEthers } from '@usedapp/core'
 import styled from 'styled-components'
 import { PollList, PollCreation } from '@dappconnect/poll-sdk-react-components'
 import { JsonRpcSigner } from '@ethersproject/providers'
-import { useWakuPolling } from '@status-waku-voting/polling-hooks'
+import { useWakuPolling } from '@dappconnect/poll-sdk-react-hooks'
 import { Modal, Networks, CreateButton } from '@status-waku-voting/react-components'
 import { Theme } from '@status-waku-voting/react-components/dist/esm/src/style/themes'
 

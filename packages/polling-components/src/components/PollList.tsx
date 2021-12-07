@@ -4,7 +4,7 @@ import React, { useEffect, useState } from 'react'
 import { Poll } from './Poll'
 import styled from 'styled-components'
 import { Theme } from '@status-waku-voting/react-components'
-import { usePollList } from '@status-waku-voting/polling-hooks'
+import { usePollList } from '@dappconnect/poll-sdk-react-hooks'
 type PollListProps = {
   theme: Theme
   wakuPolling: WakuPolling | undefined
