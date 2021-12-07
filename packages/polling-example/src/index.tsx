@@ -3,10 +3,10 @@ import styled from 'styled-components'
 import { DAppProvider, ChainId, useEthers } from '@usedapp/core'
 import { DEFAULT_CONFIG } from '@usedapp/core/dist/cjs/src/model/config/default'
 import { WakuPolling } from './components/WakuPolling'
-import { TopBar, GlobalStyle } from '@status-waku-voting/react-components'
+import { TopBar, GlobalStyle } from '@dappconnect/vote-poll-sdk-react-components'
 import pollingIcon from './assets/images/pollingIcon.png'
 import { JsonRpcSigner } from '@ethersproject/providers'
-import { orangeTheme } from '@status-waku-voting/react-components/dist/esm/src/style/themes'
+import { orangeTheme } from '@dappconnect/vote-poll-sdk-react-components/dist/esm/src/style/themes'
 
 const config = {
   readOnlyChainId: ChainId.Ropsten,

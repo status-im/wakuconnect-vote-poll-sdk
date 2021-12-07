@@ -1,6 +1,6 @@
 import React from 'react'
 import styled from 'styled-components'
-import { Theme } from '@status-waku-voting/react-components'
+import { Theme } from '@dappconnect/vote-poll-sdk-react-components'
 import { VotingRoomCard } from './VotingRoomCard'
 import { WakuVoting } from '@dappconnect/vote-poll-sdk-core'
 

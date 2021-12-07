@@ -3,7 +3,7 @@ import { DetailedTimedPoll } from '@dappconnect/vote-poll-sdk-core/dist/esm/src/
 import React, { useEffect, useState } from 'react'
 import { Poll } from './Poll'
 import styled from 'styled-components'
-import { Theme } from '@status-waku-voting/react-components'
+import { Theme } from '@dappconnect/vote-poll-sdk-react-components'
 import { usePollList } from '@dappconnect/poll-sdk-react-hooks'
 type PollListProps = {
   theme: Theme

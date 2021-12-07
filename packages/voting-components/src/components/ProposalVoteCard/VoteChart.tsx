@@ -8,7 +8,7 @@ import crossIcon from '../../assets/svg/cross.svg'
 import crossWinnerIcon from '../../assets/svg/crossWinner.svg'
 import checkIcon from '../../assets/svg/check.svg'
 import checkWinnerIcon from '../../assets/svg/checkWinner.svg'
-import { useMobileVersion } from '@status-waku-voting/react-components'
+import { useMobileVersion } from '@dappconnect/vote-poll-sdk-react-components'
 import { VotingRoom } from '@dappconnect/vote-poll-sdk-core/dist/esm/src/types/PollType'
 import { WakuVoting } from '@dappconnect/vote-poll-sdk-core'
 

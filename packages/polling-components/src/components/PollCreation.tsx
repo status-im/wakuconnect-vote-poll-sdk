@@ -2,7 +2,7 @@ import React, { ReactNode, useState } from 'react'
 import styled from 'styled-components'
 import { PollType } from '@dappconnect/vote-poll-sdk-core/dist/esm/src/types/PollType'
 import { WakuPolling } from '@dappconnect/vote-poll-sdk-core'
-import { Input, addIcon, SmallButton, Modal, Theme } from '@status-waku-voting/react-components'
+import { Input, addIcon, SmallButton, Modal, Theme } from '@dappconnect/vote-poll-sdk-react-components'
 
 function getLocaleIsoTime(dateTime: Date) {
   const MS_PER_MINUTE = 60000

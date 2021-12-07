@@ -1,6 +1,6 @@
 import React from 'react'
 import styled from 'styled-components'
-import { CreateButton, Theme } from '@status-waku-voting/react-components'
+import { CreateButton, Theme } from '@dappconnect/vote-poll-sdk-react-components'
 
 type VotingRoomListEmptyProps = {
   theme: Theme

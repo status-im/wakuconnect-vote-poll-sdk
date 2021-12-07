@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
-import { blueTheme } from '@status-waku-voting/react-components/dist/esm/src/style/themes'
-import { CloseButton } from '@status-waku-voting/react-components/dist/esm/src/components/misc/Buttons'
+import { blueTheme } from '@dappconnect/vote-poll-sdk-react-components/dist/esm/src/style/themes'
+import { CloseButton } from '@dappconnect/vote-poll-sdk-react-components/dist/esm/src/components/misc/Buttons'
 import styled from 'styled-components'
 import { NotificationLink } from './ViewLink'
 

@@ -6,11 +6,11 @@ import {
   VotingRoomListEmpty,
   NewVotingRoomModal,
 } from '@status-waku-voting/voting-components'
-import { blueTheme } from '@status-waku-voting/react-components/dist/esm/src/style/themes'
+import { blueTheme } from '@dappconnect/vote-poll-sdk-react-components/dist/esm/src/style/themes'
 import { WakuVoting } from '@dappconnect/vote-poll-sdk-core'
-import { useTokenBalance } from '@status-waku-voting/react-components'
+import { useTokenBalance } from '@dappconnect/vote-poll-sdk-react-components'
 import { useEthers } from '@usedapp/core'
-import { Modal, Networks, useMobileVersion, Theme } from '@status-waku-voting/react-components'
+import { Modal, Networks, useMobileVersion, Theme } from '@dappconnect/vote-poll-sdk-react-components'
 import { useVotingRoomsId } from '@status-waku-voting/voting-hooks'
 import { VotingRoom } from '@dappconnect/vote-poll-sdk-core/dist/esm/src/types/PollType'
 import { useHistory } from 'react-router'

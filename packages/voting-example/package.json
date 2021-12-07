@@ -35,7 +35,7 @@
     "@dappconnect/vote-poll-sdk-core": "^0.1.0",
     "@status-waku-voting/voting-components": "^0.1.0",
     "@status-waku-voting/voting-hooks": "^0.1.0",
-    "@status-waku-voting/react-components": "^0.1.0",
+    "@dappconnect/vote-poll-sdk-react-components": "^0.1.0",
     "@usedapp/core": "^0.4.7",
     "ethers": "^5.4.4",
     "react": "^17.0.2",

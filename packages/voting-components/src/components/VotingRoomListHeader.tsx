@@ -1,7 +1,7 @@
 import React from 'react'
 import styled from 'styled-components'
-import { CreateButton } from '@status-waku-voting/react-components'
-import { Theme } from '@status-waku-voting/react-components/dist/esm/src/style/themes'
+import { CreateButton } from '@dappconnect/vote-poll-sdk-react-components'
+import { Theme } from '@dappconnect/vote-poll-sdk-react-components/dist/esm/src/style/themes'
 
 type VotingRoomListHeaderProps = {
   theme: Theme

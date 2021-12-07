@@ -5,7 +5,7 @@ import styled from 'styled-components'
 import { VotingRoomMobile, NewVotingRoomMobile } from '@status-waku-voting/voting-components'
 import { Voting } from './Voting'
 import { WakuVoting } from '@dappconnect/vote-poll-sdk-core'
-import { useTokenBalance } from '@status-waku-voting/react-components'
+import { useTokenBalance } from '@dappconnect/vote-poll-sdk-react-components'
 
 type VotingRoomCreationProps = {
   tokenBalance: number

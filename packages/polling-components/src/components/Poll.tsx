@@ -4,9 +4,9 @@ import { BigNumber } from 'ethers'
 import React, { useEffect, useState } from 'react'
 import { PollType } from '@dappconnect/vote-poll-sdk-core/dist/esm/src/types/PollType'
 import styled from 'styled-components'
-import { RadioGroup, SmallButton, Theme } from '@status-waku-voting/react-components'
+import { RadioGroup, SmallButton, Theme } from '@dappconnect/vote-poll-sdk-react-components'
 import { PollResults } from './PollResults'
-import { Modal } from '@status-waku-voting/react-components'
+import { Modal } from '@dappconnect/vote-poll-sdk-react-components'
 
 type PollProps = {
   theme: Theme
