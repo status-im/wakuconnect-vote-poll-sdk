@@ -1,13 +1,15 @@
 {
-  "name": "@dappconnect/vote-poll-sdk-react-components",
+  "name": "@dappconnect/vote-sdk-example",
+  "version": "0.1.0",
   "main": "dist/cjs/src/index.js",
   "module": "dist/esm/src/index.js",
   "types": "dist/esm/src/index.d.ts",
-  "version": "0.1.0",
   "license": "MIT",
   "watch": {
     "build": {
-      "patterns": ["src"],
+      "patterns": [
+        "src"
+      ],
       "extensions": "ts,tsx",
       "runOnChangeOnly": false
     }
@@ -30,10 +32,14 @@
     "lint:prettier": "yarn prettier './{src,test}/**/*.{ts,tsx}'"
   },
   "dependencies": {
+    "@dappconnect/vote-poll-sdk-core": "^0.1.0",
+    "@dappconnect/vote-sdk-react-components": "^0.1.0",
+    "@dappconnect/vote-sdk-react-hooks": "^0.1.0",
+    "@dappconnect/vote-poll-sdk-react-components": "^0.1.0",
+    "@usedapp/core": "^0.4.7",
     "ethers": "^5.4.4",
     "react": "^17.0.2",
-    "styled-components": "^5.3.0",
-    "@dappconnect/vote-poll-sdk-core": "^0.1.0"
+    "styled-components": "^5.3.0"
   },
   "devDependencies": {
     "@types/chai": "^4.2.21",

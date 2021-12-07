@@ -1,5 +1,5 @@
 {
-  "name": "@status-waku-voting/example",
+  "name": "@dappconnect/vote-poll-sdk-example",
   "version": "0.1.0",
   "main": "index.js",
   "license": "MIT",
@@ -15,8 +15,8 @@
     "lint:prettier": "yarn prettier './{src,test}/**/*.{ts,tsx}'"
   },
   "dependencies": {
-    "@status-waku-voting/polling-example": "^0.1.0",
-    "@status-waku-voting/voting-example": "^0.1.0",
+    "@dappconnect/poll-sdk-example": "^0.1.0",
+    "@dappconnect/vote-sdk-example": "^0.1.0",
     "assert": "^2.0.0",
     "buffer": "^6.0.3",
     "crypto-browserify": "^3.12.0",

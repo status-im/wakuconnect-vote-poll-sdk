@@ -1,26 +1,24 @@
 {
-  "name": "@dappconnect/vote-poll-sdk-react-components",
+  "name": "@dappconnect/poll-sdk-react-hooks",
+  "version": "0.1.0",
   "main": "dist/cjs/src/index.js",
   "module": "dist/esm/src/index.js",
   "types": "dist/esm/src/index.d.ts",
-  "version": "0.1.0",
   "license": "MIT",
   "watch": {
     "build": {
-      "patterns": ["src"],
+      "patterns": [
+        "src"
+      ],
       "extensions": "ts,tsx",
       "runOnChangeOnly": false
     }
   },
   "scripts": {
-    "watch": "yarn npm-watch",
     "clean:all": "yarn clean && rimraf node_modules/",
     "clean": "rimraf dist/",
-    "copy-assets": "yarn copy-files:cjs && yarn copy-files:esm",
-    "copy-files:cjs": "copyfiles -u 1 src/**/*.svg src/**/*.png dist/cjs/src",
-    "copy-files:esm": "copyfiles -u 1 src/**/*.svg src/**/*.png dist/esm/src",
-    "build": "yarn build:all && yarn copy-assets",
-    "build:all": "yarn run build:esm && yarn run build:cjs",
+    "watch": "yarn npm-watch",
+    "build": "yarn run build:esm && yarn run build:cjs",
     "build:esm": "tsc --module es2020 --target es2017 --outDir dist/esm",
     "build:cjs": "tsc --outDir dist/cjs",
     "test": "mocha -r jsdom-global/register",
@@ -30,10 +28,11 @@
     "lint:prettier": "yarn prettier './{src,test}/**/*.{ts,tsx}'"
   },
   "dependencies": {
+    "@dappconnect/vote-poll-sdk-core": "^0.1.0",
+    "@usedapp/core": "^0.4.7",
     "ethers": "^5.4.4",
     "react": "^17.0.2",
-    "styled-components": "^5.3.0",
-    "@dappconnect/vote-poll-sdk-core": "^0.1.0"
+    "styled-components": "^5.3.0"
   },
   "devDependencies": {
     "@types/chai": "^4.2.21",

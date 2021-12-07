@@ -1,10 +1,10 @@
-# DappConnect Voting & Polling SDKs
+# DappConnect Vote & Poll SDKs
 
 A set of DappConnect SDKs to enable gas efficient voting and gasless polling over Waku
 
-## DappConnect Voting SDK
+## DappConnect Vote SDK
 
-The DappConnect voting SDK allows you to leverage Waku to save gas fees for most voters.
+The DappConnect Vote SDK allows you to leverage Waku to save gas fees for most voters.
 
 It leverages Waku, a decentralized communication network, to broadcast and aggregates votes.
 Most token holders will not need to spend gas to vote.
@@ -151,6 +151,8 @@ A vote may become invalid between reception over Waku and submission to the smar
 - The voter has transferred a number of token out of their account, making the account balance lesser than the vote weight,
 - A vote for this voter has already been submitted to the smart contract (whether or not it has the same value).
 
-## DappConnect Polling SDK
+## DappConnect Poll SDK
 
-TODO
+The DappConnect Poll SDK allows users to create, answer and view polls in a decentralized, censorship-resistant manner.
+
+The polls are published over Waku, there is no interaction with any blockchain, removing gas costs.
