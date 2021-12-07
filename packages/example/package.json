@@ -3,7 +3,7 @@
   "repository": "git@github.com:status-im/dappconnect-vote-poll-sdk.git",
   "version": "0.1.0",
   "main": "index.js",
-  "license": "MIT",
+  "license": "MIT OR Apache-2.0",
   "scripts": {
     "clean:all": "yarn clean && rimraf node_modules/",
     "clean": "rimraf dist/",
