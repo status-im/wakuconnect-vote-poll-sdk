@@ -1,5 +1,5 @@
 {
-  "name": "@status-waku-voting/contracts",
+  "name": "@dappconnect/vote-sdk-contracts",
   "version": "0.0.1",
   "main": "index.js",
   "repository": "git@github.com:EthWorks/status-waku-voting.git",
