@@ -1,5 +1,5 @@
 {
-  "name": "status-waku-voting",
+  "name": "@dappconnect/vote-poll-sdk",
   "private": true,
   "license": "MIT",
   "engines": {
