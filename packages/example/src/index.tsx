@@ -1,7 +1,7 @@
 import React from 'react'
 import ReactDOM from 'react-dom'
-import { PollingPage } from '@status-waku-voting/polling-example'
-import { VotingPage } from '@status-waku-voting/voting-example'
+import { PollingPage } from '@dappconnect/poll-sdk-example'
+import { VotingPage } from '@dappconnect/vote-sdk-example'
 import { BrowserRouter } from 'react-router-dom'
 import { Route, Switch } from 'react-router'
 
