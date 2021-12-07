@@ -1,10 +1,11 @@
 {
   "name": "@dappconnect/vote-sdk-react-hooks",
+  "repository": "git@github.com:status-im/dappconnect-vote-poll-sdk.git",
   "version": "0.1.0",
   "main": "dist/cjs/src/index.js",
   "module": "dist/esm/src/index.js",
   "types": "dist/esm/src/index.d.ts",
-  "license": "MIT",
+  "license": "MIT OR Apache-2.0",
   "watch": {
     "build": {
       "patterns": ["src"],

@@ -2,8 +2,8 @@
   "name": "@dappconnect/vote-sdk-contracts",
   "version": "0.0.1",
   "main": "index.js",
-  "repository": "git@github.com:EthWorks/status-waku-voting.git",
-  "license": "MIT",
+  "repository": "git@github.com:status-im/dappconnect-vote-poll-sdk.git",
+  "license": "MIT OR Apache-2.0",
   "scripts": {
     "clean:all": "yarn clean && rimraf node_modules/",
     "clean": "rimraf build/ && rimraf dist/ && rimraf flatten/ rimraf cache/",

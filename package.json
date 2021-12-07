@@ -1,7 +1,8 @@
 {
   "name": "@dappconnect/vote-poll-sdk",
+  "repository": "git@github.com:status-im/dappconnect-vote-poll-sdk.git",
   "private": true,
-  "license": "MIT",
+  "license": "MIT OR Apache-2.0",
   "engines": {
     "node": ">=14"
   },
