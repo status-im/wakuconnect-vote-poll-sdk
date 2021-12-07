@@ -1,3 +1,5 @@
+# DappConnect Poll SDK Example
+
 This package is example usage of WakuPolling 
 
 Example uses usedapp for exposing web3 provider

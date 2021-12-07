@@ -1,4 +1,4 @@
-Package contains react hooks that help with memoizing values
+Package contains react hooks that help with memorizing values
 
 ## hooks
 

@@ -1,4 +1,6 @@
-Package contains example usage of voting sdk 
+# DappConnect Vote SDK Example
+
+Package contains example usage of DappConnect Vote SDK 
 
 For more detailed api please see README in voting-hooks and voting-components
 
