@@ -11,7 +11,9 @@ import { WakuMessaging } from './WakuMessaging'
 import { Web3Provider } from '@ethersproject/providers'
 import { WakuMessagesSetup } from '../types/WakuMessagesSetup'
 
-export enum MESSEGAGE_SENDING_RESULT {
+const MinTokenDefaultValue = BigNumber.from(1)
+
+export enum MESSAGE_SENDING_RESULT {
   ok = 0,
   notEnoughToken = 1,
   errorCreatingMessage = 2,
@@ -72,16 +74,17 @@ export class WakuPolling extends WakuMessaging {
     const signer = this.provider.getSigner()
     const address = await signer.getAddress()
     await this.updateBalances([address])
-    if (this.addressesBalances[address] && this.addressesBalances[address]?.gt(minToken ?? BigNumber.from(0))) {
+
+    if (this.addressesBalances[address] && this.addressesBalances[address]?.gt(minToken ?? MinTokenDefaultValue)) {
       const pollInit = await PollInitMsg.create(signer, question, answers, pollType, this.chainId, minToken, endTime)
       if (pollInit) {
         await this.sendWakuMessage(this.wakuMessages['pollInit'], pollInit)
-        return MESSEGAGE_SENDING_RESULT.ok
+        return MESSAGE_SENDING_RESULT.ok
       } else {
-        return MESSEGAGE_SENDING_RESULT.errorCreatingMessage
+        return MESSAGE_SENDING_RESULT.errorCreatingMessage
       }
     } else {
-      return MESSEGAGE_SENDING_RESULT.notEnoughToken
+      return MESSAGE_SENDING_RESULT.notEnoughToken
     }
   }
 
@@ -91,18 +94,21 @@ export class WakuPolling extends WakuMessaging {
     const poll = this.wakuMessages['pollInit'].arr.find((poll: PollInitMsg): poll is PollInitMsg => poll.id === pollId)
     if (poll) {
       await this.updateBalances([address])
-      if (this.addressesBalances[address] && this.addressesBalances[address]?.gt(poll.minToken ?? BigNumber.from(0))) {
+      if (
+        this.addressesBalances[address] &&
+        this.addressesBalances[address]?.gt(poll.minToken ?? MinTokenDefaultValue)
+      ) {
         const pollVote = await TimedPollVoteMsg.create(signer, pollId, selectedAnswer, this.chainId, tokenAmount)
         if (pollVote) {
           await this.sendWakuMessage(this.wakuMessages['pollVote'], pollVote)
         } else {
-          return MESSEGAGE_SENDING_RESULT.errorCreatingMessage
+          return MESSAGE_SENDING_RESULT.errorCreatingMessage
         }
       } else {
-        return MESSEGAGE_SENDING_RESULT.notEnoughToken
+        return MESSAGE_SENDING_RESULT.notEnoughToken
       }
     } else {
-      return MESSEGAGE_SENDING_RESULT.pollNotFound
+      return MESSAGE_SENDING_RESULT.pollNotFound
     }
   }
 
@@ -112,7 +118,7 @@ export class WakuPolling extends WakuMessaging {
       .map((poll: PollInitMsg) => {
         if (
           this.addressesBalances[poll.owner] &&
-          this.addressesBalances[poll.owner]?.gt(poll.minToken ?? BigNumber.from(0))
+          this.addressesBalances[poll.owner]?.gt(poll.minToken ?? MinTokenDefaultValue)
         ) {
           return new DetailedTimedPoll(
             poll,
@@ -121,7 +127,7 @@ export class WakuPolling extends WakuMessaging {
                 (vote: TimedPollVoteMsg) =>
                   vote.pollId === poll.id &&
                   this.addressesBalances[poll.owner] &&
-                  this.addressesBalances[vote.voter]?.gt(poll.minToken ?? BigNumber.from(0))
+                  this.addressesBalances[vote.voter]?.gt(poll.minToken ?? MinTokenDefaultValue)
               )
               .filter((e): e is TimedPollVoteMsg => !!e)
           )

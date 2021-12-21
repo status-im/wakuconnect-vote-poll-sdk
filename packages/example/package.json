@@ -8,7 +8,7 @@
     "clean:all": "yarn clean && rimraf node_modules/",
     "clean": "rimraf dist/",
     "build": "rm -rf dist && webpack --mode=production --env ENV=production",
-    "start": "webpack serve --mode=development --env ENV=development --https",
+    "start": "webpack serve --mode=development --env ENV=development --https --port 8181",
     "test": "mocha -r jsdom-global/register",
     "lint": "yarn lint:prettier --check && yarn lint:eslint",
     "lint:fix": "yarn lint:prettier --write && yarn lint:eslint --fix",
