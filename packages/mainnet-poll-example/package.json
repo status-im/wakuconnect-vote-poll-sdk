@@ -1,28 +1,13 @@
 {
   "name": "@dappconnect/mainnet-poll-sdk-example",
   "version": "0.1.0",
-  "main": "dist/cjs/src/index.js",
-  "module": "dist/esm/src/index.js",
-  "types": "dist/esm/src/index.d.ts",
+  "main": "index.js",
   "license": "MIT",
-  "watch": {
-    "build": {
-      "patterns": ["src"],
-      "extensions": "ts,tsx",
-      "runOnChangeOnly": false
-    }
-  },
   "scripts": {
-    "watch": "yarn npm-watch",
     "clean:all": "yarn clean && rimraf node_modules/",
     "clean": "rimraf dist/",
-    "copy-assets": "yarn copy-files:cjs && yarn copy-files:esm",
-    "copy-files:cjs": "copyfiles -u 1 src/**/*.svg src/**/*.png dist/cjs/src",
-    "copy-files:esm": "copyfiles -u 1 src/**/*.svg src/**/*.png dist/esm/src",
-    "build": "yarn build:all && yarn copy-assets",
-    "build:all": "yarn run build:esm && yarn run build:cjs",
-    "build:esm": "tsc --module es2020 --target es2017 --outDir dist/esm",
-    "build:cjs": "tsc --outDir dist/cjs",
+    "build": "rm -rf dist && webpack --mode=production --env ENV=production",
+    "start": "webpack serve --mode=development --env ENV=development --https --port 8181",
     "test": "mocha -r jsdom-global/register",
     "lint": "yarn lint:prettier --check && yarn lint:eslint",
     "lint:fix": "yarn lint:prettier --write && yarn lint:eslint --fix",

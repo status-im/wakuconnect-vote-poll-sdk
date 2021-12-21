@@ -7,16 +7,14 @@ import { TopBar, GlobalStyle } from '@dappconnect/vote-poll-sdk-react-components
 import pollingIcon from './assets/images/pollingIcon.png'
 import { JsonRpcSigner } from '@ethersproject/providers'
 import { orangeTheme } from '@dappconnect/vote-poll-sdk-react-components/dist/esm/src/style/themes'
-import ReactDOM from "react-dom"
-import {BrowserRouter} from "react-router-dom"
-import {Route, Switch} from "react-router"
-
-const daiTokenContract = "0x6B175474E89094C44Da98b954EedeAC495271d0F";
+import ReactDOM from 'react-dom'
+import { BrowserRouter, useParams } from 'react-router-dom'
+import { Route, Switch } from 'react-router'
 
 const config = {
   readOnlyChainId: ChainId.Mainnet,
   readOnlyUrls: {
-    [ChainId.Mainnet]: 'https://infura.io/v3/b4451d780cc64a078ccf2181e872cfcf',
+    [ChainId.Mainnet]: 'https://mainnet.infura.io/v3/b4451d780cc64a078ccf2181e872cfcf',
   },
   multicallAddresses: {
     1: '0xeefba1e63905ef1d7acba5a8513c70307c1ce441',
@@ -30,7 +28,7 @@ const config = {
   },
 }
 
-export function Polling({tokenAddress}: {tokenAddress: string}) {
+export function Polling({ tokenAddress }: { tokenAddress: string }) {
   const { account, library, activateBrowserWallet, deactivate } = useEthers()
   const [signer, setSigner] = useState<undefined | JsonRpcSigner>(undefined)
 
@@ -43,7 +41,7 @@ export function Polling({tokenAddress}: {tokenAddress: string}) {
       <TopBar
         logo={pollingIcon}
         logoWidth={84}
-        title={'Polling Dapp for DAI users'}
+        title={'Polling Dapp for DAI holders'}
         theme={orangeTheme}
         activate={activateBrowserWallet}
         account={account}
@@ -54,12 +52,14 @@ export function Polling({tokenAddress}: {tokenAddress: string}) {
   )
 }
 
-export function DaiPollingPage() {
+export function PollingPage() {
+  const { tokenAddress } = useParams<{ tokenAddress: string }>()
+
   return (
     <Page>
       <GlobalStyle />
       <DAppProvider config={config}>
-        <Polling tokenAddress={daiTokenContract}/>
+        <Polling tokenAddress={tokenAddress} />
       </DAppProvider>
     </Page>
   )
@@ -76,12 +76,12 @@ const Wrapper = styled.div`
 `
 
 ReactDOM.render(
-    <div style={{ height: '100%' }}>
-      <BrowserRouter>
-        <Switch>
-          <Route exact path="/dai" component={DaiPollingPage} />
-        </Switch>
-      </BrowserRouter>
-    </div>,
-    document.getElementById('root')
+  <div style={{ height: '100%' }}>
+    <BrowserRouter>
+      <Switch>
+        <Route exact path="/:tokenAddress" component={PollingPage} />
+      </Switch>
+    </BrowserRouter>
+  </div>,
+  document.getElementById('root')
 )

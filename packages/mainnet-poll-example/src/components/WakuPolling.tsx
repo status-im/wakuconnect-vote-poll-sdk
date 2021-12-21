@@ -20,12 +20,7 @@ export function WakuPolling({ appName, signer, theme, tokenAddress }: WakuPollin
   const config = useConfig()
   const [showPollCreation, setShowPollCreation] = useState(false)
   const [selectConnect, setSelectConnect] = useState(false)
-  const wakuPolling = useWakuPolling(
-    appName,
-    tokenAddress,
-    library,
-    config?.multicallAddresses?.[chainId ?? 1337]
-  )
+  const wakuPolling = useWakuPolling(appName, tokenAddress, library, config?.multicallAddresses?.[chainId ?? 1337])
   return (
     <Wrapper>
       {showPollCreation && signer && (
