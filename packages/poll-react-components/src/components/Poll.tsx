@@ -55,12 +55,12 @@ export function Poll({ poll, wakuPolling, theme, account }: PollProps) {
       </PollAnswersWrapper>
       {userInVoters < 0 && (
         <SmallButton
-          disabled={!account}
+          disabled={!account || selectedAnswer === undefined}
           onClick={async () => {
-            if (wakuPolling && account) {
+            if (wakuPolling && account && selectedAnswer !== undefined) {
               const result = await wakuPolling.sendTimedPollVote(
                 poll.poll.id,
-                selectedAnswer ?? 0,
+                selectedAnswer,
                 poll.poll.pollType === PollType.WEIGHTED ? BigNumber.from(tokenAmount) : undefined
               )
               if (result === 1) {
