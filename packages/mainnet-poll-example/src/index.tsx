@@ -8,8 +8,11 @@ import pollingIcon from './assets/images/pollingIcon.png'
 import { JsonRpcSigner } from '@ethersproject/providers'
 import { orangeTheme } from '@dappconnect/vote-poll-sdk-react-components/dist/esm/src/style/themes'
 import ReactDOM from 'react-dom'
-import { BrowserRouter, useParams } from 'react-router-dom'
+import { BrowserRouter } from 'react-router-dom'
 import { Route, Switch } from 'react-router'
+import { useLocation } from 'react-router-dom'
+
+const sntTokenAddress = '0x744d70FDBE2Ba4CF95131626614a1763DF805B9E'
 
 const config = {
   readOnlyChainId: ChainId.Mainnet,
@@ -41,7 +44,7 @@ export function Polling({ tokenAddress }: { tokenAddress: string }) {
       <TopBar
         logo={pollingIcon}
         logoWidth={84}
-        title={'Polling Dapp for DAI holders'}
+        title={'WakuConnect Poll Demo'}
         theme={orangeTheme}
         activate={activateBrowserWallet}
         account={account}
@@ -53,13 +56,14 @@ export function Polling({ tokenAddress }: { tokenAddress: string }) {
 }
 
 export function PollingPage() {
-  const { tokenAddress } = useParams<{ tokenAddress: string }>()
+  const location = useLocation()
+  const tokenAddress = new URLSearchParams(location.search).get('token')
 
   return (
     <Page>
       <GlobalStyle />
       <DAppProvider config={config}>
-        <Polling tokenAddress={tokenAddress} />
+        <Polling tokenAddress={tokenAddress ?? sntTokenAddress} />
       </DAppProvider>
     </Page>
   )
@@ -79,7 +83,7 @@ ReactDOM.render(
   <div style={{ height: '100%' }}>
     <BrowserRouter>
       <Switch>
-        <Route exact path="/:tokenAddress" component={PollingPage} />
+        <Route exact path="/" component={PollingPage} />
       </Switch>
     </BrowserRouter>
   </div>,
