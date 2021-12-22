@@ -5,6 +5,8 @@ import { WakuPolling } from '@dappconnect/vote-poll-sdk-core'
 import { Input, addIcon, SmallButton, Modal, Theme } from '@dappconnect/vote-poll-sdk-react-components'
 import { MESSAGE_SENDING_RESULT } from '@dappconnect/vote-poll-sdk-core/dist/esm/src/classes/WakuPolling'
 
+const defaultPollDuration = 7 * 24 * 60 * 60 * 1000 // One week in ms.
+
 function getLocaleIsoTime(dateTime: Date) {
   const MS_PER_MINUTE = 60000
   const milliseconds = dateTime.getTime() - dateTime.getTimezoneOffset() * MS_PER_MINUTE
@@ -45,7 +47,7 @@ export function PollCreation({ wakuPolling, theme, setShowPollCreation }: PollCr
   const [showCreateConfirmation, setShowCreateConfirmation] = useState(false)
   const [showNotEnoughTokens, setShowNotEnoughTokens] = useState(false)
   const [selectedType, setSelectedType] = useState(PollType.NON_WEIGHTED)
-  const [endTimePicker, setEndTimePicker] = useState(new Date(new Date().getTime() + 10000000))
+  const [endTimePicker, setEndTimePicker] = useState(new Date(new Date().getTime() + defaultPollDuration))
 
   return (
     <Modal heading="Create a poll" setShowModal={setShowPollCreation} theme={theme}>
