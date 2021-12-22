@@ -1,3 +1,0 @@
-"use strict";(self.webpackChunk_dappconnect_mainnet_poll_sdk_example=self.webpackChunk_dappconnect_mainnet_poll_sdk_example||[]).push([[966],{75966:(O,l,t)=>{t.r(l),t.d(l,{encrypt:()=>f,decrypt:()=>d,generateKeyForSymmetricEnc:()=>h,generateIv:()=>m});var o=t(5634),a=t(45024),i=t(48834).Buffer;const g="aes-256-gcm";async function f(r,s,e){const n=(0,o.CW)(g,s,r),u=n.update(e),p=n.final(),c=n.getAuthTag();return i.concat([u,p,c])}async function d(r,s,e){const n=e.length-a.D2,u=e.slice(0,n),p=e.slice(n),c=(0,o.G_)(g,s,r);c.setAuthTag(p);const y=c.update(u),E=c.final();return i.concat([y,E])}function h(){return(0,o.O6)(a.tW)}function m(){return(0,o.O6)(a.Sh)}}}]);
-
-//# sourceMappingURL=966.index.c207d5ad9a16c241dafd.js.map
