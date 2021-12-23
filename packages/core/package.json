@@ -42,7 +42,7 @@
     "typescript": "^4.3.5"
   },
   "dependencies": {
-    "@waku/vote-sdk-contracts": "^0.0.1",
+    "@waku/vote-sdk-contracts": "^0.1.0",
     "eth-sig-util": "^3.0.1",
     "ethers": "^5.4.4",
     "js-waku": "^0.11.0",
