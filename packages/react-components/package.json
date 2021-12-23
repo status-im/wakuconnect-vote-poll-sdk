@@ -1,6 +1,6 @@
 {
   "name": "@waku/vote-poll-sdk-react-components",
-  "repository": "git@github.com:status-im/wakuconnect-vote-poll-sdk.git",
+  "repository": "https://github.com/status-im/wakuconnect-vote-poll-sdk",
   "main": "dist/cjs/src/index.js",
   "module": "dist/esm/src/index.js",
   "types": "dist/esm/src/index.d.ts",

@@ -1,6 +1,6 @@
 {
   "name": "@waku/vote-sdk-example",
-  "repository": "git@github.com:status-im/wakuconnect-vote-poll-sdk.git",
+  "repository": "https://github.com/status-im/wakuconnect-vote-poll-sdk",
   "version": "0.1.0",
   "main": "dist/cjs/src/index.js",
   "module": "dist/esm/src/index.js",
