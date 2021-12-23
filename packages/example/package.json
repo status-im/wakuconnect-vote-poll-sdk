@@ -1,6 +1,6 @@
 {
   "name": "@waku/vote-poll-sdk-example",
-  "repository": "git@github.com:status-im/dappconnect-vote-poll-sdk.git",
+  "repository": "git@github.com:status-im/wakuconnect-vote-poll-sdk.git",
   "version": "0.1.0",
   "main": "index.js",
   "license": "MIT OR Apache-2.0",

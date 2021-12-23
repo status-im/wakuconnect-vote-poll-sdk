@@ -1,6 +1,6 @@
 {
   "name": "@waku/poll-sdk-react-hooks",
-  "repository": "git@github.com:status-im/dappconnect-vote-poll-sdk.git",
+  "repository": "git@github.com:status-im/wakuconnect-vote-poll-sdk.git",
   "version": "0.1.0",
   "main": "dist/cjs/src/index.js",
   "module": "dist/esm/src/index.js",
