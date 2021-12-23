@@ -1,0 +1,47 @@
+{
+  "name": "@dappconnect/mainnet-poll-sdk-example",
+  "version": "0.1.0",
+  "main": "index.js",
+  "license": "MIT",
+  "scripts": {
+    "clean:all": "yarn clean && rimraf node_modules/",
+    "clean": "rimraf dist/",
+    "build": "rm -rf dist && webpack --mode=production --env ENV=production",
+    "start": "webpack serve --mode=development --env ENV=development --https --port 8181",
+    "test": "mocha -r jsdom-global/register",
+    "lint": "yarn lint:prettier --check && yarn lint:eslint",
+    "lint:fix": "yarn lint:prettier --write && yarn lint:eslint --fix",
+    "lint:eslint": "eslint './{src,test}/**/*.{ts,tsx}'",
+    "lint:prettier": "yarn prettier './{src,test}/**/*.{ts,tsx}'"
+  },
+  "dependencies": {
+    "@dappconnect/vote-poll-sdk-core": "^0.1.0",
+    "@dappconnect/poll-sdk-react-components": "^0.1.0",
+    "@dappconnect/poll-sdk-react-hooks": "^0.1.0",
+    "@dappconnect/vote-poll-sdk-react-components": "^0.1.0",
+    "@usedapp/core": "^0.4.7",
+    "ethers": "^5.4.4",
+    "react": "^17.0.2",
+    "react-dom": "^17.0.2",
+    "react-router-dom": "^5.2.0",
+    "styled-components": "^5.3.0"
+  },
+  "devDependencies": {
+    "@types/chai": "^4.2.21",
+    "@types/mocha": "^9.0.0",
+    "@types/react": "^17.0.16",
+    "@types/styled-components": "^5.1.12",
+    "@typescript-eslint/eslint-plugin": "^4.29.0",
+    "@typescript-eslint/parser": "^4.29.0",
+    "chai": "^4.3.4",
+    "copyfiles": "^2.4.1",
+    "eslint": "^7.32.0",
+    "jsdom": "^16.7.0",
+    "jsdom-global": "^3.0.2",
+    "mocha": "^9.0.3",
+    "npm-watch": "^0.11.0",
+    "rimraf": "^3.0.2",
+    "ts-node": "^10.1.0",
+    "typescript": "^4.3.5"
+  }
+}
