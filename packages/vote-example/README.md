@@ -1,6 +1,6 @@
-# DappConnect Vote SDK Example
+# WakuConnect Vote SDK Example
 
-Package contains example usage of DappConnect Vote SDK 
+Package contains example usage of WakuConnect Vote SDK 
 
 For more detailed api please see README in voting-hooks and voting-components
 
