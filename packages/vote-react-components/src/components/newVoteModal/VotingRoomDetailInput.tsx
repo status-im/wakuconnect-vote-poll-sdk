@@ -2,8 +2,8 @@ import React, { useMemo } from 'react'
 import styled from 'styled-components'
 import { ProposingBtn } from '../Buttons'
 import { TextArea } from '../Input'
-import { blueTheme } from '@dappconnect/vote-poll-sdk-react-components/dist/esm/src/style/themes'
-import { WakuVoting } from '@dappconnect/vote-poll-sdk-core'
+import { blueTheme } from '@waku/vote-poll-sdk-react-components/dist/esm/src/style/themes'
+import { WakuVoting } from '@waku/vote-poll-sdk-core'
 
 interface VotingRoomDetailInputProps {
   availableAmount: number

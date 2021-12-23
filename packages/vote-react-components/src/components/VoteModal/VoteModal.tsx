@@ -1,9 +1,9 @@
 import React, { useEffect, useMemo, useState } from 'react'
-import { VotingRoom } from '@dappconnect/vote-poll-sdk-core/dist/esm/src/types/PollType'
-import { Modal, Theme } from '@dappconnect/vote-poll-sdk-react-components'
+import { VotingRoom } from '@waku/vote-poll-sdk-core/dist/esm/src/types/PollType'
+import { Modal, Theme } from '@waku/vote-poll-sdk-react-components'
 import { AmountModal } from './AmountModal'
 import { ConfirmModal } from './ConfirmModal'
-import { WakuVoting } from '@dappconnect/vote-poll-sdk-core'
+import { WakuVoting } from '@waku/vote-poll-sdk-core'
 
 export interface VoteModalProps {
   setShowModal: (val: boolean) => void

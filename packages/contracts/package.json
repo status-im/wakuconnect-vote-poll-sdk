@@ -1,8 +1,8 @@
 {
-  "name": "@dappconnect/vote-sdk-contracts",
+  "name": "@waku/vote-sdk-contracts",
   "version": "0.0.1",
   "main": "index.js",
-  "repository": "git@github.com:status-im/dappconnect-vote-poll-sdk.git",
+  "repository": "https://github.com/status-im/wakuconnect-vote-poll-sdk",
   "license": "MIT OR Apache-2.0",
   "scripts": {
     "clean:all": "yarn clean && rimraf node_modules/",

@@ -1,6 +1,6 @@
 {
-  "name": "@dappconnect/vote-poll-sdk-example",
-  "repository": "git@github.com:status-im/dappconnect-vote-poll-sdk.git",
+  "name": "@waku/vote-poll-sdk-example",
+  "repository": "https://github.com/status-im/wakuconnect-vote-poll-sdk",
   "version": "0.1.0",
   "main": "index.js",
   "license": "MIT OR Apache-2.0",
@@ -16,8 +16,8 @@
     "lint:prettier": "yarn prettier './{src,test}/**/*.{ts,tsx}'"
   },
   "dependencies": {
-    "@dappconnect/poll-sdk-example": "^0.1.0",
-    "@dappconnect/vote-sdk-example": "^0.1.0",
+    "@waku/poll-sdk-example": "^0.1.0",
+    "@waku/vote-sdk-example": "^0.1.0",
     "assert": "^2.0.0",
     "buffer": "^6.0.3",
     "crypto-browserify": "^3.12.0",

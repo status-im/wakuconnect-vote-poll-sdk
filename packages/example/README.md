@@ -1,1 +1,1 @@
-# DappConnect Vote & Poll SDK Example
+# WakuConnect Vote & Poll SDK Example

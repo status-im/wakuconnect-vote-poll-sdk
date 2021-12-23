@@ -56,7 +56,7 @@ WakuVoting create function expects name of DApp and address of a voting contract
 Address of token is derived from votingContract
 
 ```ts
-    import { WakuVoting } from '@dappconnect/vote-poll-sdk-core'
+    import { WakuVoting } from '@waku/vote-poll-sdk-core'
 
     await WakuVoting.create(appName, contractAddress, provider, multicallAddress, waku)
 ```
@@ -148,7 +148,7 @@ To make it easier to use WakuPolling class was created
 WakuPolling create expects name of DApp and address of a token contract, web3provider, also as optional parameter can take custom Waku object.
 
 ```ts
-    import { WakuPolling } from '@dappconnect/vote-poll-sdk-core'
+    import { WakuPolling } from '@waku/vote-poll-sdk-core'
 
     await WakuPolling.create(appName, tokenAddress, provider, multicallAddress, waku)
 ```

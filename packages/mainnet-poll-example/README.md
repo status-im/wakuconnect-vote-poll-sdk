@@ -1,1 +1,1 @@
-# Mainnet DappConnect Poll SDK Example
+# Mainnet WakuConnect Poll SDK Example

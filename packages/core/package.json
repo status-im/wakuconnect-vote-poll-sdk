@@ -1,6 +1,6 @@
 {
-  "name": "@dappconnect/vote-poll-sdk-core",
-  "repository": "git@github.com:status-im/dappconnect-vote-poll-sdk.git",
+  "name": "@waku/vote-poll-sdk-core",
+  "repository": "https://github.com/status-im/wakuconnect-vote-poll-sdk",
   "main": "dist/cjs/src/index.js",
   "module": "dist/esm/src/index.js",
   "types": "dist/esm/src/index.d.ts",
@@ -42,7 +42,7 @@
     "typescript": "^4.3.5"
   },
   "dependencies": {
-    "@dappconnect/vote-sdk-contracts": "^0.0.1",
+    "@waku/vote-sdk-contracts": "^0.0.1",
     "eth-sig-util": "^3.0.1",
     "ethers": "^5.4.4",
     "js-waku": "^0.11.0",

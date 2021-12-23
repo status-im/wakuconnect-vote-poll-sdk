@@ -1,4 +1,4 @@
-import { WakuVoting } from '@dappconnect/vote-poll-sdk-core'
+import { WakuVoting } from '@waku/vote-poll-sdk-core'
 import React, { useEffect, useRef, useState } from 'react'
 import { Web3Provider } from '@ethersproject/providers'
 

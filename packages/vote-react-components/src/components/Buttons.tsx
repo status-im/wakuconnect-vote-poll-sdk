@@ -1,4 +1,4 @@
-import { Button } from '@dappconnect/vote-poll-sdk-react-components'
+import { Button } from '@waku/vote-poll-sdk-react-components'
 import styled from 'styled-components'
 
 export const Btn = styled(Button)`

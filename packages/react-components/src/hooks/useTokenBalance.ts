@@ -1,4 +1,4 @@
-import { WakuMessaging } from '@dappconnect/vote-poll-sdk-core'
+import { WakuMessaging } from '@waku/vote-poll-sdk-core'
 import { BigNumber } from 'ethers'
 import React, { useEffect, useState } from 'react'
 

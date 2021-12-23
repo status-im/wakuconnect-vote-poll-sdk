@@ -5,14 +5,14 @@ import {
   VotingRoomList,
   VotingRoomListEmpty,
   NewVotingRoomModal,
-} from '@dappconnect/vote-sdk-react-components'
-import { blueTheme } from '@dappconnect/vote-poll-sdk-react-components/dist/esm/src/style/themes'
-import { WakuVoting } from '@dappconnect/vote-poll-sdk-core'
-import { useTokenBalance } from '@dappconnect/vote-poll-sdk-react-components'
+} from '@waku/vote-sdk-react-components'
+import { blueTheme } from '@waku/vote-poll-sdk-react-components/dist/esm/src/style/themes'
+import { WakuVoting } from '@waku/vote-poll-sdk-core'
+import { useTokenBalance } from '@waku/vote-poll-sdk-react-components'
 import { useEthers } from '@usedapp/core'
-import { Modal, Networks, useMobileVersion, Theme } from '@dappconnect/vote-poll-sdk-react-components'
-import { useVotingRoomsId } from '@dappconnect/vote-sdk-react-hooks'
-import { VotingRoom } from '@dappconnect/vote-poll-sdk-core/dist/esm/src/types/PollType'
+import { Modal, Networks, useMobileVersion, Theme } from '@waku/vote-poll-sdk-react-components'
+import { useVotingRoomsId } from '@waku/vote-sdk-react-hooks'
+import { VotingRoom } from '@waku/vote-poll-sdk-core/dist/esm/src/types/PollType'
 import { useHistory } from 'react-router'
 
 type VotingListHeaderProps = {

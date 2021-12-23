@@ -1,6 +1,6 @@
 {
-  "name": "@dappconnect/vote-poll-sdk",
-  "repository": "git@github.com:status-im/dappconnect-vote-poll-sdk.git",
+  "name": "@waku/vote-poll-sdk",
+  "repository": "https://github.com/status-im/wakuconnect-vote-poll-sdk",
   "private": true,
   "license": "MIT OR Apache-2.0",
   "engines": {

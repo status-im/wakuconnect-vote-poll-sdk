@@ -1,4 +1,4 @@
-# DappConnect Poll SDK Example
+# WakuConnect Poll SDK Example
 
 This package is example usage of WakuPolling 
 

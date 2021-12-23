@@ -1,6 +1,6 @@
 {
-  "name": "@dappconnect/poll-sdk-react-components",
-  "repository": "git@github.com:status-im/dappconnect-vote-poll-sdk.git",
+  "name": "@waku/poll-sdk-react-components",
+  "repository": "https://github.com/status-im/wakuconnect-vote-poll-sdk",
   "version": "0.1.0",
   "main": "dist/cjs/src/index.js",
   "module": "dist/esm/src/index.js",
@@ -33,9 +33,9 @@
     "lint:prettier": "yarn prettier './{src,test}/**/*.{ts,tsx}'"
   },
   "dependencies": {
-    "@dappconnect/vote-poll-sdk-core": "^0.1.0",
-    "@dappconnect/poll-sdk-react-hooks": "^0.1.0",
-    "@dappconnect/vote-poll-sdk-react-components": "^0.1.0",
+    "@waku/vote-poll-sdk-core": "^0.1.0",
+    "@waku/poll-sdk-react-hooks": "^0.1.0",
+    "@waku/vote-poll-sdk-react-components": "^0.1.0",
     "ethers": "^5.4.4",
     "react": "^17.0.2",
     "styled-components": "^5.3.0"

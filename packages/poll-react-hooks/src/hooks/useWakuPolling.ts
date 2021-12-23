@@ -1,5 +1,5 @@
 import { useEffect, useState, useRef } from 'react'
-import { WakuPolling } from '@dappconnect/vote-poll-sdk-core'
+import { WakuPolling } from '@waku/vote-poll-sdk-core'
 import { Web3Provider } from '@ethersproject/providers'
 
 export function useWakuPolling(

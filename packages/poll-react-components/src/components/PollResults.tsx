@@ -1,7 +1,7 @@
 import React from 'react'
-import { DetailedTimedPoll } from '@dappconnect/vote-poll-sdk-core/dist/esm/src/models/DetailedTimedPoll'
+import { DetailedTimedPoll } from '@waku/vote-poll-sdk-core/dist/esm/src/models/DetailedTimedPoll'
 import styled from 'styled-components'
-import { colorRouletteGenerator, checkCircleIcon } from '@dappconnect/vote-poll-sdk-react-components'
+import { colorRouletteGenerator, checkCircleIcon } from '@waku/vote-poll-sdk-react-components'
 
 type PollResultsProps = {
   poll: DetailedTimedPoll
