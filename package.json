@@ -21,7 +21,6 @@
     "test": "wsrun -e -c -s --exclude-missing test"
   },
   "dependencies": {
-    "prettier": "^2.3.1",
     "wsrun": "^5.2.4"
   }
 }
