@@ -1,10 +1,10 @@
-import { WakuPolling } from '@dappconnect/vote-poll-sdk-core'
-import { DetailedTimedPoll } from '@dappconnect/vote-poll-sdk-core/dist/esm/src/models/DetailedTimedPoll'
+import { WakuPolling } from '@waku/vote-poll-sdk-core'
+import { DetailedTimedPoll } from '@waku/vote-poll-sdk-core/dist/esm/src/models/DetailedTimedPoll'
 import React, { useEffect, useState } from 'react'
 import { Poll } from './Poll'
 import styled from 'styled-components'
-import { Theme } from '@dappconnect/vote-poll-sdk-react-components'
-import { usePollList } from '@dappconnect/poll-sdk-react-hooks'
+import { Theme } from '@waku/vote-poll-sdk-react-components'
+import { usePollList } from '@waku/poll-sdk-react-hooks'
 type PollListProps = {
   theme: Theme
   wakuPolling: WakuPolling | undefined

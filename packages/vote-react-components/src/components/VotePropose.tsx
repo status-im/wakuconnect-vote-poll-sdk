@@ -1,4 +1,4 @@
-import { WakuVoting } from '@dappconnect/vote-poll-sdk-core'
+import { WakuVoting } from '@waku/vote-poll-sdk-core'
 import React, { useCallback, useMemo } from 'react'
 import { useState } from 'react'
 import styled from 'styled-components'

@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useRef } from 'react'
-import { WakuVoting } from '@dappconnect/vote-poll-sdk-core'
-import { VotingRoom } from '@dappconnect/vote-poll-sdk-core/dist/esm/src/types/PollType'
+import { WakuVoting } from '@waku/vote-poll-sdk-core'
+import { VotingRoom } from '@waku/vote-poll-sdk-core/dist/esm/src/types/PollType'
 
 export function useVotingRoom(id: number, wakuVoting: WakuVoting) {
   const [votingRoom, setVotingRoom] = useState<VotingRoom | undefined>(undefined)

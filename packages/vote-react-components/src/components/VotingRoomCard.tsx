@@ -1,13 +1,13 @@
 import React, { ReactElement, useCallback, useState, useRef, useMemo } from 'react'
 import styled from 'styled-components'
-import { Theme } from '@dappconnect/vote-poll-sdk-react-components'
+import { Theme } from '@waku/vote-poll-sdk-react-components'
 import { ProposalInfo } from './ProposalInfo'
 import { ProposalVote } from './ProposalVoteCard/ProposalVote'
-import { WakuVoting } from '@dappconnect/vote-poll-sdk-core'
-import { useVotingRoom } from '@dappconnect/vote-sdk-react-hooks'
+import { WakuVoting } from '@waku/vote-poll-sdk-core'
+import { useVotingRoom } from '@waku/vote-sdk-react-hooks'
 import { VoteModal, VoteModalProps } from './VoteModal/VoteModal'
-import { useRefMobileVersion } from '@dappconnect/vote-poll-sdk-react-components'
-import { VotingRoom } from '@dappconnect/vote-poll-sdk-core/dist/esm/src/types/PollType'
+import { useRefMobileVersion } from '@waku/vote-poll-sdk-react-components'
+import { VotingRoom } from '@waku/vote-poll-sdk-core/dist/esm/src/types/PollType'
 
 interface VotingRoomCardProps {
   votingRoomId: number

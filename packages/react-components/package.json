@@ -1,5 +1,5 @@
 {
-  "name": "@dappconnect/vote-poll-sdk-react-components",
+  "name": "@waku/vote-poll-sdk-react-components",
   "repository": "git@github.com:status-im/dappconnect-vote-poll-sdk.git",
   "main": "dist/cjs/src/index.js",
   "module": "dist/esm/src/index.js",
@@ -34,7 +34,7 @@
     "ethers": "^5.4.4",
     "react": "^17.0.2",
     "styled-components": "^5.3.0",
-    "@dappconnect/vote-poll-sdk-core": "^0.1.0"
+    "@waku/vote-poll-sdk-core": "^0.1.0"
   },
   "devDependencies": {
     "@types/chai": "^4.2.21",

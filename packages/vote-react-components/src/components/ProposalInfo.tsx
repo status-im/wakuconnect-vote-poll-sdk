@@ -1,4 +1,4 @@
-import { VotingRoom } from '@dappconnect/vote-poll-sdk-core/dist/esm/src/types/PollType'
+import { VotingRoom } from '@waku/vote-poll-sdk-core/dist/esm/src/types/PollType'
 import React from 'react'
 import styled from 'styled-components'
 import { ViewLink } from './ViewLink'

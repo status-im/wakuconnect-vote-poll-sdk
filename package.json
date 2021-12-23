@@ -1,5 +1,5 @@
 {
-  "name": "@dappconnect/vote-poll-sdk",
+  "name": "@waku/vote-poll-sdk",
   "repository": "git@github.com:status-im/dappconnect-vote-poll-sdk.git",
   "private": true,
   "license": "MIT OR Apache-2.0",

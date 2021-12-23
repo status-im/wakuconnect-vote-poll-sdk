@@ -2,10 +2,10 @@ import React from 'react'
 import { Redirect, Route, Switch, useHistory } from 'react-router'
 import { BrowserRouter } from 'react-router-dom'
 import styled from 'styled-components'
-import { VotingRoomMobile, NewVotingRoomMobile } from '@dappconnect/vote-sdk-react-components'
+import { VotingRoomMobile, NewVotingRoomMobile } from '@waku/vote-sdk-react-components'
 import { Voting } from './Voting'
-import { WakuVoting } from '@dappconnect/vote-poll-sdk-core'
-import { useTokenBalance } from '@dappconnect/vote-poll-sdk-react-components'
+import { WakuVoting } from '@waku/vote-poll-sdk-core'
+import { useTokenBalance } from '@waku/vote-poll-sdk-react-components'
 
 type VotingRoomCreationProps = {
   tokenBalance: number

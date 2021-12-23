@@ -1,5 +1,5 @@
 {
-  "name": "@dappconnect/vote-sdk-react-hooks",
+  "name": "@waku/vote-sdk-react-hooks",
   "repository": "git@github.com:status-im/dappconnect-vote-poll-sdk.git",
   "version": "0.1.0",
   "main": "dist/cjs/src/index.js",
@@ -27,7 +27,7 @@
     "lint:prettier": "yarn prettier './{src,test}/**/*.{ts,tsx}'"
   },
   "dependencies": {
-    "@dappconnect/vote-poll-sdk-core": "^0.1.0",
+    "@waku/vote-poll-sdk-core": "^0.1.0",
     "ethers": "^5.4.4",
     "react": "^17.0.2",
     "styled-components": "^5.3.0"

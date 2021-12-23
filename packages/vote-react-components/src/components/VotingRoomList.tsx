@@ -1,10 +1,10 @@
 import React from 'react'
 import styled from 'styled-components'
-import { Theme } from '@dappconnect/vote-poll-sdk-react-components'
+import { Theme } from '@waku/vote-poll-sdk-react-components'
 import { VotingRoomCard } from './VotingRoomCard'
-import { WakuVoting } from '@dappconnect/vote-poll-sdk-core'
+import { WakuVoting } from '@waku/vote-poll-sdk-core'
 
-import { VotingRoom } from '@dappconnect/vote-poll-sdk-core/dist/esm/src/types/PollType'
+import { VotingRoom } from '@waku/vote-poll-sdk-core/dist/esm/src/types/PollType'
 
 type VotingRoomListProps = {
   theme: Theme

@@ -1,4 +1,4 @@
-import { VotingContract } from '@dappconnect/vote-sdk-contracts/abi'
+import { VotingContract } from '@waku/vote-sdk-contracts/abi'
 import { WakuMessaging } from './WakuMessaging'
 import { Contract, Wallet, BigNumber, ethers, utils } from 'ethers'
 import { Waku, WakuMessage } from 'js-waku'

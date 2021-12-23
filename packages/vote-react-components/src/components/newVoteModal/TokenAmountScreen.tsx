@@ -1,4 +1,4 @@
-import { WakuVoting } from '@dappconnect/vote-poll-sdk-core'
+import { WakuVoting } from '@waku/vote-poll-sdk-core'
 import { useEthers } from '@usedapp/core'
 import React, { useState } from 'react'
 import styled from 'styled-components'

@@ -1,9 +1,9 @@
 import React, { ReactNode, useState } from 'react'
 import styled from 'styled-components'
-import { PollType } from '@dappconnect/vote-poll-sdk-core/dist/esm/src/types/PollType'
-import { WakuPolling } from '@dappconnect/vote-poll-sdk-core'
-import { Input, addIcon, SmallButton, Modal, Theme } from '@dappconnect/vote-poll-sdk-react-components'
-import { MESSAGE_SENDING_RESULT } from '@dappconnect/vote-poll-sdk-core/dist/esm/src/classes/WakuPolling'
+import { PollType } from '@waku/vote-poll-sdk-core/dist/esm/src/types/PollType'
+import { WakuPolling } from '@waku/vote-poll-sdk-core'
+import { Input, addIcon, SmallButton, Modal, Theme } from '@waku/vote-poll-sdk-react-components'
+import { MESSAGE_SENDING_RESULT } from '@waku/vote-poll-sdk-core/dist/esm/src/classes/WakuPolling'
 
 const defaultPollDuration = 7 * 24 * 60 * 60 * 1000 // One week in ms.
 
