@@ -8,7 +8,9 @@
   "license": "MIT OR Apache-2.0",
   "watch": {
     "build": {
-      "patterns": ["src"],
+      "patterns": [
+        "src"
+      ],
       "extensions": "ts,tsx",
       "runOnChangeOnly": false
     }
