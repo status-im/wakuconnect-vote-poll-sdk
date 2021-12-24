@@ -36,7 +36,7 @@
     "@waku/poll-sdk-react-hooks": "^0.1.0",
     "@waku/vote-poll-sdk-core": "^0.1.0",
     "@waku/vote-poll-sdk-react-components": "^0.1.0",
-    "ethers": "^5.4.4",
+    "ethers": "5.4.6",
     "react": "^17.0.2",
     "styled-components": "^5.3.0"
   },
