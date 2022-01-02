@@ -1450,16 +1450,17 @@
   resolved "https://registry.yarnpkg.com/@ungap/promise-all-settled/-/promise-all-settled-1.1.2.tgz#aa58042711d6e3275dd37dc597e5d31e8c290a44"
   integrity sha512-sL/cEvJWAnClXw0wHk85/2L0G6Sj8UB0Ctc1TEMbKSsmpRosqhwj9gWgFRZSrBr2f9tiXISwNhCPmlfqUqyb9Q==
 
-"@usedapp/core@^0.4.7":
-  version "0.4.7"
-  resolved "https://registry.yarnpkg.com/@usedapp/core/-/core-0.4.7.tgz#87964abf14ba87edd4fe068ee73fe0cb9fcdee2d"
-  integrity sha512-0JpzUPUHFgmq8GWTl9EGZKR5nS8HQ2e5wwaIG8GBE2VUS40uKwlNhlqkIwD2mkFhpMj8EssMArzcZRzLqZmEPA==
+"@usedapp/core@0.5.5":
+  version "0.5.5"
+  resolved "https://registry.yarnpkg.com/@usedapp/core/-/core-0.5.5.tgz#651d8b4e2fc85a19935e0b3ec1495a103b8b75b6"
+  integrity sha512-2a/ttaD0fY1Ui7ubB0pVEzi15euuKr8a/oiXs4rWH8qrth+jW38QyImvl7xQVO63Ikq2pKqmBOJbSFVubdHNDw==
   dependencies:
     "@types/react" "17.0.1"
     "@web3-react/core" "6.1.1"
     "@web3-react/injected-connector" "6.0.7"
     "@web3-react/network-connector" "6.1.5"
     ethers "5.4.1"
+    lodash.merge "^4.6.2"
     nanoid "3.1.22"
 
 "@vascosantos/moving-average@^1.1.0":
@@ -4896,7 +4897,7 @@ ethereum-cryptography@^0.1.3:
     secp256k1 "^4.0.1"
     setimmediate "^1.0.5"
 
-ethereum-waffle@^3.3.0, ethereum-waffle@^3.4.0:
+ethereum-waffle@^3.4.0:
   version "3.4.0"
   resolved "https://registry.yarnpkg.com/ethereum-waffle/-/ethereum-waffle-3.4.0.tgz#990b3c6c26db9c2dd943bf26750a496f60c04720"
   integrity sha512-ADBqZCkoSA5Isk486ntKJVjFEawIiC+3HxNqpJqONvh3YXBTNiRfXvJtGuAFLXPG91QaqkGqILEHANAo7j/olQ==
@@ -5150,7 +5151,7 @@ ethers@5.4.1:
     "@ethersproject/web" "5.4.0"
     "@ethersproject/wordlists" "5.4.0"
 
-ethers@^5.0.0, ethers@^5.0.1, ethers@^5.0.2, ethers@^5.4.4:
+ethers@5.4.6, ethers@^5.0.0, ethers@^5.0.1, ethers@^5.0.2:
   version "5.4.6"
   resolved "https://registry.yarnpkg.com/ethers/-/ethers-5.4.6.tgz#fe0a023956b5502c947f58e82fbcf9a73e5e75b6"
   integrity sha512-F7LXARyB/Px3AQC6/QKedWZ8eqCkgOLORqL4B/F0Mag/K+qJSFGqsR36EaOZ6fKg3ZonI+pdbhb4A8Knt/43jQ==
