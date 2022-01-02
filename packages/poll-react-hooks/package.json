@@ -1,7 +1,7 @@
 {
   "name": "@waku/poll-sdk-react-hooks",
   "repository": "https://github.com/status-im/wakuconnect-vote-poll-sdk",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "main": "dist/cjs/src/index.js",
   "module": "dist/esm/src/index.js",
   "types": "dist/esm/src/index.d.ts",
@@ -33,7 +33,7 @@
   },
   "dependencies": {
     "@usedapp/core": "0.5.5",
-    "@waku/vote-poll-sdk-core": "^0.1.0",
+    "@waku/vote-poll-sdk-core": "^0.2.0",
     "ethers": "5.4.6",
     "react": "^17.0.2",
     "styled-components": "^5.3.0"
