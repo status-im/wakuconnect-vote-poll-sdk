@@ -17,4 +17,22 @@ jobs:
     - run: yarn lint
     - run: yarn build
     - run: yarn test
-    
+  examples:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        example: [ mainnet-poll ]
+    steps:
+      - uses: actions/checkout@v2
+      - name: Use Node.js
+        uses: actions/setup-node@v1
+        with:
+          node-version: 14.x
+      - run: yarn install --frozen-lockfile
+        working-directory: examples/${{ matrix.example }}
+      - run: yarn lint
+        working-directory: examples/${{ matrix.example }}
+      - run: yarn build
+        working-directory: examples/${{ matrix.example }}
+      - run: yarn test
+        working-directory: examples/${{ matrix.example }}
