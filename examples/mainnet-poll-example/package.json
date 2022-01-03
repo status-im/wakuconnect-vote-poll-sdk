@@ -39,7 +39,7 @@
     "assert": "^2.0.0",
     "chai": "^4.3.4",
     "esbuild-loader": "^2.18.0",
-    "eslint": "^7.32.0",
+    "eslint": "^8.6.0",
     "file-loader": "^6.2.0",
     "fork-ts-checker-webpack-plugin": "^6.5.0",
     "html-webpack-plugin": "^5.5.0",
