@@ -1,4 +1,3 @@
-const path = require('path')
 const HtmlWebpackPlugin = require('html-webpack-plugin')
 const ForkTsCheckerWebpackPlugin = require('fork-ts-checker-webpack-plugin')
 const webpack = require('webpack')
@@ -14,7 +13,6 @@ module.exports = (env) => {
         entry: './src/index.tsx',
         output: {
             filename: 'index.[fullhash].js',
-            path: path.join(__dirname, 'dist'),
             publicPath: "/",
         },
         devtool: 'source-map',
@@ -52,11 +50,11 @@ module.exports = (env) => {
         },
         optimization: {
             minimizer: [
-              new ESBuildMinifyPlugin({
-                target: 'es2018',
-              }),
+                new ESBuildMinifyPlugin({
+                    target: 'es2018',
+                }),
             ],
-          },
+        },
         plugins: [
             new ForkTsCheckerWebpackPlugin(),
             new HtmlWebpackPlugin({
@@ -73,9 +71,13 @@ module.exports = (env) => {
         devServer: {
             historyApiFallback: true,
             host: '0.0.0.0',
-            stats: 'errors-only',
-            overlay: true,
             hot: true,
+            client: {
+                overlay: true,
+            },
+            devMiddleware: {
+                stats: 'errors-only',
+            }
         },
         stats: 'minimal'
     }
