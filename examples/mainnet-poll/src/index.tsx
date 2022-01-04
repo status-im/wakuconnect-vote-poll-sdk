@@ -31,7 +31,7 @@ const config = {
   },
 }
 
-export function Polling({ tokenAddress }: { tokenAddress: string }) {
+export function PollPage({ tokenAddress }: { tokenAddress: string }) {
   const { account, library, activateBrowserWallet, deactivate } = useEthers()
   const [signer, setSigner] = useState<undefined | JsonRpcSigner>(undefined)
 
@@ -55,7 +55,7 @@ export function Polling({ tokenAddress }: { tokenAddress: string }) {
   )
 }
 
-export function PollingPage() {
+export function App() {
   const location = useLocation()
   const tokenAddress = new URLSearchParams(location.search).get('token')
 
@@ -63,7 +63,7 @@ export function PollingPage() {
     <Wrapper>
       <GlobalStyle />
       <DAppProvider config={config}>
-        <Polling tokenAddress={tokenAddress ?? sntTokenAddress} />
+        <PollPage tokenAddress={tokenAddress ?? sntTokenAddress} />
       </DAppProvider>
     </Wrapper>
   )
@@ -78,7 +78,7 @@ ReactDOM.render(
   <div style={{ height: '100%' }}>
     <BrowserRouter>
       <Switch>
-        <Route exact path="/" component={PollingPage} />
+        <Route exact path="/" component={App} />
       </Switch>
     </BrowserRouter>
   </div>,
