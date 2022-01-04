@@ -15,7 +15,7 @@ type WakuPollingProps = {
   tokenAddress: string
 }
 
-export function WakuPolling({ appName, signer, theme, tokenAddress }: WakuPollingProps) {
+export function Poll({ appName, signer, theme, tokenAddress }: WakuPollingProps) {
   const { activateBrowserWallet, account, library, chainId } = useEthers()
   const config = useConfig()
   const [showPollCreation, setShowPollCreation] = useState(false)

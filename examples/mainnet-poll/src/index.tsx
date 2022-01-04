@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react'
 import styled from 'styled-components'
 import { DAppProvider, ChainId, useEthers } from '@usedapp/core'
 import { DEFAULT_CONFIG } from '@usedapp/core/dist/cjs/src/model/config/default'
-import { WakuPolling } from './components/WakuPolling'
+import { Poll } from './components/Poll'
 import { TopBar, GlobalStyle } from '@waku/vote-poll-sdk-react-components'
 import pollingIcon from './assets/images/pollingIcon.png'
 import { JsonRpcSigner } from '@ethersproject/providers'
@@ -50,7 +50,7 @@ export function PollPage({ tokenAddress }: { tokenAddress: string }) {
         account={account}
         deactivate={deactivate}
       />
-      <WakuPolling theme={orangeTheme} appName={'testApp_'} signer={signer} tokenAddress={tokenAddress} />
+      <Poll theme={orangeTheme} appName={'testApp_'} signer={signer} tokenAddress={tokenAddress} />
     </Wrapper>
   )
 }
