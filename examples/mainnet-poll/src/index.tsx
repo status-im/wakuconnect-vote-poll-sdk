@@ -60,19 +60,14 @@ export function PollingPage() {
   const tokenAddress = new URLSearchParams(location.search).get('token')
 
   return (
-    <Page>
+    <Wrapper>
       <GlobalStyle />
       <DAppProvider config={config}>
         <Polling tokenAddress={tokenAddress ?? sntTokenAddress} />
       </DAppProvider>
-    </Page>
+    </Wrapper>
   )
 }
-
-const Page = styled.div`
-  height: 100%;
-  width: 100%;
-`
 
 const Wrapper = styled.div`
   height: 100%;
