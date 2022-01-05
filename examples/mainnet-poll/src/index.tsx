@@ -1,16 +1,15 @@
 import React, { useEffect, useState } from 'react'
 import styled from 'styled-components'
-import { DAppProvider, ChainId, useEthers } from '@usedapp/core'
+import { ChainId, DAppProvider, useEthers } from '@usedapp/core'
 import { DEFAULT_CONFIG } from '@usedapp/core/dist/cjs/src/model/config/default'
-import { WakuPolling } from './components/WakuPolling'
-import { TopBar, GlobalStyle } from '@waku/vote-poll-sdk-react-components'
+import { Poll } from './components/Poll'
+import { GlobalStyle, TopBar } from '@waku/vote-poll-sdk-react-components'
 import pollingIcon from './assets/images/pollingIcon.png'
 import { JsonRpcSigner } from '@ethersproject/providers'
 import { orangeTheme } from '@waku/vote-poll-sdk-react-components/dist/esm/src/style/themes'
 import ReactDOM from 'react-dom'
-import { BrowserRouter } from 'react-router-dom'
+import { BrowserRouter, useLocation } from 'react-router-dom'
 import { Route, Switch } from 'react-router'
-import { useLocation } from 'react-router-dom'
 
 const sntTokenAddress = '0x744d70FDBE2Ba4CF95131626614a1763DF805B9E'
 
@@ -31,12 +30,17 @@ const config = {
   },
 }
 
-export function Polling({ tokenAddress }: { tokenAddress: string }) {
-  const { account, library, activateBrowserWallet, deactivate } = useEthers()
+export function PollPage({ tokenAddress }: { tokenAddress: string }) {
+  const { account, library, activateBrowserWallet, deactivate, chainId } = useEthers()
   const [signer, setSigner] = useState<undefined | JsonRpcSigner>(undefined)
 
   useEffect(() => {
-    setSigner(library?.getSigner())
+    if (account) {
+      setSigner(library?.getSigner())
+    } else {
+      // Deactivate signer if signed out
+      setSigner(undefined)
+    }
   }, [account])
 
   return (
@@ -50,29 +54,32 @@ export function Polling({ tokenAddress }: { tokenAddress: string }) {
         account={account}
         deactivate={deactivate}
       />
-      <WakuPolling theme={orangeTheme} appName={'testApp_'} signer={signer} tokenAddress={tokenAddress} />
+      <Poll
+        theme={orangeTheme}
+        appName={'demo-poll-dapp'}
+        library={library}
+        signer={signer}
+        chainId={chainId}
+        account={account}
+        tokenAddress={tokenAddress}
+      />
     </Wrapper>
   )
 }
 
-export function PollingPage() {
+export function App() {
   const location = useLocation()
   const tokenAddress = new URLSearchParams(location.search).get('token')
 
   return (
-    <Page>
+    <Wrapper>
       <GlobalStyle />
       <DAppProvider config={config}>
-        <Polling tokenAddress={tokenAddress ?? sntTokenAddress} />
+        <PollPage tokenAddress={tokenAddress ?? sntTokenAddress} />
       </DAppProvider>
-    </Page>
+    </Wrapper>
   )
 }
-
-const Page = styled.div`
-  height: 100%;
-  width: 100%;
-`
 
 const Wrapper = styled.div`
   height: 100%;
@@ -83,7 +90,7 @@ ReactDOM.render(
   <div style={{ height: '100%' }}>
     <BrowserRouter>
       <Switch>
-        <Route exact path="/" component={PollingPage} />
+        <Route exact path="/" component={App} />
       </Switch>
     </BrowserRouter>
   </div>,
