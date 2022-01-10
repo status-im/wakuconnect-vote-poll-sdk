@@ -18,7 +18,7 @@ message Vote {
 `)
 
 type Message = {
-  roomIdAndType: string
+  proposalIdAndType: string
   tokenAmount: string
   voter: string
 }
@@ -43,7 +43,7 @@ export function createSignMsgParams(message: Message, chainId: number, verifying
         { name: 'verifyingContract', type: 'address' },
       ],
       Vote: [
-        { name: 'roomIdAndType', type: 'uint256' },
+        { name: 'proposalIdAndType', type: 'uint256' },
         { name: 'tokenAmount', type: 'uint256' },
         { name: 'voter', type: 'address' },
       ],
@@ -92,7 +92,7 @@ export class VoteMsg {
     const signFunction = createSignFunction(signer)
     const voter = await signer.getAddress()
     const msg = {
-      roomIdAndType: BigNumber.from(roomId).mul(2).add(answer).toHexString(),
+      proposalIdAndType: BigNumber.from(roomId).mul(2).add(answer).toHexString(),
       tokenAmount: tokenAmount.toHexString(),
       voter,
     }
@@ -136,7 +136,7 @@ export class VoteMsg {
       const signature = utils.hexlify(payload.signature)
 
       const msg = {
-        roomIdAndType: BigNumber.from(payload.roomId).mul(2).add(payload.answer).toHexString(),
+        proposalIdAndType: BigNumber.from(payload.roomId).mul(2).add(payload.answer).toHexString(),
         tokenAmount: utils.hexlify(payload.tokenAmount),
         voter: utils.getAddress(utils.hexlify(payload.voter)),
       }

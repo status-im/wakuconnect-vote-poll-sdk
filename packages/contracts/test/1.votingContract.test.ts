@@ -26,7 +26,7 @@ const typedData = {
       { name: 'verifyingContract', type: 'address' },
     ],
     Vote: [
-      { name: 'roomIdAndType', type: 'uint256' },
+      { name: 'proposalIdAndType', type: 'uint256' },
       { name: 'tokenAmount', type: 'uint256' },
       { name: 'voter', type: 'address' },
     ],
@@ -69,7 +69,7 @@ const getSignedMessages = async (
   const signedMessages = messages.map((msg, idx) => {
     const t: TypedMessage<MessageTypes> = {
       ...typedData,
-      message: { roomIdAndType: msg[1].toHexString(), tokenAmount: msg[2].toHexString(), voter: msg[0] },
+      message: { proposalIdAndType: msg[1].toHexString(), tokenAmount: msg[2].toHexString(), voter: msg[0] },
     }
     const sig = utils.splitSignature(
       signTypedMessage(Buffer.from(utils.arrayify(votes[idx].voter.privateKey)), { data: t }, 'V3')
@@ -120,9 +120,9 @@ describe('Contract', () => {
       it('no tokens address', async () => {
         const { contract, noTokensAddress } = await loadFixture(fixture)
         const noTokensContract = contract.connect(noTokensAddress)
-        await expect(
-          noTokensContract.initializeProposal('test', 'short desc', BigNumber.from(10))
-        ).to.be.revertedWith('sender does not have the amount of token they voted for')
+        await expect(noTokensContract.initializeProposal('test', 'short desc', BigNumber.from(10))).to.be.revertedWith(
+          'sender does not have the amount of token they voted for'
+        )
       })
 
       it("can't start voting with 0 tokens", async () => {
@@ -356,7 +356,7 @@ describe('Contract', () => {
       const msg = [firstAddress.address, BigNumber.from(0).mul(2).add(1), BigNumber.from(100000000000)]
       const t: TypedMessage<MessageTypes> = {
         ...typedData,
-        message: { roomIdAndType: msg[1].toHexString(), tokenAmount: msg[2].toHexString(), voter: msg[0] },
+        message: { proposalIdAndType: msg[1].toHexString(), tokenAmount: msg[2].toHexString(), voter: msg[0] },
       }
       const sig = utils.splitSignature(
         signTypedMessage(Buffer.from(utils.arrayify(firstAddress.privateKey)), { data: t }, 'V3')
@@ -429,7 +429,7 @@ describe('Contract', () => {
         messages.map(async (msg) => {
           const t: TypedMessage<MessageTypes> = {
             ...typedData,
-            message: { roomIdAndType: msg[1].toHexString(), tokenAmount: msg[2].toHexString(), voter: msg[0] },
+            message: { proposalIdAndType: msg[1].toHexString(), tokenAmount: msg[2].toHexString(), voter: msg[0] },
           }
           const sig = utils.splitSignature(
             signTypedMessage(Buffer.from(utils.arrayify(firstAddress.privateKey)), { data: t }, 'V3')
@@ -448,7 +448,7 @@ describe('Contract', () => {
         const correctMessageData: TypedMessage<MessageTypes> = {
           ...domainSeparator,
           message: {
-            roomIdAndType: correctMessageParams[1].toHexString(),
+            proposalIdAndType: correctMessageParams[1].toHexString(),
             tokenAmount: correctMessageParams[2].toHexString(),
             voter: correctMessageParams[0],
           },

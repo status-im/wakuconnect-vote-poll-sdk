@@ -104,7 +104,7 @@ The structure of typed data for a vote message is as follows:
           { name: 'verifyingContract', type: 'address' },
       ],
       Vote: [
-        { name: 'roomIdAndType', type: 'uint256' },
+        { name: 'proposalIdAndType', type: 'uint256' },
         { name: 'tokenAmount', type: 'uint256' },
         { name: 'voter', type: 'address' },
       ],
@@ -119,7 +119,7 @@ The structure of typed data for a vote message is as follows:
   message: {
       voter: voterAddress,
       tokenAmount: tokenAmount,
-      roomIdAndType: roomIdAndType
+      proposalIdAndType: proposalIdAndType
   }
 }
 ```
@@ -174,7 +174,7 @@ For more information about EIP-712 go to [docs](https://eips.ethereum.org/EIPS/e
     Cast a single vote.
     Updates `totalVotes` amount of proposal with index corresponding to `proposalId`.
 
-    If voting first bit of `vote.roomIdAndType` is 1 that means that vote is for and `vote.tokenAmount` is added to `votingRooms[roomId].totalVotesFor`, otherwise if `vote.roomIdAndType` is 0 `vote.tokenAmount` is added to `votingRooms[roomId].totalVotesAgainst`.
+    If voting first bit of `vote.proposalIdAndType` is 1 that means that vote is for and `vote.tokenAmount` is added to `votingRooms[roomId].totalVotesFor`, otherwise if `vote.proposalIdAndType` is 0 `vote.tokenAmount` is added to `votingRooms[roomId].totalVotesAgainst`.
 
     After that add new address to room `voters` and updates mapping `voted` accordingly.
 
