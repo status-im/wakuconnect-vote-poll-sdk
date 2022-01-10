@@ -152,7 +152,7 @@ describe('Contract', () => {
       expect((await contract.proposals(1))[6]).to.deep.eq(BigNumber.from(1))
     })
 
-    it('reverts no room', async () => {
+    it('reverts: no proposal', async () => {
       const { contract } = await loadFixture(fixture)
       await expect(contract.proposals(1)).to.be.reverted
       await expect(contract.proposals(0)).to.be.reverted
@@ -160,35 +160,35 @@ describe('Contract', () => {
       await expect(contract.proposals(1)).to.be.reverted
     })
 
-    it('getOngoingVotingRooms', async () => {
+    it('getOpenProposals', async () => {
       const { contract, provider } = await loadFixture(fixture)
 
       await expect((await contract.getOpenProposals()).length).to.eq(0)
       await contract.initializeProposal('test1', 'short desc', BigNumber.from(100))
 
-      let rooms
-      rooms = await contract.getOpenProposals()
-      await expect(rooms.length).to.eq(1)
-      await expect(rooms[0][2]).to.eq('test1')
+      let proposals
+      proposals = await contract.getOpenProposals()
+      await expect(proposals.length).to.eq(1)
+      await expect(proposals[0][2]).to.eq('test1')
       await provider.send('evm_increaseTime', [500])
       await provider.send('evm_mine', [])
 
       await contract.initializeProposal('test2', 'short desc', BigNumber.from(100))
-      rooms = await contract.getOpenProposals()
-      await expect(rooms.length).to.eq(2)
-      await expect(rooms[0][2]).to.eq('test2')
-      await expect(rooms[1][2]).to.eq('test1')
+      proposals = await contract.getOpenProposals()
+      await expect(proposals.length).to.eq(2)
+      await expect(proposals[0][2]).to.eq('test2')
+      await expect(proposals[1][2]).to.eq('test1')
       await provider.send('evm_increaseTime', [600])
       await provider.send('evm_mine', [])
 
-      rooms = await contract.getOpenProposals()
+      proposals = await contract.getOpenProposals()
 
-      await expect(rooms.length).to.eq(1)
-      await expect(rooms[0][2]).to.eq('test2')
+      await expect(proposals.length).to.eq(1)
+      await expect(proposals[0][2]).to.eq('test2')
       await provider.send('evm_increaseTime', [600])
       await provider.send('evm_mine', [])
-      rooms = await contract.getOpenProposals()
-      await expect(rooms.length).to.eq(0)
+      proposals = await contract.getOpenProposals()
+      await expect(proposals.length).to.eq(0)
     })
   })
   describe('helpers', () => {
@@ -271,25 +271,25 @@ describe('Contract', () => {
       })
     })
 
-    describe('getVotingRoomsFrom', () => {
+    describe('getProposalFromId', () => {
       it('empty', async () => {
         const { contract } = await loadFixture(fixture)
         expect((await contract.getProposalFromId(1)).length).to.eq(0)
       })
-      it('from 1 votingRooms 1', async () => {
+      it('from 1 proposal 1', async () => {
         const { contract } = await loadFixture(fixture)
         await contract.initializeProposal('T1', 't1', BigNumber.from(100))
         expect((await contract.getProposalFromId(1)).length).to.eq(0)
       })
 
-      it('from 1 votingRooms 2', async () => {
+      it('from 1 proposal 2', async () => {
         const { contract } = await loadFixture(fixture)
         await contract.initializeProposal('T1', 't1', BigNumber.from(100))
         await contract.initializeProposal('T2', 't2', BigNumber.from(200))
         expect((await contract.getProposalFromId(1)).length).to.eq(1)
       })
 
-      it('from 1 votingRooms 3', async () => {
+      it('from 1 proposal 3', async () => {
         const { contract } = await loadFixture(fixture)
         await contract.initializeProposal('T1', 't1', BigNumber.from(100))
         await contract.initializeProposal('T2', 't2', BigNumber.from(200))
@@ -297,18 +297,18 @@ describe('Contract', () => {
         expect((await contract.getProposalFromId(1)).length).to.eq(2)
       })
 
-      it('from 0 votingRooms 0', async () => {
+      it('from 0 proposal 0', async () => {
         const { contract } = await loadFixture(fixture)
         expect((await contract.getProposalFromId(0)).length).to.eq(0)
       })
 
-      it('from 0 votingRooms 1', async () => {
+      it('from 0 proposal 1', async () => {
         const { contract } = await loadFixture(fixture)
         await contract.initializeProposal('T1', 't1', BigNumber.from(100))
         expect((await contract.getProposalFromId(0)).length).to.eq(1)
       })
 
-      it('from 0 votingRooms 2', async () => {
+      it('from 0 proposal 2', async () => {
         const { contract } = await loadFixture(fixture)
         await contract.initializeProposal('T1', 't1', BigNumber.from(100))
         await contract.initializeProposal('T2', 't2', BigNumber.from(100))
@@ -365,11 +365,11 @@ describe('Contract', () => {
 
       await expect(contract.castVotes([signedMessage])).to.be.revertedWith('voter doesnt have enough tokens')
 
-      const votingRoom = await contract.proposals(0)
-      expect(votingRoom[2]).to.eq('test')
-      expect(votingRoom[3]).to.eq('')
-      expect(votingRoom[4]).to.deep.eq(BigNumber.from(100))
-      expect(votingRoom[5]).to.deep.eq(BigNumber.from(0))
+      const proposals = await contract.proposals(0)
+      expect(proposals[2]).to.eq('test')
+      expect(proposals[3]).to.eq('')
+      expect(proposals[4]).to.deep.eq(BigNumber.from(100))
+      expect(proposals[5]).to.deep.eq(BigNumber.from(0))
     })
 
     it('success', async () => {
@@ -378,11 +378,11 @@ describe('Contract', () => {
       await contract.initializeProposal('test', 'test desc', BigNumber.from(100))
       await contract.castVotes(signedMessages)
 
-      const votingRoom = await contract.proposals(0)
-      expect(votingRoom[2]).to.eq('test')
-      expect(votingRoom[3]).to.eq('test desc')
-      expect(votingRoom[4]).to.deep.eq(BigNumber.from(200))
-      expect(votingRoom[5]).to.deep.eq(BigNumber.from(100))
+      const proposals = await contract.proposals(0)
+      expect(proposals[2]).to.eq('test')
+      expect(proposals[3]).to.eq('test desc')
+      expect(proposals[4]).to.deep.eq(BigNumber.from(200))
+      expect(proposals[5]).to.deep.eq(BigNumber.from(100))
     })
 
     it('double vote', async () => {
@@ -392,11 +392,11 @@ describe('Contract', () => {
       await contract.castVotes(signedMessages)
       await expect(contract.castVotes(signedMessages)).to.be.revertedWith('voter already voted')
 
-      const votingRoom = await contract.proposals(0)
-      expect(votingRoom[2]).to.eq('test')
-      expect(votingRoom[3]).to.eq('')
-      expect(votingRoom[4]).to.deep.eq(BigNumber.from(200))
-      expect(votingRoom[5]).to.deep.eq(BigNumber.from(100))
+      const proposals = await contract.proposals(0)
+      expect(proposals[2]).to.eq('test')
+      expect(proposals[3]).to.eq('')
+      expect(proposals[4]).to.deep.eq(BigNumber.from(200))
+      expect(proposals[5]).to.deep.eq(BigNumber.from(100))
     })
 
     it('random bytes', async () => {
