@@ -39,7 +39,7 @@ contract VotingContract {
         bytes32 vs;
     }
 
-    event VoteCast(uint256 roomId, address voter);
+    event VoteCast(uint256 proposalId, address voter);
     event ProposalStarted(uint256 proposalId, string title);
 
     constructor(IERC20 _address, uint256 _voteDuration) {
