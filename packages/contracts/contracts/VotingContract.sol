@@ -10,17 +10,18 @@ contract VotingContract {
     using SafeMath for uint256;
 
     IERC20 public token;
-    uint256 private votingLength;
+    uint256 private voteDuration;
 
     bytes32 private constant EIP712DOMAIN_TYPEHASH =
         keccak256('EIP712Domain(string name,string version,uint256 chainId,address verifyingContract)');
-    bytes32 private constant VOTE_TYPEHASH = keccak256('Vote(uint256 roomIdAndType,uint256 tokenAmount,address voter)');
+    bytes32 private constant VOTE_TYPEHASH =
+        keccak256('Vote(uint256 proposalIdAndType,uint256 tokenAmount,address voter)');
     bytes32 private DOMAIN_SEPARATOR;
 
-    struct VotingRoom {
+    struct Proposal {
         uint256 startBlock;
         uint256 endAt;
-        string question;
+        string title;
         string description;
         uint256 totalVotesFor;
         uint256 totalVotesAgainst;
@@ -28,22 +29,22 @@ contract VotingContract {
         address[] voters;
     }
     mapping(uint256 => mapping(address => bool)) private voted;
-    VotingRoom[] public votingRooms;
+    Proposal[] public proposals;
 
     struct Vote {
         address voter;
-        uint256 roomIdAndType;
+        uint256 proposalIdAndType;
         uint256 tokenAmount;
         bytes32 r;
         bytes32 vs;
     }
 
-    event VoteCast(uint256 roomId, address voter);
-    event VotingRoomStarted(uint256 roomId, string question);
+    event VoteCast(uint256 proposalId, address voter);
+    event ProposalStarted(uint256 proposalId, string title);
 
-    constructor(IERC20 _address, uint256 _votingLength) {
+    constructor(IERC20 _address, uint256 _voteDuration) {
         token = _address;
-        votingLength = _votingLength;
+        voteDuration = _voteDuration;
         DOMAIN_SEPARATOR = keccak256(
             abi.encode(
                 EIP712DOMAIN_TYPEHASH,
@@ -55,26 +56,26 @@ contract VotingContract {
         );
     }
 
-    function getVotingRoomLength() public view returns (uint256) {
-        return votingRooms.length;
+    function getProposalsLength() public view returns (uint256) {
+        return proposals.length;
     }
 
-    function getLastNVotingRooms(uint256 amount) public view returns (VotingRoom[] memory result) {
+    function getLastNProposals(uint256 amount) public view returns (Proposal[] memory result) {
         if (amount == 0) {
-            return new VotingRoom[](0);
+            return new Proposal[](0);
         }
-        uint256 votingRoomsLen = votingRooms.length;
+        uint256 proposalsLen = proposals.length;
         uint256 limit;
-        if (amount > votingRoomsLen) {
+        if (amount > proposalsLen) {
             limit = 0;
         } else {
-            limit = votingRoomsLen - amount;
+            limit = proposalsLen - amount;
         }
-        uint256 i = votingRoomsLen;
+        uint256 i = proposalsLen;
         uint256 j = 0;
-        result = new VotingRoom[](amount);
+        result = new Proposal[](amount);
         while (i > 0 && i > limit) {
-            result[j++] = votingRooms[--i];
+            result[j++] = proposals[--i];
         }
         if (j < amount) {
             assembly {
@@ -83,60 +84,63 @@ contract VotingContract {
         }
     }
 
-    function getVotingRoomsFrom(uint256 id) public view returns (VotingRoom[] memory result) {
-        if (id + 1 > votingRooms.length) {
-            return new VotingRoom[](0);
+    function getProposalFromId(uint256 id) public view returns (Proposal[] memory result) {
+        if (id + 1 > proposals.length) {
+            return new Proposal[](0);
         }
-        result = new VotingRoom[](votingRooms.length - id);
+        result = new Proposal[](proposals.length - id);
         uint256 i = id;
         uint256 j = 0;
-        while (i < votingRooms.length) {
-            result[j++] = votingRooms[i++];
+        while (i < proposals.length) {
+            result[j++] = proposals[i++];
         }
     }
 
-    function getVotingRooms() public view returns (VotingRoom[] memory) {
-        return votingRooms;
+    function getProposals() public view returns (Proposal[] memory) {
+        return proposals;
     }
 
-    function getOngoingVotingRooms() public view returns (VotingRoom[] memory result) {
-        uint256 votingRoomsLen = votingRooms.length;
-        uint256 i = votingRoomsLen;
-        result = new VotingRoom[](votingRoomsLen);
-        while (i > 0 && votingRooms[--i].endAt > block.timestamp) {
-            result[votingRooms.length - 1 - i] = votingRooms[i];
-            votingRoomsLen--;
+    function getOpenProposals() public view returns (Proposal[] memory result) {
+        uint256 proposalsLen = proposals.length;
+        uint256 i = proposalsLen;
+        result = new Proposal[](proposalsLen);
+        while (i > 0 && proposals[--i].endAt > block.timestamp) {
+            result[proposals.length - 1 - i] = proposals[i];
+            proposalsLen--;
         }
         assembly {
-            mstore(result, sub(mload(result), votingRoomsLen))
+            mstore(result, sub(mload(result), proposalsLen))
         }
     }
 
-    function listRoomVoters(uint256 roomId) public view returns (address[] memory) {
-        require(roomId < votingRooms.length, 'No room');
-        return votingRooms[roomId].voters;
+    function listVotersForProposal(uint256 proposalId) public view returns (address[] memory) {
+        require(proposalId < proposals.length, 'No proposal for this id');
+        return proposals[proposalId].voters;
     }
 
-    function initializeVotingRoom(
-        string calldata question,
+    function initializeProposal(
+        string calldata title,
         string calldata description,
-        uint256 voteAmount
+        uint256 creatorVoteForAmount
     ) public {
-        require(voteAmount > 0, 'token amount must not be 0');
-        require(token.balanceOf(msg.sender) >= voteAmount, 'not enough token');
-        VotingRoom memory newVotingRoom;
-        newVotingRoom.startBlock = block.number;
-        newVotingRoom.endAt = block.timestamp.add(votingLength);
-        newVotingRoom.question = question;
-        newVotingRoom.description = description;
-        newVotingRoom.totalVotesFor = voteAmount;
-        newVotingRoom.id = votingRooms.length;
-        voted[votingRooms.length][msg.sender] = true;
+        require(creatorVoteForAmount > 0, 'token amount must not be 0');
+        require(
+            token.balanceOf(msg.sender) >= creatorVoteForAmount,
+            'sender does not have the amount of token they voted for'
+        );
+        Proposal memory proposal;
+        proposal.startBlock = block.number;
+        proposal.endAt = block.timestamp.add(voteDuration);
+        proposal.title = title;
+        proposal.description = description;
+        proposal.totalVotesFor = creatorVoteForAmount;
+        proposal.id = proposals.length;
+        voted[proposals.length][msg.sender] = true;
 
-        votingRooms.push(newVotingRoom);
-        votingRooms[votingRooms.length - 1].voters.push(msg.sender);
+        proposals.push(proposal);
+        proposals[proposals.length - 1].voters.push(msg.sender);
 
-        emit VotingRoomStarted(votingRooms.length - 1, question);
+        emit ProposalStarted(proposals.length - 1, title);
     }
 
     function verify(
@@ -144,32 +148,32 @@ contract VotingContract {
         bytes32 r,
         bytes32 vs
     ) internal view returns (bool) {
-        bytes32 voteHash = keccak256(abi.encode(VOTE_TYPEHASH, vote.roomIdAndType, vote.tokenAmount, vote.voter));
+        bytes32 voteHash = keccak256(abi.encode(VOTE_TYPEHASH, vote.proposalIdAndType, vote.tokenAmount, vote.voter));
         bytes32 digest = keccak256(abi.encodePacked('\x19\x01', DOMAIN_SEPARATOR, voteHash));
         return ECDSA.recover(digest, r, vs) == vote.voter;
     }
 
-    function updateRoomVotes(Vote calldata vote, uint256 roomId) internal {
-        if (vote.roomIdAndType & 1 == 1) {
-            votingRooms[roomId].totalVotesFor = votingRooms[roomId].totalVotesFor.add(vote.tokenAmount);
+    function castVote(Vote calldata vote, uint256 proposalId) internal {
+        if (vote.proposalIdAndType & 1 == 1) {
+            proposals[proposalId].totalVotesFor = proposals[proposalId].totalVotesFor.add(vote.tokenAmount);
         } else {
-            votingRooms[roomId].totalVotesAgainst = votingRooms[roomId].totalVotesAgainst.add(vote.tokenAmount);
+            proposals[proposalId].totalVotesAgainst = proposals[proposalId].totalVotesAgainst.add(vote.tokenAmount);
         }
-        votingRooms[roomId].voters.push(vote.voter);
-        voted[roomId][vote.voter] = true;
+        proposals[proposalId].voters.push(vote.voter);
+        voted[proposalId][vote.voter] = true;
     }
 
     function castVotes(Vote[] calldata votes) public {
         for (uint256 i = 0; i < votes.length; i++) {
             Vote calldata vote = votes[i];
-            uint256 roomId = vote.roomIdAndType >> 1;
-            require(roomId < votingRooms.length, 'vote not found');
-            require(votingRooms[roomId].endAt > block.timestamp, 'vote closed');
+            uint256 proposalId = vote.proposalIdAndType >> 1;
+            require(proposalId < proposals.length, 'proposal does not exist');
+            require(proposals[proposalId].endAt > block.timestamp, 'vote closed for this proposal');
+            require(voted[proposalId][vote.voter] == false, 'voter already voted');
             require(verify(vote, vote.r, vote.vs), 'vote has wrong signature');
-            require(voted[roomId][vote.voter] == false, 'voter already voted');
             require(token.balanceOf(vote.voter) >= vote.tokenAmount, 'voter doesnt have enough tokens');
-            updateRoomVotes(vote, roomId);
-            emit VoteCast(roomId, vote.voter);
+            castVote(vote, proposalId);
+            emit VoteCast(proposalId, vote.voter);
         }
     }
 }
