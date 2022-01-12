@@ -1,6 +1,6 @@
 {
   "name": "@waku/vote-sdk-contracts",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "main": "index.js",
   "repository": "https://github.com/status-im/wakuconnect-vote-poll-sdk",
   "license": "MIT OR Apache-2.0",
