@@ -1,9 +1,7 @@
-import React, { useState } from 'react'
-import { useConfig } from '@usedapp/core'
-import { ChainId } from '@usedapp/core/src/constants'
+import React, { useMemo, useState } from 'react'
 import styled from 'styled-components'
 import { PollCreation, PollList } from '@waku/poll-sdk-react-components'
-import { JsonRpcSigner, Web3Provider } from '@ethersproject/providers'
+import { Web3Provider } from '@ethersproject/providers'
 import { useWakuPolling } from '@waku/poll-sdk-react-hooks'
 import { CreateButton } from '@waku/vote-poll-sdk-react-components'
 import { Theme } from '@waku/vote-poll-sdk-react-components/dist/esm/src/style/themes'
@@ -11,23 +9,20 @@ import { Theme } from '@waku/vote-poll-sdk-react-components/dist/esm/src/style/t
 type PollProps = {
   appName: string
   library: Web3Provider | undefined
-  signer: JsonRpcSigner | undefined
-  chainId: ChainId | undefined
   account: string | null | undefined
   theme: Theme
   tokenAddress: string
+  multicallAddress: string
 }
 
-export function Poll({ appName, library, signer, chainId, account, theme, tokenAddress }: PollProps) {
-  const config = useConfig()
+export function Poll({ appName, library, account, theme, tokenAddress, multicallAddress }: PollProps) {
   const [showPollCreation, setShowPollCreation] = useState(false)
-  const wakuPolling = useWakuPolling(appName, tokenAddress, library, config?.multicallAddresses?.[chainId ?? 1337])
-
-  const disabled = !signer
+  const wakuPolling = useWakuPolling(appName, tokenAddress, library, multicallAddress)
+  const disabled = useMemo(() => !account, [account])
 
   return (
     <Wrapper>
-      {showPollCreation && signer && (
+      {showPollCreation && account && (
         <PollCreation wakuPolling={wakuPolling} setShowPollCreation={setShowPollCreation} theme={theme} />
       )}
       {
