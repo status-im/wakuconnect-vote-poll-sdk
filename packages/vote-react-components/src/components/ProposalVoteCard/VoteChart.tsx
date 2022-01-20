@@ -1,4 +1,4 @@
-import React, { useMemo, useRef } from 'react'
+import React, { useMemo } from 'react'
 import CountUp from 'react-countup'
 import styled from 'styled-components'
 import { addCommas } from '../../helpers/addCommas'
@@ -8,7 +8,6 @@ import crossIcon from '../../assets/svg/cross.svg'
 import crossWinnerIcon from '../../assets/svg/crossWinner.svg'
 import checkIcon from '../../assets/svg/check.svg'
 import checkWinnerIcon from '../../assets/svg/checkWinner.svg'
-import { useMobileVersion } from '@waku/vote-poll-sdk-react-components'
 import { VotingRoom } from '@waku/vote-poll-sdk-core/dist/esm/src/types/PollType'
 import { WakuVoting } from '@waku/vote-poll-sdk-core'
 
@@ -39,7 +38,13 @@ export function VoteChart({
     () => totalVotesFor.add(totalVotesAgainst),
     [totalVotesFor.toString(), totalVotesAgainst.toString()]
   )
-  const graphWidth = useMemo(() => totalVotesAgainst.mul(100).div(voteSum).toNumber(), [voteSum])
+  const graphWidth = useMemo(() => {
+    if (voteSum.gt(0)) {
+      return totalVotesAgainst.mul(100).div(voteSum).toNumber()
+    } else {
+      return 1
+    }
+  }, [voteSum])
 
   const balanceWidth = useMemo(() => {
     if (!proposingAmount) {

@@ -31,7 +31,7 @@ function VotingWrapper() {
   const config = useConfig()
   const waku = useWakuVoting(
     'test',
-    '0x965a61B9A91400AdA142b591ab0E235024c94E3D',
+    '0x2c818275a741c3d6d222f981ee8ec37bc0e3c0eb',
     library,
     config?.multicallAddresses?.[chainId ?? 1337]
   )

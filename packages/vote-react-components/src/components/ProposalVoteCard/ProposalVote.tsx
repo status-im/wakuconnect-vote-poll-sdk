@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import styled from 'styled-components'
-import { FinalBtn, VoteBtnAgainst, VoteBtnFor } from '../Buttons'
+import { VoteBtnAgainst, VoteBtnFor } from '../Buttons'
 import { VoteSubmitButton } from './VoteSubmitButton'
 import { VoteChart } from './VoteChart'
 import { ViewLink } from '../ViewLink'

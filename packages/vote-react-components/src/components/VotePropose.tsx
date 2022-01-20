@@ -1,5 +1,5 @@
 import { WakuVoting } from '@waku/vote-poll-sdk-core'
-import React, { useCallback, useMemo } from 'react'
+import React, { useMemo } from 'react'
 import { useState } from 'react'
 import styled from 'styled-components'
 import { addCommas } from '../helpers/addCommas'

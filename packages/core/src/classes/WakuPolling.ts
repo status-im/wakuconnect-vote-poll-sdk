@@ -1,15 +1,11 @@
 import { Waku } from 'js-waku'
-import { JsonRpcSigner } from '@ethersproject/providers'
 import { PollInitMsg } from '../models/PollInitMsg'
 import { PollType } from '../types/PollType'
-import { BigNumber, Wallet } from 'ethers'
-import { WakuMessage } from 'js-waku'
+import { BigNumber } from 'ethers'
 import { TimedPollVoteMsg } from '../models/TimedPollVoteMsg'
 import { DetailedTimedPoll } from '../models/DetailedTimedPoll'
-import { createWaku } from '../utils/createWaku'
 import { WakuMessaging } from './WakuMessaging'
 import { Web3Provider } from '@ethersproject/providers'
-import { WakuMessagesSetup } from '../types/WakuMessagesSetup'
 
 const MinTokenDefaultValue = BigNumber.from(1)
 
@@ -71,6 +67,9 @@ export class WakuPolling extends WakuMessaging {
     minToken?: BigNumber,
     endTime?: number
   ) {
+    if (minToken) {
+      minToken = minToken.mul(this.tokenMultiDecimals)
+    }
     const signer = this.provider.getSigner()
     const address = await signer.getAddress()
     await this.updateBalances([address])
@@ -89,6 +88,9 @@ export class WakuPolling extends WakuMessaging {
   }
 
   public async sendTimedPollVote(pollId: string, selectedAnswer: number, tokenAmount?: BigNumber) {
+    if (tokenAmount) {
+      tokenAmount = tokenAmount.mul(this.tokenMultiDecimals)
+    }
     const signer = this.provider.getSigner()
     const address = await signer.getAddress()
     const poll = this.wakuMessages['pollInit'].arr.find((poll: PollInitMsg): poll is PollInitMsg => poll.id === pollId)
@@ -129,7 +131,8 @@ export class WakuPolling extends WakuMessaging {
                   this.addressesBalances[poll.owner] &&
                   this.addressesBalances[vote.voter]?.gt(poll.minToken ?? MinTokenDefaultValue)
               )
-              .filter((e): e is TimedPollVoteMsg => !!e)
+              .filter((e): e is TimedPollVoteMsg => !!e),
+            this.tokenMultiDecimals
           )
         } else {
           return undefined

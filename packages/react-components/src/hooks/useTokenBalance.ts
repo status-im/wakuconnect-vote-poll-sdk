@@ -1,6 +1,6 @@
 import { WakuMessaging } from '@waku/vote-poll-sdk-core'
 import { BigNumber } from 'ethers'
-import React, { useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 
 export function useTokenBalance(address: string | null | undefined, wakuVoting: WakuMessaging) {
   const [tokenBalance, setTokenBalance] = useState(0)

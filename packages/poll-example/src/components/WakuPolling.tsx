@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState } from 'react'
 import { useConfig, useEthers } from '@usedapp/core'
 
 import styled from 'styled-components'
@@ -21,7 +21,7 @@ export function WakuPolling({ appName, signer, theme }: WakuPollingProps) {
   const [selectConnect, setSelectConnect] = useState(false)
   const wakuPolling = useWakuPolling(
     appName,
-    '0x80ee48b5ba5c3ea556b7ff6d850d2fb2c4bc7412',
+    '0xdef06eb7cf63ef68cb326b8bc658cf61d888d25a',
     library,
     config?.multicallAddresses?.[chainId ?? 1337]
   )
