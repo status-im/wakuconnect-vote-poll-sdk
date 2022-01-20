@@ -22,5 +22,6 @@
   },
   "dependencies": {
     "wsrun": "^5.2.4"
-  }
+  },
+  "version": "0.1.0"
 }

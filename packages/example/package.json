@@ -1,7 +1,7 @@
 {
   "name": "@waku/vote-poll-sdk-example",
   "repository": "https://github.com/status-im/wakuconnect-vote-poll-sdk",
-  "version": "0.2.0",
+  "version": "0.4.0",
   "main": "index.js",
   "license": "MIT OR Apache-2.0",
   "scripts": {
@@ -16,8 +16,8 @@
     "lint:prettier": "yarn prettier './{src,test}/**/*.{ts,tsx}'"
   },
   "dependencies": {
-    "@waku/poll-sdk-example": "^0.2.0",
-    "@waku/vote-sdk-example": "^0.2.0",
+    "@waku/poll-sdk-example": "^0.4.0",
+    "@waku/vote-sdk-example": "^0.4.0",
     "assert": "^2.0.0",
     "crypto-browserify": "^3.12.0",
     "prettier": "^2.3.2",
