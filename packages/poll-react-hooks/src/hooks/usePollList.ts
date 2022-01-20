@@ -1,6 +1,6 @@
 import { WakuPolling } from '@waku/vote-poll-sdk-core'
 import { DetailedTimedPoll } from '@waku/vote-poll-sdk-core/dist/esm/src/models/DetailedTimedPoll'
-import React, { useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 
 export function usePollList(wakuPolling: WakuPolling | undefined) {
   const [polls, setPolls] = useState<DetailedTimedPoll[]>([])

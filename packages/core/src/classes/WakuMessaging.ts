@@ -3,7 +3,6 @@ import { WakuMessage } from 'js-waku'
 import { BigNumber } from 'ethers'
 import { Web3Provider } from '@ethersproject/providers'
 import { Contract } from '@ethersproject/contracts'
-import { Interface } from '@ethersproject/abi'
 import { ERC20 } from '../abi'
 import { createWaku } from '../utils/createWaku'
 import { WakuMessagesSetup } from '../types/WakuMessagesSetup'
@@ -35,6 +34,8 @@ export class WakuMessaging {
   public tokenDecimals: number | undefined
   public tokenSymbol: string | undefined
 
+  protected tokenMultiDecimals: BigNumber = BigNumber.from(0)
+
   protected constructor(
     appName: string,
     tokenAddress: string,
@@ -50,7 +51,6 @@ export class WakuMessaging {
     this.chainId = chainId
     this.token = new Contract(tokenAddress, ERC20, this.provider)
     this.multicall = new Contract(multicall, ABI, this.provider)
-
     wakuMessagesSetup.forEach((setupData) => {
       this.wakuMessages[setupData.name] = {
         topic: `/${this.appName}/0.0.1/${setupData.name}/proto/`,
@@ -70,6 +70,7 @@ export class WakuMessaging {
 
   protected async setObserver() {
     this.tokenDecimals = await this.token.decimals()
+    this.tokenMultiDecimals = BigNumber.from(10).pow(this.tokenDecimals ?? 0)
     this.tokenSymbol = await this.token.symbol()
     this.waku = await createWaku(this.waku)
     await Promise.all(

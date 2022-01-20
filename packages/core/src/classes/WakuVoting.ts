@@ -1,14 +1,12 @@
 import { VotingContract } from '@waku/vote-sdk-contracts/abi'
 import { WakuMessaging } from './WakuMessaging'
-import { Contract, Wallet, BigNumber, ethers, utils } from 'ethers'
-import { Waku, WakuMessage } from 'js-waku'
-import { createWaku } from '../utils/createWaku'
-import { JsonRpcSigner, Web3Provider } from '@ethersproject/providers'
+import { Contract, BigNumber, utils } from 'ethers'
+import { Waku } from 'js-waku'
+import { Web3Provider } from '@ethersproject/providers'
 import { VoteMsg } from '../models/VoteMsg'
 import { VotingRoom } from '../types/PollType'
-import { DetailedVotingRoom } from '../models/DetailedVotingRoom'
 
-const ABI = [
+export const ABI = [
   'function aggregate(tuple(address target, bytes callData)[] calls) view returns (uint256 blockNumber, bytes[] returnData)',
 ]
 
@@ -72,7 +70,7 @@ export class WakuVoting extends WakuMessaging {
     if (this.provider) {
       const signer = this.provider.getSigner()
       this.votingContract = await this.votingContract.connect(signer)
-      await this.votingContract.initializeVotingRoom(question, descripiton, tokenAmount)
+      await this.votingContract.initializeProposal(question, descripiton, tokenAmount.mul(this.tokenMultiDecimals))
     }
   }
 
@@ -80,7 +78,7 @@ export class WakuVoting extends WakuMessaging {
   private lastGetPollsBlockNumber = 0
   private lastActivePoll = 0
 
-  public async getVotingRooms() {
+  public async getProposals() {
     const blockNumber = await this.provider.getBlockNumber()
     if (blockNumber != this.lastGetPollsBlockNumber) {
       this.lastGetPollsBlockNumber = blockNumber
@@ -89,7 +87,7 @@ export class WakuVoting extends WakuMessaging {
       if (this.lastActivePoll < 0) {
         this.lastActivePoll = this.lastPolls.length
       }
-      const polls = await this.votingContract.getVotingRoomsFrom(this.lastActivePoll)
+      const polls = await this.votingContract.getProposalFromId(this.lastActivePoll)
       polls.forEach((poll: any) => {
         const timeLeft = poll[1].toNumber() * 1000 - Date.now()
         const votingRoom: VotingRoom = {
@@ -97,10 +95,10 @@ export class WakuVoting extends WakuMessaging {
           endAt: poll[1],
           question: poll[2],
           description: poll[3],
-          totalVotesFor: poll[4],
-          totalVotesAgainst: poll[5],
-          wakuTotalVotesFor: poll[4],
-          wakuTotalVotesAgainst: poll[5],
+          totalVotesFor: poll[4].div(this.tokenMultiDecimals),
+          totalVotesAgainst: poll[5].div(this.tokenMultiDecimals),
+          wakuTotalVotesFor: poll[4].div(this.tokenMultiDecimals),
+          wakuTotalVotesAgainst: poll[5].div(this.tokenMultiDecimals),
           voters: poll[7],
           id: BigNumber.from(poll[6]).toNumber(),
           timeLeft,
@@ -133,7 +131,7 @@ export class WakuVoting extends WakuMessaging {
       roomId,
       selectedAnswer,
       this.chainId,
-      tokenAmount,
+      tokenAmount.mul(this.tokenMultiDecimals),
       this.votingContract.address
     )
     await this.sendWakuMessage(this.wakuMessages['vote'], vote)
@@ -149,11 +147,11 @@ export class WakuVoting extends WakuMessaging {
     this.votingContract.castVotes(mappedVotes)
   }
 
-  public async getVotingRoom(id: number) {
+  public async getProposal(id: number) {
     await this.updateBalances()
     let votingRoom: VotingRoom
     try {
-      await this.getVotingRooms()
+      await this.getProposals()
       votingRoom = this.lastPolls[id]
       votingRoom.wakuVotes = undefined
       votingRoom.wakuTotalVotesAgainst = votingRoom.totalVotesAgainst
@@ -173,14 +171,18 @@ export class WakuVoting extends WakuMessaging {
       if (
         vote.roomId === id &&
         this.addressesBalances[vote.voter] &&
-        this.addressesBalances[vote.voter]?.gt(vote.tokenAmount)
+        this.addressesBalances[vote.voter]?.gte(vote.tokenAmount.div(this.tokenMultiDecimals))
       ) {
         if (!votersHashMap[vote.voter]) {
           votersHashMap[vote.voter] = true
           if (vote.answer === 0) {
-            votingRoom.wakuTotalVotesAgainst = votingRoom.wakuTotalVotesAgainst.add(vote.tokenAmount)
+            votingRoom.wakuTotalVotesAgainst = votingRoom.wakuTotalVotesAgainst.add(
+              vote.tokenAmount.div(this.tokenMultiDecimals)
+            )
           } else {
-            votingRoom.wakuTotalVotesFor = votingRoom.wakuTotalVotesFor.add(vote.tokenAmount)
+            votingRoom.wakuTotalVotesFor = votingRoom.wakuTotalVotesFor.add(
+              vote.tokenAmount.div(this.tokenMultiDecimals)
+            )
           }
           return true
         }
@@ -188,7 +190,10 @@ export class WakuVoting extends WakuMessaging {
       return false
     }) as VoteMsg[]
 
-    const sum = wakuVotes.reduce((prev, curr) => prev.add(curr.tokenAmount), BigNumber.from(0))
+    const sum = wakuVotes.reduce(
+      (prev, curr) => prev.add(curr.tokenAmount.div(this.tokenMultiDecimals)),
+      BigNumber.from(0)
+    )
     votingRoom.wakuVotes = { sum, votes: wakuVotes }
     return votingRoom
   }

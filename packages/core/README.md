@@ -67,7 +67,7 @@ All api functions use `provider.getSigner()` to define signer
 
 - `createVote(question: string, descripiton: string, tokenAmount: BigNumber)` creates new votingRoom on blockchain
 
-- `getVotingRooms()` which return a list o VotingRoom
+- `getProposals()` which return a list o Proposals
 
 ```
 export type VotingRoom = {
@@ -95,7 +95,7 @@ export type VotingRoom = {
 
 - `commitVotes(votes: VoteMsg[])` commits votes to blockchain
 
-- `getVotingRoom(id: number)` gets VotingRoom with given id
+- `getProposal(id: number)` gets proposal with given id
 
 # Polls
 

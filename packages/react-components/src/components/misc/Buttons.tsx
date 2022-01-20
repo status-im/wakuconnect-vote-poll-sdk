@@ -1,4 +1,4 @@
-import styled, { css } from 'styled-components'
+import styled from 'styled-components'
 import { orangeTheme, Theme } from '../../style/themes'
 import closeButton from '../../assets/svg/close.svg'
 import blueCloseButton from '../../assets/svg/blueClose.svg'

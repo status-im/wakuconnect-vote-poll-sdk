@@ -1,5 +1,5 @@
 import React from 'react'
-import { Redirect, Route, Switch, useHistory } from 'react-router'
+import { Route, Switch, useHistory } from 'react-router'
 import { BrowserRouter } from 'react-router-dom'
 import styled from 'styled-components'
 import { VotingRoomMobile, NewVotingRoomMobile } from '@waku/vote-sdk-react-components'

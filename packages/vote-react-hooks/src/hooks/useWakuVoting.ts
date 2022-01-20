@@ -1,5 +1,5 @@
 import { WakuVoting } from '@waku/vote-poll-sdk-core'
-import React, { useEffect, useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { Web3Provider } from '@ethersproject/providers'
 
 export function useWakuVoting(

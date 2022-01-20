@@ -1,4 +1,4 @@
-import React, { ReactNode, useState } from 'react'
+import React, { ReactNode, useMemo, useState } from 'react'
 import styled from 'styled-components'
 import { PollType } from '@waku/vote-poll-sdk-core/dist/esm/src/types/PollType'
 import { WakuPolling } from '@waku/vote-poll-sdk-core'
@@ -7,7 +7,7 @@ import { MESSAGE_SENDING_RESULT } from '@waku/vote-poll-sdk-core/dist/esm/src/cl
 
 const defaultPollDuration = 7 * 24 * 60 * 60 * 1000 // One week in ms.
 
-function getLocaleIsoTime(dateTime: Date) {
+export function getLocaleIsoTime(dateTime: Date) {
   const MS_PER_MINUTE = 60000
   const milliseconds = dateTime.getTime() - dateTime.getTimezoneOffset() * MS_PER_MINUTE
   const newDate = new Date(milliseconds)
@@ -46,8 +46,8 @@ export function PollCreation({ wakuPolling, theme, setShowPollCreation }: PollCr
   const [question, setQuestion] = useState('')
   const [showCreateConfirmation, setShowCreateConfirmation] = useState(false)
   const [showNotEnoughTokens, setShowNotEnoughTokens] = useState(false)
-  const [selectedType, setSelectedType] = useState(PollType.NON_WEIGHTED)
-  const [endTimePicker, setEndTimePicker] = useState(new Date(new Date().getTime() + defaultPollDuration))
+  const selectedType = useMemo(() => PollType.NON_WEIGHTED, [])
+  const endTimePicker = useMemo(() => new Date(new Date().getTime() + defaultPollDuration), [])
 
   return (
     <Modal heading="Create a poll" setShowModal={setShowPollCreation} theme={theme}>
