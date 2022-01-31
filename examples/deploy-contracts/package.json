@@ -1,0 +1,12 @@
+{
+  "name": "deploy-contracts",
+  "version": "1.0.0",
+  "main": "index.js",
+  "license": "MIT",
+  "dependencies": {
+    "@waku/vote-sdk-contracts": "^0.4.0",
+    "ethers": "^5.5.3",
+    "ts-node": "^10.4.0",
+    "typescript": "^4.5.5"
+  }
+}
